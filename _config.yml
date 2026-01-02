@@ -1,0 +1,44 @@
+# Personal Info
+title: "Masoud Ghasemi"
+description: "Python Backend & AI Engineer"
+author: "Masoud Ghasemi"
+email: "masudpythongit@gmail.com"
+phone: "(+98) 9010361944"
+location: "Ahvaz, Iran"
+linkedin: "masoud-ghasemi-748412381"
+github_username: "sorna-fast"
+
+# Certificate Folder URL
+certificates_folder: "https://github.com/sorna-fast/sorna-fast/tree/master/Certificate"
+
+# Projects Data
+projects:
+  - name: "EuroSAT CNN Classifier"
+    desc: "Land-use classification with 96.4% accuracy"
+    url: "https://github.com/sorna-fast/eurosat-cnn-classifier"
+    tags: ["Python", "TensorFlow", "CNN"]
+
+  - name: "TB Chest X-Ray Classifier"
+    desc: "Medical AI for tuberculosis detection"
+    url: "https://github.com/sorna-fast/tb-chest-xray-classifier"
+    tags: ["Deep Learning", "Medical AI", "CNN"]
+
+  - name: "Breast Cancer Diagnosis"
+    desc: "Neural network with 98.25% accuracy"
+    url: "https://github.com/sorna-fast/breast-cancer-diagnosis-neural-network"
+    tags: ["ANN", "Scikit-Learn", "Healthcare"]
+
+  - name: "Rock-Paper-Scissors CNN"
+    desc: "Gesture recognition with 99% accuracy"
+    url: "https://github.com/sorna-fast/rock-paper-scissors-cnn"
+    tags: ["Image Processing", "Data Augmentation"]
+
+  - name: "Royal Clinic Portal"
+    desc: "Clinic management with online booking"
+    url: "https://github.com/sorna-fast/royal-clinic-project"
+    tags: ["Django", "PostgreSQL", "REST API"]
+
+  - name: "Django Online Shop"
+    desc: "E-commerce platform with payments"
+    url: "https://github.com/sorna-fast/django-online-shop"
+    tags: ["Django", "Payment Gateway"]
