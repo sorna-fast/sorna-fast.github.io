@@ -60,7 +60,8 @@
                 </div>
                 {% endfor %}
             </div>
-
+            <br>
+            <br>
             <div class="view-all-link">
                 <a href="https://github.com/sorna-fast?tab=repositories" target="_blank" class="btn btn-primary">
                     More Projects →
@@ -70,31 +71,48 @@
         </div>
     </section>
 
-    <!-- Certificates Section (NEW) -->
-    <section id="certificates" class="certificates">
-        <div class="container">
-            <h2 class="section-title">Certificates</h2>
-            <p class="section-subtitle">Click to view certificates in full size</p>
+<section id="certificates" class="certificates">
+    <div class="container">
+        <h2 class="section-title">Certificates</h2>
 
-            <!-- GitHub Certificates Grid -->
-            <div class="certificates-grid" id="certGrid">
-                <!-- Certificates will be loaded automatically -->
-            </div>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-org="all">All Certificates</button>
+            <button class="filter-btn" data-org="harvard">Harvard</button>
+            <button class="filter-btn" data-org="linkedin">LinkedIn</button>
+            <button class="filter-btn" data-org="tvto">TVTO</button>
+            
+        </div>
 
-            <div class="view-all-link">
-                <a href="{{ site.certificates_folder }}" target="_blank" class="btn btn-primary">
-                    View All Certificates on GitHub →
-                </a>
+        
+        <div class="certificates-slider-wrapper">
+            <div class="certificates-track" id="certSlider">
+                
             </div>
         </div>
-    </section>
+
+        <!-- کنترل اسلایدر -->
+        <div class="slider-controls">
+            <button class="control-btn" id="pauseBtn">⏸️ Pause</button>
+            <button class="control-btn" id="speedBtn">⚡ Speed Up</button>
+        </div>
+        <br>
+        <!-- دکمه مشاهده همه -->
+        <div class="view-all-link">
+            <a href="{{ site.certificates_folder }}" target="_blank" class="btn btn-primary">
+                View All Certificates on GitHub →
+            </a>
+        </div>
+    </div>
+</section>
+
 
     <!-- About Section -->
     <section id="about">
         <div class="container">
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
-                <img src="https://via.placeholder.com/400x400/0a192f/64ffda?text=Masoud+Ghasemi" alt="Masoud Ghasemi"
+                <img src="./profile.jpg" alt="Masoud Ghasemi"
                     class="profile-img">
                 <div class="about-text">
                     <h3>Backend & AI Developer with 2+ Years Experience</h3>
@@ -110,7 +128,7 @@
 
                     <h3 style="margin-top: 30px;">Key Skills</h3>
                     <div class="skills-list">
-                        {% assign skills = "Python,Django,Django Rest Framework,FastAPI, TensorFlow,Scikit-Learn,,SQL,MongoDB,Pandas,NumPy,Data Analysis,Git"
+                        {% assign skills = "Python,Django,Django Rest Framework,FastAPI, TensorFlow,Scikit-Learn,SQL,MongoDB,Pandas,NumPy,Data Analysis,Git"
                         | split: "," %}
                         {% for skill in skills %}
                         <span class="skill-item">{{ skill }}</span>
@@ -198,10 +216,133 @@
             }
         }
 
+    // اسلایدر و فیلتر گواهینامه‌ها
+    class CertificateSlider {
+        constructor() {
+            this.slider = document.getElementById('certSlider');
+            this.isPaused = false;
+            this.speed = 30; // ثانیه
+            this.allCertificates = [];
+            this.filteredCertificates = [];
+            this.init();
+        }
+
+        async init() {
+            await this.loadCertificates();
+            this.setupFilters();
+            this.setupControls();
+            this.render();
+        }
+
+        async loadCertificates() {
+            const githubApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
+            try {
+                const response = await fetch(githubApi);
+                const files = await response.json();
+
+                this.allCertificates = files
+                    .filter(file => file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i))
+                    .map(file => ({
+                        name: file.name.replace(/\.[^/.]+$/, ""),
+                        url: file.html_url,
+                        type: file.name.endsWith('.pdf') ? 'pdf' : 'image',
+                        org: this.detectOrganization(file.name), // تشخیص خودکار سازمان
+                        originalName: file.name
+                    }));
+
+                this.filteredCertificates = [...this.allCertificates];
+            } catch (error) {
+                this.slider.innerHTML = '<p style="color: var(--accent);">Error loading certificates</p>';
+            }
+        }
+
+        detectOrganization(filename) {
+            const name = filename.toLowerCase();
+            if (name.includes('harvard') || name.includes('cs50')) return 'harvard';
+            if (name.includes('linkedin')) return 'linkedin';
+            if (name.includes('tvto') || name.includes('msrt')) return 'tvto';
+            if (name.includes('certificate')) return 'tvto'; // پیش‌فرض
+            return 'other';
+        }
+
+        setupFilters() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // حذف کلاس active از همه
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    // اضافه کردن کلاس active به دکمه فعلی
+                    e.target.classList.add('active');
+
+                    const org = e.target.dataset.org;
+                    this.filter(org);
+                });
+            });
+        }
+
+        setupControls() {
+            const pauseBtn = document.getElementById('pauseBtn');
+            const speedBtn = document.getElementById('speedBtn');
+
+            pauseBtn.addEventListener('click', () => {
+                this.isPaused = !this.isPaused;
+                this.updateAnimation();
+                pauseBtn.textContent = this.isPaused ? '▶️ Play' : '⏸️ Pause';
+            });
+
+            speedBtn.addEventListener('click', () => {
+                this.speed = this.speed === 30 ? 15 : 30;
+                this.updateAnimation();
+                speedBtn.textContent = this.speed === 15 ? '🐌 Slow Down' : '⚡ Speed Up';
+            });
+        }
+
+        filter(org) {
+            if (org === 'all') {
+                this.filteredCertificates = [...this.allCertificates];
+            } else {
+                this.filteredCertificates = this.allCertificates.filter(cert => cert.org === org);
+            }
+            this.render();
+        }
+
+        render() {
+            if (this.filteredCertificates.length === 0) {
+                this.slider.innerHTML = '<p style="color: var(--accent);">No certificates found</p>';
+                return;
+            }
+
+            // ساخت HTML برای هر گواهینامه
+            const certificatesHTML = this.filteredCertificates.map(cert => `
+            <div class="certificate-card" onclick="window.open('${cert.url}', '_blank')">
+                <div class="cert-preview ${cert.type}-preview">
+                    ${cert.type === 'pdf' ? '📄' : '🖼️'}
+                </div>
+                <span class="org-tag">${cert.org.toUpperCase()}</span>
+                <h4>${cert.name}</h4>
+                <span class="cert-type">${cert.type.toUpperCase()}</span>
+            </div>
+        `).join('');
+
+            this.slider.innerHTML = certificatesHTML;
+            this.updateAnimation();
+        }
+
+        updateAnimation() {
+            this.slider.style.animation = this.isPaused
+                ? 'none'
+                : `slideRTL ${this.speed}s linear infinite`;
+        }
+    }
+
+    // اجرا بعد از لود شدن صفحه
+    document.addEventListener('DOMContentLoaded', () => {
+        new CertificateSlider();
+    });
+
         // Load on page load
         document.addEventListener('DOMContentLoaded', loadCertificates);
     </script>
-
 </body>
 
 </html>
