@@ -9,7 +9,7 @@ github_username: "sorna-fast"
 
 # Certificate Folder URL
 certificates_folder: "https://github.com/sorna-fast/sorna-fast/tree/master/Certificate"
-""
+
 # Projects Data
 projects:
 
@@ -24,14 +24,14 @@ projects:
     tags: ["Deep Learning", "TensorFlow", "Medical AI", "CNN","Fastapi"]
 
   - name: "SornaFlow"
-    desc: "Organizational workflow platform built with Django, featuring employee management, task assignment, reporting, and Jalali date support. "
+    desc: "Organizational workflow platform built with Django, featuring employee management, task assignment, reporting, and Jalali date support."
     url: "https://github.com/sorna-fast/SornaFlow"
     tags: ["Django", "mysql-database", "docker"]
 
   - name: "EuroSAT CNN Classifier"
     desc: "Land-use classification with 96.4% accuracy"
     url: "https://github.com/sorna-fast/eurosat-cnn-classifier"
-    tags: ["Python", "TensorFlow", "CNN","Data Augmentation" ,"mage Processing"]
+    tags: ["Python", "TensorFlow", "CNN","Data Augmentation","Image Processing"]
 
   - name: "Royal Clinic Portal"
     desc: "Clinic management with online booking"
@@ -44,11 +44,11 @@ projects:
     tags: ["Django", "ajax"]
 
   - name: "media-database-cs50sql"
-    desc: "Final project for CS50 SQL – A normalized media database to manage movies, series, contributors, users, comments, and views. "
+    desc: "Final project for CS50 SQL – A normalized media database to manage movies, series, contributors, users, comments, and views."
     url: "https://github.com/sorna-fast/media-database-cs50sql"
-    tags: ["SQL", "SQL-SEVER", "SQL-Queries", "SQL-Schema"]
+    tags: ["SQL", "SQL-SERVER", "SQL-Queries", "SQL-Schema"]
 
   - name: "food-store-database-mongodb"
-    desc: "Food store database with all orders and database records "
+    desc: "Food store database with all orders and database records"
     url: "https://github.com/sorna-fast/food-store-database-mongodb"
-    tags: ["Mongodb", "Nosql-Database"]
+    tags: ["MongoDB", "NoSQL-Database"]
