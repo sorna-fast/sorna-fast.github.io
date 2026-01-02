@@ -1,0 +1,203 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ site.title }}</title>
+    <meta name="description" content="{{ site.description }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="#home" class="logo">MG</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#certificates">Certificates</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h1>Masoud Ghasemi</h1>
+            <h2>Python Backend & AI Engineer</h2>
+            <p style="direction: ltr; text-align: left;">Building scalable APIs and AI models with 98%+ accuracy in medical diagnostics and computer vision</p>
+            <div class="cta-buttons">
+                <a href="#projects" class="btn btn-primary">View Projects</a>
+                <a href="https://github.com/sorna-fast" class="btn btn-secondary" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+        <div class="container">
+            <h2 class="section-title">Projects</h2>
+            <div class="projects-grid">
+                {% for project in site.projects %}
+                <div class="project-card">
+                    <h3>{{ project.name }}</h3>
+                    <p>{{ project.desc }}</p>
+                    <div class="tags">
+                        {% for tag in project.tags %}
+                        <span class="tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    <a href="{{ project.url }}" target="_blank" class="project-link">View Code →</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Certificates Section (NEW) -->
+    <section id="certificates" class="certificates">
+        <div class="container">
+            <h2 class="section-title">Certificates</h2>
+            <p class="section-subtitle">Click to view certificates in full size</p>
+
+            <!-- GitHub Certificates Grid -->
+            <div class="certificates-grid" id="certGrid">
+                <!-- Certificates will be loaded automatically -->
+            </div>
+
+            <div class="view-all-link">
+                <a href="{{ site.certificates_folder }}" target="_blank" class="btn btn-primary">
+                    View All Certificates on GitHub →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-content">
+                <img src="https://via.placeholder.com/400x400/0a192f/64ffda?text=Masoud+Ghasemi" alt="Masoud Ghasemi"
+                    class="profile-img">
+                <div class="about-text">
+                    <h3>Backend & AI Developer with 2+ Years Experience</h3>
+                    <p>
+                        Designing scalable APIs, database management systems, and AI models using Python, Django, and
+                        TensorFlow.
+                        Proven track record in medical diagnostics and computer vision achieving 98%+ accuracy.
+                    </p>
+                    <p>
+                        Currently pursuing Bachelor of Computer Engineering at Payam Noor University.
+                        Passionate about building intelligent systems that solve real-world problems.
+                    </p>
+
+                    <h3 style="margin-top: 30px;">Key Skills</h3>
+                    <div class="skills-list">
+                        {% assign skills = "Python,Django,TensorFlow,Scikit-Learn,FastAPI,SQL,MongoDB,Pandas,NumPy,Git"
+                        | split: "," %}
+                        {% for skill in skills %}
+                        <span class="skill-item">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>Email</h3>
+                    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+                </div>
+                <div class="contact-item">
+                    <h3>Phone</h3>
+                    <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
+                </div>
+                <div class="contact-item">
+                    <h3>Location</h3>
+                    <p>{{ site.location }}</p>
+                </div>
+                <div class="contact-item">
+                    <h3>LinkedIn</h3>
+                    <a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank">
+                        linkedin.com/in/{{ site.linkedin }}
+                    </a>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="https://github.com/sorna-fast" target="_blank" class="btn btn-primary">
+                    View All Projects on GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Masoud Ghasemi. Built with Jekyll & GitHub Pages</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Certificates -->
+    <script>
+        // Auto-load certificates from GitHub folder
+        async function loadCertificates() {
+            const githubApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
+            const certGrid = document.getElementById('certGrid');
+
+            try {
+                const response = await fetch(githubApi);
+                const files = await response.json();
+
+                // Filter only image files
+                const imageFiles = files.filter(file =>
+                    file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i)
+                );
+
+                imageFiles.forEach(file => {
+                    const certCard = document.createElement('div');
+                    certCard.className = 'certificate-card';
+
+                    // Check if PDF or image
+                    const isPdf = file.name.endsWith('.pdf');
+                    const icon = isPdf ? '📄' : '🖼️';
+                    const type = isPdf ? 'PDF' : 'Image';
+
+                    certCard.innerHTML = `
+            <a href="${file.html_url}" target="_blank" class="cert-link">
+              <div class="cert-preview">
+                ${icon}
+              </div>
+              <h4>${file.name.replace(/\.[^/.]+$/, "")}</h4>
+              <span class="cert-type">${type}</span>
+            </a>
+          `;
+
+                    certGrid.appendChild(certCard);
+                });
+            } catch (error) {
+                certGrid.innerHTML = '<p style="text-align: center; color: var(--accent);">Certificates loading from GitHub...</p>';
+            }
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadCertificates);
+    </script>
+
+</body>
+
+</html>
