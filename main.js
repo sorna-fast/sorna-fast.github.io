@@ -201,7 +201,7 @@ class CertificateSlider {
 
         console.log(`✅ Rendering ${this.filteredCertificates.length} certificates`);
 
-        this.speed = Math.max(40, this.filteredCertificates.length * 4);
+        this.speed = Math.max(35, this.filteredCertificates.length * 4);
 
         const certificatesHTML = this.filteredCertificates.map(cert => {
             console.log("  📄 Adding certificate:", cert.name);
