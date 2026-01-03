@@ -2,7 +2,6 @@
 ---
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
     <!-- Navigation -->
@@ -33,7 +31,7 @@
         <div class="container">
             <h1>Masoud Ghasemi</h1>
             <h2>Python Backend & AI Engineer</h2>
-            <p style="direction: ltr; text-align: left;">Building scalable APIs and AI models with 98%+ accuracy in medical diagnostics and computer vision</p>
+            <p>Building scalable APIs and AI models with 98%+ accuracy</p>
             <div class="cta-buttons">
                 <a href="#projects" class="btn btn-primary">View Projects</a>
                 <a href="https://github.com/sorna-fast" class="btn btn-secondary" target="_blank">GitHub</a>
@@ -42,7 +40,6 @@
     </section>
 
     <!-- Projects Section -->
-
     <section id="projects">
         <div class="container">
             <h2 class="section-title">Projects</h2>
@@ -60,76 +57,53 @@
                 </div>
                 {% endfor %}
             </div>
-            <br>
-            <br>
             <div class="view-all-link">
                 <a href="https://github.com/sorna-fast?tab=repositories" target="_blank" class="btn btn-primary">
                     More Projects →
                 </a>
             </div>
-
         </div>
     </section>
 
-<section id="certificates" class="certificates">
-    <div class="container">
-        <h2 class="section-title">Certificates</h2>
-
-        
-        <div class="filter-buttons">
-            <button class="filter-btn active" data-org="all">All Certificates</button>
-            <button class="filter-btn" data-org="harvard">Harvard</button>
-            <button class="filter-btn" data-org="linkedin">LinkedIn</button>
-            <button class="filter-btn" data-org="tvto">TVTO</button>
-            
-        </div>
-
-        
-        <div class="certificates-slider-wrapper">
-            <div class="certificates-track" id="certSlider">
-                
+    <!-- Certificates Section - ساده و دیباگ‌پذیر -->
+    <section id="certificates" class="certificates">
+        <div class="container">
+            <h2 class="section-title">Certificates</h2>
+            <!-- فیلترها - ساخته میشن توسط JS -->
+            <div class="filter-buttons" id="filterButtons"></div>
+            <!-- محتوای گواهی‌ها -->
+            <div class="certificates-slider-wrapper">
+                <div class="certificates-track" id="certSlider">
+                    <p style="text-align:center; color:var(--accent); padding:50px;">Loading certificates...</p>
+                </div>
+            </div>
+            <!-- کنترل‌ها -->
+            <div class="slider-controls">
+                <button class="control-btn" id="pauseBtn">⏸️ Pause</button>
+                <button class="control-btn" id="speedBtn">⚡ Speed Up</button>
+            </div>
+            <div class="view-all-link">
+                <a href="https://github.com/sorna-fast/sorna-fast/tree/master/Certificate" target="_blank" class="btn btn-primary">
+                    View All Certificates on GitHub →
+                </a>
             </div>
         </div>
-
-        <!-- کنترل اسلایدر -->
-        <div class="slider-controls">
-            <button class="control-btn" id="pauseBtn">⏸️ Pause</button>
-            <button class="control-btn" id="speedBtn">⚡ Speed Up</button>
-        </div>
-        <br>
-        <!-- دکمه مشاهده همه -->
-        <div class="view-all-link">
-            <a href="{{ site.certificates_folder }}" target="_blank" class="btn btn-primary">
-                View All Certificates on GitHub →
-            </a>
-        </div>
-    </div>
-</section>
-
+    </section>
 
     <!-- About Section -->
     <section id="about">
         <div class="container">
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
-                <img src="./profile.jpg" alt="Masoud Ghasemi"
-                    class="profile-img">
+                <img src="./profile.png" alt="Masoud Ghasemi" class="profile-img">
                 <div class="about-text">
                     <h3>Backend & AI Developer with 2+ Years Experience</h3>
-                    <p>
-                        Designing scalable APIs, database management systems, and AI models using Python, Django, and
-                        TensorFlow.
-                        Proven track record in medical diagnostics and computer vision achieving 98%+ accuracy.
-                    </p>
-                    <p>
-                        Currently pursuing Bachelor of Computer Engineering at Payam Noor University.
-                        Passionate about building intelligent systems that solve real-world problems.
-                    </p>
-
+                    <p>Designing scalable APIs, database management systems, and AI models using Python, Django, and TensorFlow. Proven track record in medical diagnostics and computer vision achieving 98%+ accuracy.</p>
+                    <p>Currently pursuing Bachelor of Computer Engineering at Payam Noor University. Passionate about building intelligent systems that solve real-world problems.</p>
+                    
                     <h3 style="margin-top: 30px;">Key Skills</h3>
                     <div class="skills-list">
-                        {% assign skills = "Python,Django,Django Rest Framework,FastAPI, TensorFlow,Scikit-Learn,SQL,MongoDB,Pandas,NumPy,Data Analysis,Git"
-                        | split: "," %}
+                        {% assign skills = "Python,Django,TensorFlow,Scikit-Learn,SQL,MongoDB,Pandas,NumPy,Git" | split: "," %}
                         {% for skill in skills %}
                         <span class="skill-item">{{ skill }}</span>
                         {% endfor %}
@@ -153,13 +127,17 @@
                     <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
                 </div>
                 <div class="contact-item">
+                    <h3>Location</h3>
+                    <p>{{ site.location }}</p>
+                </div>
+                <div class="contact-item">
                     <h3>LinkedIn</h3>
                     <a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank">
                         linkedin.com/in/{{ site.linkedin }}
                     </a>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 40px;">
+            <div class="view-all-link">
                 <a href="https://github.com/sorna-fast" target="_blank" class="btn btn-primary">
                     View All Projects on GitHub
                 </a>
@@ -170,179 +148,169 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 Masoud Ghasemi. Built with Jekyll & GitHub Pages</p>
+            <p>&copy; 2025 Masoud Ghasemi. Built with GitHub Pages</p>
         </div>
     </footer>
 
-    <!-- JavaScript for Certificates -->
+    <!-- JavaScript ساده و دیباگ‌پذیر -->
     <script>
-        // Auto-load certificates from GitHub folder
+        console.log("✅ Script started loading...");
+
+        // بررسی وجود المان
+        const certSlider = document.getElementById('certSlider');
+        const filterButtons = document.getElementById('filterButtons');
+        
+        if (!certSlider) {
+            console.error("❌ #certSlider not found!");
+        } else {
+            console.log("✅ #certSlider found");
+        }
+
+        // کلاس ساده‌تر برای شروع
         async function loadCertificates() {
-            const githubApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
-            const certGrid = document.getElementById('certGrid');
-
+            console.log("🔄 Loading certificates...");
+            
             try {
-                const response = await fetch(githubApi);
-                const files = await response.json();
+                const response = await fetch('https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate');
+                console.log("📡 API Response status:", response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const folders = await response.json();
+                console.log("📁 Folders found:", folders.length);
 
-                // Filter only image files
-                const imageFiles = files.filter(file =>
-                    file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i)
-                );
+                if (folders.length === 0) {
+                    certSlider.innerHTML = '<p style="color:var(--accent);text-align:center;">No certificate folders found</p>';
+                    return;
+                }
 
-                imageFiles.forEach(file => {
-                    const certCard = document.createElement('div');
-                    certCard.className = 'certificate-card';
+                let allCerts = [];
 
-                    // Check if PDF or image
-                    const isPdf = file.name.endsWith('.pdf');
-                    const icon = isPdf ? '📄' : '🖼️';
-                    const type = isPdf ? 'PDF' : 'Image';
+                // برای هر فولدر
+                for (const folder of folders) {
+                    if (folder.type === 'dir') {
+                        console.log("  📂 Processing folder:", folder.name);
+                        
+                        try {
+                            const folderResponse = await fetch(`https://api.github.com/repos/sorna-fast/sorna-fast/contents/${folder.path}`);
+                            const files = await folderResponse.json();
+                            
+                            const certs = files
+                                .filter(file => file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i))
+                                .map(file => ({
+                                    name: file.name.replace(/\.[^/.]+$/, ""),
+                                    url: file.html_url,
+                                    downloadUrl: file.download_url,
+                                    type: file.name.endsWith('.pdf') ? 'pdf' : 'image',
+                                    org: normalizeOrgName(folder.name)
+                                }));
+                            
+                            console.log(`    📄 Found ${certs.length} certificates in ${folder.name}`);
+                            allCerts.push(...certs);
+                        } catch (error) {
+                            console.warn(`    ⚠️ Failed to load ${folder.name}:`, error);
+                        }
+                    }
+                }
 
-                    certCard.innerHTML = `
-            <a href="${file.html_url}" target="_blank" class="cert-link">
-              <div class="cert-preview">
-                ${icon}
-              </div>
-              <h4>${file.name.replace(/\.[^/.]+$/, "")}</h4>
-              <span class="cert-type">${type}</span>
-            </a>
-          `;
+                console.log("✅ Total certificates:", allCerts.length);
+                
+                if (allCerts.length === 0) {
+                    certSlider.innerHTML = '<p style="color:var(--accent);text-align:center;">No certificates found in folders</p>';
+                    return;
+                }
 
-                    certGrid.appendChild(certCard);
-                });
+                // نمایش گواهی‌ها
+                renderCertificates(allCerts);
+                
+                // ساخت فیلترها
+                createFilters(allCerts);
+
             } catch (error) {
-                certGrid.innerHTML = '<p style="text-align: center; color: var(--accent);">Certificates loading from GitHub...</p>';
+                console.error("❌ Fatal error:", error);
+                certSlider.innerHTML = `<p style="color:red;text-align:center;">Error: ${error.message}</p>`;
             }
         }
 
-    // اسلایدر و فیلتر گواهینامه‌ها
-    class CertificateSlider {
-        constructor() {
-            this.slider = document.getElementById('certSlider');
-            this.isPaused = false;
-            this.speed = 30; // ثانیه
-            this.allCertificates = [];
-            this.filteredCertificates = [];
-            this.init();
+        function normalizeOrgName(folderName) {
+            const nameMap = {
+                'Iran-Technical-and-Vocational-Training-Organization-(TVTO)': 'TVTO',
+                'LINKEDIN-LEARNING': 'LinkedIn',
+                'MSRT-of-Iran': 'MSRT',
+                'CS50': 'Harvard',
+                'IRAN-DIGITAL': 'Iran Digital',
+                'Urbino-Carlo': 'Urbino'
+            };
+            return nameMap[folderName] || folderName.replace(/[-_]/g, ' ');
         }
 
-        async init() {
-            await this.loadCertificates();
-            this.setupFilters();
-            this.setupControls();
-            this.render();
+        function renderCertificates(certificates) {
+            const html = certificates.map(cert => {
+                const preview = cert.downloadUrl
+                    ? `<img src="${cert.downloadUrl}" alt="${cert.name}" loading="lazy">`
+                    : `<div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                         <span style="font-size:1.2rem;color:var(--accent);">PDF</span>
+                       </div>`;
+                
+                return `
+                    <div class="certificate-card" onclick="window.open('${cert.url}', '_blank')">
+                        <div class="cert-preview">${preview}</div>
+                        <span class="org-tag">${cert.org.toUpperCase()}</span>
+                        <h4>${cert.name}</h4>
+                        <span class="cert-type">${cert.type.toUpperCase()}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            certSlider.innerHTML = html;
+            console.log("✅ Certificates rendered");
         }
 
-        async loadCertificates() {
-            const githubApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
-            try {
-                const response = await fetch(githubApi);
-                const files = await response.json();
-
-                this.allCertificates = files
-                    .filter(file => file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i))
-                    .map(file => ({
-                        name: file.name.replace(/\.[^/.]+$/, ""),
-                        url: file.html_url,
-                        type: file.name.endsWith('.pdf') ? 'pdf' : 'image',
-                        org: this.detectOrganization(file.name), // تشخیص خودکار سازمان
-                        originalName: file.name
-                    }));
-
-                this.filteredCertificates = [...this.allCertificates];
-            } catch (error) {
-                this.slider.innerHTML = '<p style="color: var(--accent);">Error loading certificates</p>';
-            }
-        }
-
-        detectOrganization(filename) {
-            const name = filename.toLowerCase();
-            if (name.includes('harvard') || name.includes('cs50')) return 'harvard';
-            if (name.includes('linkedin')) return 'linkedin';
-            if (name.includes('tvto') || name.includes('msrt')) return 'tvto';
-            if (name.includes('certificate')) return 'tvto'; // پیش‌فرض
-            return 'other';
-        }
-
-        setupFilters() {
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            filterButtons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    // حذف کلاس active از همه
-                    filterButtons.forEach(b => b.classList.remove('active'));
-                    // اضافه کردن کلاس active به دکمه فعلی
-                    e.target.classList.add('active');
-
-                    const org = e.target.dataset.org;
-                    this.filter(org);
-                });
-            });
-        }
-
-        setupControls() {
-            const pauseBtn = document.getElementById('pauseBtn');
-            const speedBtn = document.getElementById('speedBtn');
-
-            pauseBtn.addEventListener('click', () => {
-                this.isPaused = !this.isPaused;
-                this.updateAnimation();
-                pauseBtn.textContent = this.isPaused ? '▶️ Play' : '⏸️ Pause';
-            });
-
-            speedBtn.addEventListener('click', () => {
-                this.speed = this.speed === 30 ? 15 : 30;
-                this.updateAnimation();
-                speedBtn.textContent = this.speed === 15 ? '🐌 Slow Down' : '⚡ Speed Up';
-            });
-        }
-
-        filter(org) {
-            if (org === 'all') {
-                this.filteredCertificates = [...this.allCertificates];
-            } else {
-                this.filteredCertificates = this.allCertificates.filter(cert => cert.org === org);
-            }
-            this.render();
-        }
-
-        render() {
-            if (this.filteredCertificates.length === 0) {
-                this.slider.innerHTML = '<p style="color: var(--accent);">No certificates found</p>';
+        function createFilters(certificates) {
+            const uniqueOrgs = [...new Set(certificates.map(c => c.org))];
+            console.log("🎯 Unique organizations:", uniqueOrgs);
+            
+            const filterContainer = document.getElementById('filterButtons');
+            if (!filterContainer) {
+                console.error("❌ #filterButtons not found!");
                 return;
             }
 
-            // ساخت HTML برای هر گواهینامه
-            const certificatesHTML = this.filteredCertificates.map(cert => `
-            <div class="certificate-card" onclick="window.open('${cert.url}', '_blank')">
-                <div class="cert-preview ${cert.type}-preview">
-                    ${cert.type === 'pdf' ? '📄' : '🖼️'}
-                </div>
-                <span class="org-tag">${cert.org.toUpperCase()}</span>
-                <h4>${cert.name}</h4>
-                <span class="cert-type">${cert.type.toUpperCase()}</span>
-            </div>
-        `).join('');
+            filterContainer.innerHTML = '';
 
-            this.slider.innerHTML = certificatesHTML;
-            this.updateAnimation();
+            // دکمه All
+            const allBtn = document.createElement('button');
+            allBtn.className = 'filter-btn active';
+            allBtn.textContent = 'All';
+            allBtn.onclick = () => renderCertificates(certificates);
+            filterContainer.appendChild(allBtn);
+
+            // دکمه سازمان‌ها
+            uniqueOrgs.forEach(org => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.textContent = org;
+                btn.onclick = () => {
+                    const filtered = certificates.filter(c => c.org === org);
+                    renderCertificates(filtered);
+                };
+                filterContainer.appendChild(btn);
+            });
+            
+            console.log("✅ Filters created");
         }
 
-        updateAnimation() {
-            this.slider.style.animation = this.isPaused
-                ? 'none'
-                : `slideRTL ${this.speed}s linear infinite`;
+        // اجرا بعد از لود شدن کامل صفحه
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadCertificates);
+        } else {
+            loadCertificates();
         }
-    }
 
-    // اجرا بعد از لود شدن صفحه
-    document.addEventListener('DOMContentLoaded', () => {
-        new CertificateSlider();
-    });
-
-        // Load on page load
-        document.addEventListener('DOMContentLoaded', loadCertificates);
+        console.log("✅ Script setup complete");
     </script>
-</body>
 
+</body>
 </html>

@@ -19,7 +19,7 @@ projects:
     tags: ["Deep Learning", "TensorFlow", "CNN","Fastapi"]
 
   - name: "TB Chest X-Ray Classifier"
-    desc: "Medical AI for tuberculosis detection"
+    desc: "TB Chest X-Ray Classifier - Deep learning model for Tuberculosis detection using CNN architecture with 99.5% accuracy and 0.999 AUC score. "
     url: "https://github.com/sorna-fast/tb-chest-xray-classifier"
     tags: ["Deep Learning", "TensorFlow", "Medical AI", "CNN","Fastapi"]
 

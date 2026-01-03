@@ -121,7 +121,6 @@ nav .container {
 .btn-primary:hover {
     background: rgba(100, 255, 218, 0.1);
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(100, 255, 218, 0.2);
 }
 
 .btn-secondary {
@@ -143,14 +142,7 @@ section {
     font-size: 2.5rem;
     color: var(--white);
     text-align: center;
-    margin-bottom: 20px;
-}
-
-.section-subtitle {
-    text-align: center;
-    color: var(--text);
     margin-bottom: 50px;
-    font-size: 1.1rem;
 }
 
 /* ===== Projects ===== */
@@ -171,7 +163,6 @@ section {
 .project-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(100, 255, 218, 0.1);
-    border-color: var(--accent);
 }
 
 .project-card h3 {
@@ -179,15 +170,11 @@ section {
     margin-bottom: 10px;
 }
 
-.project-card p {
-    margin-bottom: 15px;
-}
-
 .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 20px;
+    margin: 15px 0;
 }
 
 .tag {
@@ -204,42 +191,103 @@ section {
     font-weight: 600;
 }
 
-/* ===== CERTIFICATES (NEW) ===== */
+.view-all-link {
+    text-align: center;
+    margin-top: 50px;
+}
+
+/* ===== Certificates (Slider) ===== */
 .certificates {
     background: var(--light);
 }
 
-.certificates-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+.certificates-slider-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.certificates-track {
+    display: flex;
     gap: 20px;
-    margin-bottom: 40px;
+    width: max-content;
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    background: var(--light);
+    color: var(--text);
+    border: 1px solid var(--accent);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: var(--accent);
+    color: var(--primary);
+    transform: translateY(-2px);
 }
 
 .certificate-card {
+    min-width: 250px;
     background: var(--primary);
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid rgba(100, 255, 218, 0.1);
-    transition: transform 0.3s;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid rgba(100, 255, 218, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    position: relative;
 }
 
 .certificate-card:hover {
     transform: translateY(-5px);
-    border-color: var(--accent);
-}
-
-.cert-link {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    padding: 20px;
-    text-align: center;
+    box-shadow: 0 10px 25px rgba(100, 255, 218, 0.1);
 }
 
 .cert-preview {
-    font-size: 3rem;
+    width: 100%;
+    height: 150px;
+    background: var(--light);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.cert-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.org-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--accent);
+    color: var(--primary);
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    z-index: 10;
 }
 
 .certificate-card h4 {
@@ -253,10 +301,30 @@ section {
     color: var(--accent);
     font-size: 0.8rem;
     font-weight: 500;
+    text-transform: uppercase;
 }
 
-.view-all-link {
-    text-align: center;
+.slider-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.control-btn {
+    background: none;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.control-btn:hover {
+    background: var(--accent);
+    color: var(--primary);
 }
 
 /* ===== About ===== */
@@ -345,143 +413,7 @@ footer {
         font-size: 0.9rem;
     }
 
-    .certificates-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    .certificate-card {
+        min-width: 200px;
     }
-}
-
-/* اسلایدر گواهینامه‌ها */
-.certificates-slider-wrapper {
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 30px;
-    border-radius: 10px;
-}
-
-.certificates-track {
-    display: flex;
-    animation: slideRTL 30s linear infinite;
-    gap: 20px;
-}
-
-.certificates-track:hover {
-    animation-play-state: paused;
-}
-
-@keyframes slideRTL {
-    0% {
-        transform: translateX(100%);
-    }
-
-    100% {
-        transform: translateX(-100%);
-    }
-}
-
-/* دکمه‌های فیلتر */
-.filter-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-}
-
-.filter-btn {
-    padding: 8px 20px;
-    background: var(--light);
-    color: var(--text);
-    border: 1px solid var(--accent);
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-weight: 500;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-    background: var(--accent);
-    color: var(--primary);
-    transform: translateY(-2px);
-}
-
-/* کارت گواهینامه (استایل بهبود یافته) */
-.certificate-card {
-    min-width: 250px;
-    background: var(--primary);
-    border-radius: 10px;
-    padding: 20px;
-    border: 1px solid rgba(100, 255, 218, 0.2);
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-}
-
-.certificate-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(100, 255, 218, 0.1);
-}
-
-/* پشتیبانی از PDF و تصویر */
-.cert-preview {
-    width: 100%;
-    height: 150px;
-    background: var(--light);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    margin-bottom: 15px;
-    overflow: hidden;
-    position: relative;
-}
-
-.cert-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.pdf-preview::before {
-    content: "📄";
-}
-
-.image-preview::before {
-    content: "🖼️";
-}
-
-.org-tag {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--accent);
-    color: var(--primary);
-    padding: 4px 12px;
-    border-radius: 15px;
-    font-size: 0.7rem;
-    font-weight: 600;
-}
-
-/* دکمه pause/play */
-.slider-controls {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.control-btn {
-    background: none;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s;
-}
-
-.control-btn:hover {
-    background: var(--accent);
-    color: var(--primary);
 }
