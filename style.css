@@ -633,3 +633,137 @@ footer {
     border-radius: 4px;
     /* اختیاری: گوشه‌های گرد */
 }
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: var(--accent);
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-links {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background: var(--primary);
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        padding: 20px 0;
+    }
+
+    .nav-links.active {
+        left: 0;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* فونت‌ها */
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero h2 {
+        font-size: 1.3rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    /* layouts روی هم */
+    .about-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .profile-img {
+        margin: 0 auto;
+        max-width: 300px;
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-info {
+        grid-template-columns: 1fr;
+    }
+
+    /* دکمه‌ها */
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    /* فاصله‌ها */
+    .container {
+        padding: 0 15px;
+    }
+
+    section {
+        padding: 60px 0;
+    }
+
+    /* لوگوی کوچک‌تر */
+    .logo img {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+}
+@media (max-width: 768px) {
+
+    /* منوی لمسی بهتر */
+    .nav-links a {
+        display: block;
+        padding: 12px 0;
+        width: 100%;
+    }
+
+    /* کارت‌های کوچک‌تر */
+    .project-card,
+    .contact-item {
+        padding: 20px;
+    }
+
+    /* جلوگیری از اسکرول افقی */
+    body {
+        overflow-x: hidden;
+    }
+
+    /* کارت‌های گواهی */
+    .certificate-card {
+        min-width: 240px;
+        width: 240px;
+        height: 320px;
+    }
+
+    .cert-preview {
+        height: 150px;
+    }
+}
