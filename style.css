@@ -610,3 +610,26 @@ footer {
 .education-item p strong {
     color: var(--white);
 }
+
+
+/* در style.css اضافه کن */
+
+.logo {
+    display: inline-flex;
+    /* برای ترازبندی بهتر */
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    text-decoration: none;
+}
+
+.logo img {
+    width: 4.8rem;
+    /* هم اندازه با فونت 1.5rem قبلی ولی واضح‌تر */
+    height: 4.8rem;
+    object-fit: contain;
+    /* عکس بدون کشیدگی نشون داده بشه */
+    vertical-align: middle;
+    border-radius: 4px;
+    /* اختیاری: گوشه‌های گرد */
+}
