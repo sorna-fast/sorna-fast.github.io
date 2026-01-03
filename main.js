@@ -1,4 +1,4 @@
-// main.js - Certificate Slider with Raw URLs (No API Rate Limits)
+// main.js - Original API-based Certificate Loading (FIXED)
 
 class CertificateSlider {
     constructor() {
@@ -19,99 +19,78 @@ class CertificateSlider {
     }
 
     async loadCertificates() {
-        console.log("📂 Loading certificates from GitHub Raw URLs...");
+        // ⚠️ اگر خطای 403 گرفتی، این روش API است و محدودیت دارد.
+        // برای حل: به GitHub Settings > Developer settings > Personal access tokens برو
+        // و یک توکن بساز، سپس خط زیر رو فعال کن:
+        // const token = 'YOUR_TOKEN_HERE';
+        // const headers = { 'Authorization': `token ${token}` };
+        // و در fetch(mainApi, { headers }) اضافه کن
 
-        // ✅ ساختار دقیق فولدرها و فایل‌های شما
-        const certificatesData = [
-            {
-                org: 'Harvard',
-                folder: 'CS50',
-                files: [{ name: 'CS50 Certificate', file: 'CS50 Certificate.jpg' }]
-            },
-            {
-                org: 'Daneshjooyar',
-                folder: 'Daneshjooyar',
-                files: [{ name: 'Daneshjooyar Certificate', file: 'certificate.jpg' }]
-            },
-            {
-                org: 'Faraders',
-                folder: 'Faraders',
-                files: [{ name: 'Faraders Certificate', file: 'certificate.png' }]
-            },
-            {
-                org: 'Iran Digital',
-                folder: 'IRAN-DIGITAL',
-                files: [{ name: 'Iran Digital Certificate', file: 'certificate.jpg' }]
-            },
-            {
-                org: 'TVTO',
-                folder: 'Iran-Technical-and-Vocational-Training-Organization-(TVTO)',
-                files: [{ name: 'TVTO Certificate', file: 'TVTO Certificate.pdf' }]
-            },
-            {
-                org: 'Kaggle',
-                folder: 'Kaggle',
-                files: [
-                    { name: 'Kaggle Certificate 1', file: 'certificate1.jpg' },
-                    { name: 'Kaggle Certificate 2', file: 'certificate2.jpg' }
-                ]
-            },
-            {
-                org: 'LinkedIn',
-                folder: 'LINKEDIN-LEARNING',
-                files: [
-                    { name: 'LinkedIn Certificate 1', file: 'LinkedIn Certificate 1.jpg' },
-                    { name: 'LinkedIn Certificate 2', file: 'LinkedIn Certificate 2.jpg' }
-                ]
-            },
-            {
-                org: 'MSRT',
-                folder: 'MSRT-of-Iran',
-                files: [{ name: 'MSRT Certificate', file: 'MSRT Certificate.png' }]
-            },
-            {
-                org: 'Urbino',
-                folder: 'Urbino-Carlo',
-                files: [{ name: 'Urbino Certificate', file: 'Urbino Certificate.jpeg' }]
-            },
-            {
-                org: 'Intellipaat',
-                folder: 'intellipaat',
-                files: [{ name: 'Intellipaat Certificate', file: 'certificate.jpg' }]
-            }
-        ];
+        const mainApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
 
         try {
-            const allCerts = [];
-            const baseRawUrl = 'https://raw.githubusercontent.com/sorna-fast/sorna-fast/master/Certificate';
-            const baseHtmlUrl = 'https://github.com/sorna-fast/sorna-fast/blob/master/Certificate';
+            console.log(`📡 Fetching: ${mainApi}`);
+            const response = await fetch(mainApi);
 
-            for (const orgData of certificatesData) {
-                for (const fileData of orgData.files) {
-                    const fileExtension = fileData.file.split('.').pop().toLowerCase();
-                    const isPdf = fileExtension === 'pdf';
-
-                    const rawUrl = `${baseRawUrl}/${orgData.folder}/${fileData.file}`;
-                    const htmlUrl = `${baseHtmlUrl}/${orgData.folder}/${fileData.file}`;
-
-                    allCerts.push({
-                        name: fileData.name,
-                        url: htmlUrl,
-                        downloadUrl: rawUrl,
-                        type: isPdf ? 'pdf' : 'image',
-                        org: orgData.org,
-                        fullPath: `Certificate/${orgData.folder}/${fileData.file}`
-                    });
-                }
+            if (response.status === 403) {
+                const errorData = await response.json().catch(() => ({}));
+                this.errorMessage = `GitHub API Rate Limit (403): ${errorData.message || 'Try again in 1 hour'}`;
+                console.error("❌ 403 Error:", this.errorMessage);
+                return;
             }
 
-            if (allCerts.length === 0) {
-                this.errorMessage = "No certificates found in structure";
+            if (!response.ok) {
+                this.errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                console.error("❌ HTTP Error:", this.errorMessage);
+                return;
+            }
+
+            const folders = await response.json();
+            console.log(`✅ Found ${folders.length} folders`);
+
+            if (folders.length === 0) {
+                this.errorMessage = "No certificate folders found";
                 console.warn("⚠️", this.errorMessage);
                 return;
             }
 
-            console.log(`✅ Total: ${allCerts.length} certificates loaded`);
+            const allCerts = [];
+
+            for (const folder of folders) {
+                if (folder.type === 'dir') {
+                    console.log(`📂 Processing folder: ${folder.name}`);
+                    const folderApi = `https://api.github.com/repos/sorna-fast/sorna-fast/contents/${folder.path}`;
+
+                    try {
+                        const folderResponse = await fetch(folderApi);
+                        const files = await folderResponse.json();
+
+                        const certs = files
+                            .filter(file => file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i))
+                            .map(file => ({
+                                name: file.name.replace(/\.[^/.]+$/, ""),
+                                url: file.html_url,
+                                downloadUrl: file.download_url,
+                                type: file.name.endsWith('.pdf') ? 'pdf' : 'image',
+                                org: this.normalizeOrgName(folder.name),
+                                fullPath: file.path
+                            }));
+
+                        console.log(`  ✅ ${certs.length} certificates in ${folder.name}`);
+                        allCerts.push(...certs);
+                    } catch (error) {
+                        console.warn(`  ⚠️ Failed ${folder.name}:`, error.message);
+                    }
+                }
+            }
+
+            if (allCerts.length === 0) {
+                this.errorMessage = "No PDF/Image files found in any folder";
+                console.warn("⚠️", this.errorMessage);
+                return;
+            }
+
+            console.log(`✅ ${allCerts.length} total certificates loaded`);
             this.allCertificates = allCerts;
             this.filteredCertificates = [...allCerts];
 
@@ -119,6 +98,22 @@ class CertificateSlider {
             this.errorMessage = `Failed to load certificates: ${error.message}`;
             console.error("❌ Fatal error:", error);
         }
+    }
+
+    normalizeOrgName(folderName) {
+        const nameMap = {
+            'Iran-Technical-and-Vocational-Training-Organization-(TVTO)': 'TVTO',
+            'LINKEDIN-LEARNING': 'LinkedIn',
+            'MSRT-of-Iran': 'MSRT',
+            'CS50': 'Harvard',
+            'IRAN-DIGITAL': 'Iran Digital',
+            'Urbino-Carlo': 'Urbino',
+            'intellipaat': 'Intellipaat',
+            'Daneshjooyar': 'Daneshjooyar',
+            'Faraders': 'Faraders',
+            'Kaggle': 'Kaggle'
+        };
+        return nameMap[folderName] || folderName.replace(/[-_]/g, ' ');
     }
 
     setupFilters() {
@@ -184,15 +179,12 @@ class CertificateSlider {
     render() {
         if (this.errorMessage) {
             this.slider.innerHTML = `
-                <div style="text-align:center;padding:40px;color:var(--accent);background:rgba(100,255,218,0.05);border-radius:10px;border:1px solid rgba(100,255,218,0.2);">
-                    <h3 style="color:var(--accent);margin-bottom:15px;">❌ Error Loading Certificates</h3>
-                    <p style="color:var(--white);font-size:1.1rem;">${this.errorMessage}</p>
-                    <p style="margin-top:15px;font-size:0.9rem;color:var(--text);">
-                        Please check the console (F12) for more details or visit GitHub directly:
+                <div style="text-align:center;padding:40px;color:var(--accent);background:rgba(100,255,218,0.05);border-radius:10px;">
+                    <h3>❌ Certificate Loading Error</h3>
+                    <p>${this.errorMessage}</p>
+                    <p style="font-size:0.9rem;margin-top:15px;">
+                        If rate limited: wait 1 hour or add GitHub token
                     </p>
-                    <a href="https://github.com/sorna-fast/sorna-fast/tree/master/Certificate" target="_blank" style="color:var(--accent);text-decoration:underline;font-weight:600;">
-                        View Certificates on GitHub
-                    </a>
                 </div>
             `;
             return;
@@ -201,8 +193,8 @@ class CertificateSlider {
         if (this.filteredCertificates.length === 0) {
             this.slider.innerHTML = `
                 <div style="text-align:center;padding:40px;color:var(--text);">
-                    <h3>No certificates found for this filter</h3>
-                    <p>Try selecting "All Certificates" or check if files exist in GitHub</p>
+                    <h3>No certificates found</h3>
+                    <p>Try selecting "All Certificates"</p>
                 </div>
             `;
             return;
@@ -240,7 +232,7 @@ class CertificateSlider {
     }
 }
 
-// Mobile Menu Toggle with Hamburger Animation
+// Mobile Menu Toggle
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
 
@@ -256,7 +248,6 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     });
 });
 
-// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
     console.log("✅ DOM ready, starting CertificateSlider...");
     new CertificateSlider();
