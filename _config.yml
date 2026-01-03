@@ -29,7 +29,7 @@ projects:
     tags: ["Django", "mysql database", "docker","Automation"]
 
   - name: "EuroSAT CNN Classifier"
-    desc: "Land-use classification with 96.4% accuracy"
+    desc: "Satellite Image Classification using CNN - EuroSAT Dataset Deep Learning model achieving 96.4% accuracy in land use recognition TensorFlow implementation with comprehensive analysis and visualizations "
     url: "https://github.com/sorna-fast/eurosat-cnn-classifier"
     tags: ["Python", "TensorFlow", "CNN","Data Augmentation","Image Processing"]
 
@@ -39,7 +39,7 @@ projects:
     tags: ["Django", "ajax","mysql database","html css"]
 
   - name: "Django Online Shop"
-    desc: "E-commerce platform with payments"
+    desc: "Website project focusing on BKD programming with various features"
     url: "https://github.com/sorna-fast/django-online-shop"
     tags: ["Django", "ajax","mysql database","html css"]
 
