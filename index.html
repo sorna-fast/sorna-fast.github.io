@@ -14,16 +14,15 @@
 </head>
 
 <body>
-
     <!-- Navigation -->
     <nav>
         <div class="container">
             <a href="#home" class="logo"><img src="./favicon.png" alt="MG"></a>
-                <div class="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#projects">Projects</a></li>
@@ -39,7 +38,7 @@
         <div class="container">
             <h1>Masoud Ghasemi</h1>
             <h2>Python Backend & AI Engineer</h2>
-            <p>Building scalable APIs and AI models </p>
+            <p>Building scalable APIs and AI models</p>
             <div class="cta-buttons">
                 <a href="#projects" class="btn btn-primary">View Projects</a>
                 <a href="https://github.com/sorna-fast" class="btn btn-secondary" target="_blank">GitHub</a>
@@ -107,24 +106,23 @@
                 <img src="./profile.png" alt="Masoud Ghasemi" class="profile-img">
                 <div class="about-text">
                     <h3>Backend & AI Developer</h3>
-                    <p tyle="direction: ltr; text-align: left;">Designing scalable APIs, database management systems, and AI models using Python, Django, and TensorFlow. Proven track
-                    record in medical diagnostics and computer vision, achieving 98%+ accuracy.
-                    
-                    Currently pursuing Bachelor of Computer Engineering at Payam Noor University. Passionate about building intelligent
-                    systems that solve real-world problems.</p>
+                    <p style="direction: ltr; text-align: left;">Designing scalable APIs, database management systems,
+                        and AI models using Python, Django, and TensorFlow. Proven track record in medical diagnostics
+                        and computer vision, achieving 98%+ accuracy.</p>
                     <p>Currently pursuing Bachelor of Computer Engineering at Payam Noor University. Passionate about
                         building intelligent systems that solve real-world problems.</p>
-                <h3 style="margin-top: 30px;">University Education</h3>
-                <div class="education-item">
-                    <h4>Computer Engineering Student</h4>
-                    <p><strong>Payam Noor University</strong></p>
-                    <p>Bachelor's Degree (B.Sc.) - In Progress</p>
-                    <p>2023 - Present</p>
-                </div>
+                    <h3 style="margin-top: 30px;">University Education</h3>
+                    <div class="education-item">
+                        <h4>Computer Engineering Student</h4>
+                        <p><strong>Payam Noor University</strong></p>
+                        <p>Bachelor's Degree (B.Sc.) - In Progress</p>
+                        <p>2023 - Present</p>
+                    </div>
                     <h3 style="margin-top: 30px;">Key Skills</h3>
                     <div class="skills-list">
-                        {% assign skills = "Python,Django,Fast api,TensorFlow-Keras,Scikit-Learn,SQL,MongoDB,Pandas,NumPy,Data Analysis,Git" | split:
-                        "," %}
+                        {% assign skills =
+                        "Python,Django,FastAPI,TensorFlow-Keras,Scikit-Learn,SQL,MongoDB,Pandas,NumPy,Data Analysis,Git"
+                        | split: "," %}
                         {% for skill in skills %}
                         <span class="skill-item">{{ skill }}</span>
                         {% endfor %}
@@ -171,7 +169,7 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2025 Masoud Ghasemi(sorna-fast).</p>
+            <p>&copy; 2025 Masoud Ghasemi (sorna-fast).</p>
         </div>
     </footer>
     <script src="./main.js"></script>
