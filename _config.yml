@@ -21,12 +21,12 @@ projects:
   - name: "TB Chest X-Ray Classifier"
     desc: "TB Chest X-Ray Classifier - Deep learning model for Tuberculosis detection using CNN architecture with 99.5% accuracy and 0.999 AUC score. "
     url: "https://github.com/sorna-fast/tb-chest-xray-classifier"
-    tags: ["Deep Learning", "TensorFlow", "Medical AI", "CNN","Fastapi"]
+    tags: ["Deep Learning", "TensorFlow","Tuberculosis detection","Computer vision", "Medical AI", "CNN","chest-xray","Fastapi"]
 
   - name: "SornaFlow"
     desc: "Organizational workflow platform built with Django, featuring employee management, task assignment, reporting, and Jalali date support."
     url: "https://github.com/sorna-fast/SornaFlow"
-    tags: ["Django", "mysql-database", "docker"]
+    tags: ["Django", "mysql database", "docker","Automation"]
 
   - name: "EuroSAT CNN Classifier"
     desc: "Land-use classification with 96.4% accuracy"
@@ -36,12 +36,12 @@ projects:
   - name: "Royal Clinic Portal"
     desc: "Clinic management with online booking"
     url: "https://github.com/sorna-fast/royal-clinic-project"
-    tags: ["Django", "ajax"]
+    tags: ["Django", "ajax","mysql database","html css"]
 
   - name: "Django Online Shop"
     desc: "E-commerce platform with payments"
     url: "https://github.com/sorna-fast/django-online-shop"
-    tags: ["Django", "ajax"]
+    tags: ["Django", "ajax","mysql database","html css"]
 
   - name: "media-database-cs50sql"
     desc: "Final project for CS50 SQL – A normalized media database to manage movies, series, contributors, users, comments, and views."
@@ -51,4 +51,4 @@ projects:
   - name: "food-store-database-mongodb"
     desc: "Food store database with all orders and database records"
     url: "https://github.com/sorna-fast/food-store-database-mongodb"
-    tags: ["MongoDB", "NoSQL-Database"]
+    tags: ["MongoDB", "NoSQL Database","NoSQL Queries","Nosql store"]

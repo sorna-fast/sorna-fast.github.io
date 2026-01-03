@@ -2,6 +2,7 @@
 ---
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <!-- Navigation -->
@@ -65,25 +67,26 @@
         </div>
     </section>
 
-    <!-- Certificates Section - ساده و دیباگ‌پذیر -->
+    <!-- Certificates Section -->
     <section id="certificates" class="certificates">
         <div class="container">
             <h2 class="section-title">Certificates</h2>
-            <!-- فیلترها - ساخته میشن توسط JS -->
-            <div class="filter-buttons" id="filterButtons"></div>
-            <!-- محتوای گواهی‌ها -->
-            <div class="certificates-slider-wrapper">
-                <div class="certificates-track" id="certSlider">
-                    <p style="text-align:center; color:var(--accent); padding:50px;">Loading certificates...</p>
-                </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-org="all">All Certificates</button>
+                <button class="filter-btn" data-org="harvard">Harvard</button>
+                <button class="filter-btn" data-org="linkedin">LinkedIn</button>
+                <button class="filter-btn" data-org="tvto">TVTO</button>
             </div>
-            <!-- کنترل‌ها -->
+            <div class="certificates-slider-wrapper">
+                <div class="certificates-track" id="certSlider"></div>
+            </div>
             <div class="slider-controls">
-                <button class="control-btn" id="pauseBtn">⏸️ Pause</button>
+                <button class="control-btn" id="pauseBtn"> Pause</button>
                 <button class="control-btn" id="speedBtn">⚡ Speed Up</button>
             </div>
             <div class="view-all-link">
-                <a href="https://github.com/sorna-fast/sorna-fast/tree/master/Certificate" target="_blank" class="btn btn-primary">
+                <a href="https://github.com/sorna-fast/sorna-fast/tree/master/Certificate" target="_blank"
+                    class="btn btn-primary">
                     View All Certificates on GitHub →
                 </a>
             </div>
@@ -97,13 +100,17 @@
             <div class="about-content">
                 <img src="./profile.png" alt="Masoud Ghasemi" class="profile-img">
                 <div class="about-text">
-                    <h3>Backend & AI Developer with 2+ Years Experience</h3>
-                    <p>Designing scalable APIs, database management systems, and AI models using Python, Django, and TensorFlow. Proven track record in medical diagnostics and computer vision achieving 98%+ accuracy.</p>
-                    <p>Currently pursuing Bachelor of Computer Engineering at Payam Noor University. Passionate about building intelligent systems that solve real-world problems.</p>
-                    
+                    <h3>Backend & AI Developer with</h3>
+                    <p>Designing scalable APIs, database management systems, and AI models using Python, Django, and
+                        TensorFlow. Proven track record in medical diagnostics and computer vision achieving 98%+
+                        accuracy.</p>
+                    <p>Currently pursuing Bachelor of Computer Engineering at Payam Noor University. Passionate about
+                        building intelligent systems that solve real-world problems.</p>
+
                     <h3 style="margin-top: 30px;">Key Skills</h3>
                     <div class="skills-list">
-                        {% assign skills = "Python,Django,TensorFlow,Scikit-Learn,SQL,MongoDB,Pandas,NumPy,Git" | split: "," %}
+                        {% assign skills = "Python,Django,Fast api,TensorFlow-Keras,Scikit-Learn,SQL,MongoDB,Pandas,NumPy,Git" | split:
+                        "," %}
                         {% for skill in skills %}
                         <span class="skill-item">{{ skill }}</span>
                         {% endfor %}
@@ -127,13 +134,15 @@
                     <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
                 </div>
                 <div class="contact-item">
-                    <h3>Location</h3>
-                    <p>{{ site.location }}</p>
-                </div>
-                <div class="contact-item">
                     <h3>LinkedIn</h3>
                     <a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank">
                         linkedin.com/in/{{ site.linkedin }}
+                    </a>
+                </div>
+                <div class="contact-item">
+                    <h3>Telegram</h3>
+                    <a href="https://t.me/Masoud_Ghasemi_sorna_fast" target="_blank">
+                        @Masoud_Ghasemi_sorna_fast
                     </a>
                 </div>
             </div>
@@ -152,51 +161,39 @@
         </div>
     </footer>
 
-    <!-- JavaScript ساده و دیباگ‌پذیر -->
+    <!-- JavaScript - نسخه نهایی -->
     <script>
-        console.log("✅ Script started loading...");
-
-        // بررسی وجود المان
-        const certSlider = document.getElementById('certSlider');
-        const filterButtons = document.getElementById('filterButtons');
-        
-        if (!certSlider) {
-            console.error("❌ #certSlider not found!");
-        } else {
-            console.log("✅ #certSlider found");
+    // اسلایدر و فیلتر گواهینامه‌ها - نسخه نهایی (Speed Bug Fixed)
+    class CertificateSlider {
+        constructor() {
+            this.slider = document.getElementById('certSlider');
+            this.isPaused = false;
+            this.speed = 90; // سرعت پایه
+            this.allCertificates = [];
+            this.filteredCertificates = [];
+            this.init();
         }
 
-        // کلاس ساده‌تر برای شروع
-        async function loadCertificates() {
-            console.log("🔄 Loading certificates...");
-            
+        async init() {
+            await this.loadCertificates();
+            this.setupFilters();
+            this.setupControls();
+            this.render();
+        }
+
+        async loadCertificates() {
+            const mainApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
             try {
-                const response = await fetch('https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate');
-                console.log("📡 API Response status:", response.status);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
+                const response = await fetch(mainApi);
                 const folders = await response.json();
-                console.log("📁 Folders found:", folders.length);
+                const allCerts = [];
 
-                if (folders.length === 0) {
-                    certSlider.innerHTML = '<p style="color:var(--accent);text-align:center;">No certificate folders found</p>';
-                    return;
-                }
-
-                let allCerts = [];
-
-                // برای هر فولدر
                 for (const folder of folders) {
                     if (folder.type === 'dir') {
-                        console.log("  📂 Processing folder:", folder.name);
-                        
+                        const folderApi = `https://api.github.com/repos/sorna-fast/sorna-fast/contents/${folder.path}`;
                         try {
-                            const folderResponse = await fetch(`https://api.github.com/repos/sorna-fast/sorna-fast/contents/${folder.path}`);
+                            const folderResponse = await fetch(folderApi);
                             const files = await folderResponse.json();
-                            
                             const certs = files
                                 .filter(file => file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i))
                                 .map(file => ({
@@ -204,37 +201,23 @@
                                     url: file.html_url,
                                     downloadUrl: file.download_url,
                                     type: file.name.endsWith('.pdf') ? 'pdf' : 'image',
-                                    org: normalizeOrgName(folder.name)
+                                    org: this.normalizeOrgName(folder.name),
+                                    fullPath: file.path
                                 }));
-                            
-                            console.log(`    📄 Found ${certs.length} certificates in ${folder.name}`);
                             allCerts.push(...certs);
                         } catch (error) {
-                            console.warn(`    ⚠️ Failed to load ${folder.name}:`, error);
+                            console.warn(`Failed to load folder: ${folder.name}`);
                         }
                     }
                 }
-
-                console.log("✅ Total certificates:", allCerts.length);
-                
-                if (allCerts.length === 0) {
-                    certSlider.innerHTML = '<p style="color:var(--accent);text-align:center;">No certificates found in folders</p>';
-                    return;
-                }
-
-                // نمایش گواهی‌ها
-                renderCertificates(allCerts);
-                
-                // ساخت فیلترها
-                createFilters(allCerts);
-
+                this.allCertificates = allCerts;
+                this.filteredCertificates = [...allCerts];
             } catch (error) {
-                console.error("❌ Fatal error:", error);
-                certSlider.innerHTML = `<p style="color:red;text-align:center;">Error: ${error.message}</p>`;
+                this.slider.innerHTML = '<p style="color: var(--accent);">Error loading certificates</p>';
             }
         }
 
-        function normalizeOrgName(folderName) {
+        normalizeOrgName(folderName) {
             const nameMap = {
                 'Iran-Technical-and-Vocational-Training-Organization-(TVTO)': 'TVTO',
                 'LINKEDIN-LEARNING': 'LinkedIn',
@@ -246,71 +229,112 @@
             return nameMap[folderName] || folderName.replace(/[-_]/g, ' ');
         }
 
-        function renderCertificates(certificates) {
-            const html = certificates.map(cert => {
-                const preview = cert.downloadUrl
-                    ? `<img src="${cert.downloadUrl}" alt="${cert.name}" loading="lazy">`
-                    : `<div style="display:flex;align-items:center;justify-content:center;height:100%;">
-                         <span style="font-size:1.2rem;color:var(--accent);">PDF</span>
-                       </div>`;
-                
-                return `
-                    <div class="certificate-card" onclick="window.open('${cert.url}', '_blank')">
-                        <div class="cert-preview">${preview}</div>
-                        <span class="org-tag">${cert.org.toUpperCase()}</span>
-                        <h4>${cert.name}</h4>
-                        <span class="cert-type">${cert.type.toUpperCase()}</span>
-                    </div>
-                `;
-            }).join('');
-            
-            certSlider.innerHTML = html;
-            console.log("✅ Certificates rendered");
-        }
-
-        function createFilters(certificates) {
-            const uniqueOrgs = [...new Set(certificates.map(c => c.org))];
-            console.log("🎯 Unique organizations:", uniqueOrgs);
-            
-            const filterContainer = document.getElementById('filterButtons');
-            if (!filterContainer) {
-                console.error("❌ #filterButtons not found!");
-                return;
-            }
-
+        setupFilters() {
+            const uniqueOrgs = [...new Set(this.allCertificates.map(cert => cert.org))];
+            const filterContainer = document.querySelector('.filter-buttons');
             filterContainer.innerHTML = '';
 
-            // دکمه All
             const allBtn = document.createElement('button');
             allBtn.className = 'filter-btn active';
-            allBtn.textContent = 'All';
-            allBtn.onclick = () => renderCertificates(certificates);
+            allBtn.dataset.org = 'all';
+            allBtn.textContent = 'All Certificates';
             filterContainer.appendChild(allBtn);
 
-            // دکمه سازمان‌ها
             uniqueOrgs.forEach(org => {
                 const btn = document.createElement('button');
                 btn.className = 'filter-btn';
+                btn.dataset.org = org.toLowerCase();
                 btn.textContent = org;
-                btn.onclick = () => {
-                    const filtered = certificates.filter(c => c.org === org);
-                    renderCertificates(filtered);
-                };
                 filterContainer.appendChild(btn);
             });
-            
-            console.log("✅ Filters created");
+
+            filterContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-btn')) {
+                    filterContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.filter(e.target.dataset.org);
+                }
+            });
         }
 
-        // اجرا بعد از لود شدن کامل صفحه
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadCertificates);
-        } else {
-            loadCertificates();
+        setupControls() {
+            const pauseBtn = document.getElementById('pauseBtn');
+            const speedBtn = document.getElementById('speedBtn');
+
+            if (pauseBtn) {
+                pauseBtn.addEventListener('click', () => {
+                    this.isPaused = !this.isPaused;
+                    pauseBtn.textContent = this.isPaused ? ' Play' : ' Pause';
+                    this.updateAnimation();
+                });
+            }
+
+            if (speedBtn) {
+                speedBtn.addEventListener('click', () => {
+                    // تغییر سرعت و آپدیت فوری
+                    this.speed = this.speed === 90 ? 35 : 90;
+                    speedBtn.textContent = this.speed === 90 ? ' Slow Down' : '⚡ Speed Up';
+                    this.updateAnimation(); // ✅ این خط سرعت رو اپدیت میکنه
+                });
+            }
         }
 
-        console.log("✅ Script setup complete");
+        filter(org) {
+            if (org === 'all') {
+                this.filteredCertificates = [...this.allCertificates];
+            } else {
+                this.filteredCertificates = this.allCertificates.filter(cert => cert.org.toLowerCase() === org);
+            }
+            this.render();
+        }
+
+        render() {
+            if (this.filteredCertificates.length === 0) {
+                this.slider.innerHTML = '<p style="color: var(--accent); text-align: center; width: 100%;">No certificates found</p>';
+                return;
+            }
+
+            // محاسبه سرعت بر اساس تعداد (فقط در رندر اولیه)
+            this.speed = Math.max(40, this.filteredCertificates.length * 4);
+
+            const certificatesHTML = this.filteredCertificates.map(cert => {
+                const previewHTML = cert.downloadUrl
+                    ? `<img src="${cert.downloadUrl}" alt="${cert.name}" loading="lazy">`
+                    : `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;">
+                     <span style="font-size:1.5rem;color:var(--accent);margin-bottom:10px;">DOCUMENT</span>
+                     <span style="font-size:0.8rem;color:var(--text);">PDF FILE</span>
+                   </div>`;
+
+                return `
+                <div class="certificate-card" onclick="window.open('${cert.url}', '_blank')">
+                    <div class="cert-preview">
+                        ${previewHTML}
+                    </div>
+                    <span class="org-tag">${cert.org.toUpperCase()}</span>
+                    <h4>${cert.name}</h4>
+                    <span class="cert-type">${cert.type.toUpperCase()}</span>
+                </div>
+            `;
+            }).join('');
+
+            // تکرار برای افکت بی‌نهایت
+            this.slider.innerHTML = certificatesHTML + certificatesHTML;
+            this.updateAnimation();
+        }
+
+        updateAnimation() {
+            // ⭐ فقط انیمیشن رو آپدیت میکنه، سرعت رو دوباره محاسبه نمیکنه
+            this.slider.style.animation = `slideRTL ${this.speed}s linear infinite`;
+            this.slider.style.animationPlayState = this.isPaused ? 'paused' : 'running';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("✅ Certificate Slider initializing...");
+        new CertificateSlider();
+    });
     </script>
 
 </body>
+
 </html>
