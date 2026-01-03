@@ -1,4 +1,4 @@
-// main.js - Certificate Slider with Error Messages in UI
+// main.js - Certificate Slider with Raw URLs (No API Rate Limits)
 
 class CertificateSlider {
     constructor() {
@@ -7,7 +7,7 @@ class CertificateSlider {
         this.speed = 90;
         this.allCertificates = [];
         this.filteredCertificates = [];
-        this.errorMessage = null; // ذخیره پیام خطا
+        this.errorMessage = null;
         this.init();
     }
 
@@ -19,91 +19,106 @@ class CertificateSlider {
     }
 
     async loadCertificates() {
-        const mainApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
+        console.log("📂 Loading certificates from GitHub Raw URLs...");
+
+        // ✅ ساختار دقیق فولدرها و فایل‌های شما
+        const certificatesData = [
+            {
+                org: 'Harvard',
+                folder: 'CS50',
+                files: [{ name: 'CS50 Certificate', file: 'CS50 Certificate.jpg' }]
+            },
+            {
+                org: 'Daneshjooyar',
+                folder: 'Daneshjooyar',
+                files: [{ name: 'Daneshjooyar Certificate', file: 'certificate.jpg' }]
+            },
+            {
+                org: 'Faraders',
+                folder: 'Faraders',
+                files: [{ name: 'Faraders Certificate', file: 'certificate.png' }]
+            },
+            {
+                org: 'Iran Digital',
+                folder: 'IRAN-DIGITAL',
+                files: [{ name: 'Iran Digital Certificate', file: 'certificate.jpg' }]
+            },
+            {
+                org: 'TVTO',
+                folder: 'Iran-Technical-and-Vocational-Training-Organization-(TVTO)',
+                files: [{ name: 'TVTO Certificate', file: 'TVTO Certificate.pdf' }]
+            },
+            {
+                org: 'Kaggle',
+                folder: 'Kaggle',
+                files: [
+                    { name: 'Kaggle Certificate 1', file: 'certificate1.jpg' },
+                    { name: 'Kaggle Certificate 2', file: 'certificate2.jpg' }
+                ]
+            },
+            {
+                org: 'LinkedIn',
+                folder: 'LINKEDIN-LEARNING',
+                files: [
+                    { name: 'LinkedIn Certificate 1', file: 'LinkedIn Certificate 1.jpg' },
+                    { name: 'LinkedIn Certificate 2', file: 'LinkedIn Certificate 2.jpg' }
+                ]
+            },
+            {
+                org: 'MSRT',
+                folder: 'MSRT-of-Iran',
+                files: [{ name: 'MSRT Certificate', file: 'MSRT Certificate.png' }]
+            },
+            {
+                org: 'Urbino',
+                folder: 'Urbino-Carlo',
+                files: [{ name: 'Urbino Certificate', file: 'Urbino Certificate.jpeg' }]
+            },
+            {
+                org: 'Intellipaat',
+                folder: 'intellipaat',
+                files: [{ name: 'Intellipaat Certificate', file: 'certificate.jpg' }]
+            }
+        ];
 
         try {
-            console.log(`📡 Fetching: ${mainApi}`);
-            const response = await fetch(mainApi);
-
-            // ⭐ چک کردن خطاها
-            if (response.status === 403) {
-                const errorData = await response.json().catch(() => ({}));
-                this.errorMessage = `HTTP 403: ${errorData.message || 'Access denied (sanctions/rate limit)'}`;
-                console.error("❌ 403 Error:", this.errorMessage);
-                return; // متوقف کردن
-            }
-
-            if (!response.ok) {
-                this.errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-                console.error("❌ HTTP Error:", this.errorMessage);
-                return;
-            }
-
-            const folders = await response.json();
-            console.log(`✅ Folders: ${folders.length}`);
-
-            if (folders.length === 0) {
-                this.errorMessage = "No certificate folders found in repository";
-                console.warn("⚠️", this.errorMessage);
-                return;
-            }
-
             const allCerts = [];
+            const baseRawUrl = 'https://raw.githubusercontent.com/sorna-fast/sorna-fast/master/Certificate';
+            const baseHtmlUrl = 'https://github.com/sorna-fast/sorna-fast/blob/master/Certificate';
 
-            for (const folder of folders) {
-                if (folder.type === 'dir') {
-                    console.log(`📂 Folder: ${folder.name}`);
-                    const folderApi = `https://api.github.com/repos/sorna-fast/sorna-fast/contents/${folder.path}`;
+            for (const orgData of certificatesData) {
+                for (const fileData of orgData.files) {
+                    const fileExtension = fileData.file.split('.').pop().toLowerCase();
+                    const isPdf = fileExtension === 'pdf';
 
-                    try {
-                        const folderResponse = await fetch(folderApi);
-                        const files = await folderResponse.json();
+                    const rawUrl = `${baseRawUrl}/${orgData.folder}/${fileData.file}`;
+                    const htmlUrl = `${baseHtmlUrl}/${orgData.folder}/${fileData.file}`;
 
-                        const certs = files
-                            .filter(file => file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i))
-                            .map(file => ({
-                                name: file.name.replace(/\.[^/.]+$/, ""),
-                                url: file.html_url,
-                                downloadUrl: file.download_url,
-                                type: file.name.endsWith('.pdf') ? 'pdf' : 'image',
-                                org: this.normalizeOrgName(folder.name),
-                                fullPath: file.path
-                            }));
-
-                        console.log(`  ✅ ${certs.length} certificates in ${folder.name}`);
-                        allCerts.push(...certs);
-                    } catch (error) {
-                        console.warn(`  ⚠️ Failed ${folder.name}:`, error.message);
-                    }
+                    allCerts.push({
+                        name: fileData.name,
+                        url: htmlUrl,
+                        downloadUrl: rawUrl,
+                        type: isPdf ? 'pdf' : 'image',
+                        org: orgData.org,
+                        fullPath: `Certificate/${orgData.folder}/${fileData.file}`
+                    });
                 }
             }
 
             if (allCerts.length === 0) {
-                this.errorMessage = "No PDF/Image files found in any certificate folder";
+                this.errorMessage = "No certificates found in structure";
                 console.warn("⚠️", this.errorMessage);
                 return;
             }
 
-            console.log(`✅ Total: ${allCerts.length} certificates`);
+            console.log(`✅ Total: ${allCerts.length} certificates loaded`);
             this.allCertificates = allCerts;
             this.filteredCertificates = [...allCerts];
 
         } catch (error) {
-            this.errorMessage = error.message;
+            this.errorMessage = `Failed to load certificates: ${error.message}`;
             console.error("❌ Fatal error:", error);
         }
-    }
-
-    normalizeOrgName(folderName) {
-        const nameMap = {
-            'Iran-Technical-and-Vocational-Training-Organization-(TVTO)': 'TVTO',
-            'LINKEDIN-LEARNING': 'LinkedIn',
-            'MSRT-of-Iran': 'MSRT',
-            'CS50': 'Harvard',
-            'IRAN-DIGITAL': 'Iran Digital',
-            'Urbino-Carlo': 'Urbino'
-        };
-        return nameMap[folderName] || folderName.replace(/[-_]/g, ' ');
     }
 
     setupFilters() {
@@ -167,11 +182,7 @@ class CertificateSlider {
     }
 
     render() {
-        console.log("🎨 render() called");
-
-        // نمایش پیام خطا اگر وجود داشت
         if (this.errorMessage) {
-            console.log("❌ Showing error:", this.errorMessage);
             this.slider.innerHTML = `
                 <div style="text-align:center;padding:40px;color:var(--accent);background:rgba(100,255,218,0.05);border-radius:10px;border:1px solid rgba(100,255,218,0.2);">
                     <h3 style="color:var(--accent);margin-bottom:15px;">❌ Error Loading Certificates</h3>
@@ -187,9 +198,7 @@ class CertificateSlider {
             return;
         }
 
-        // پیدا نکردن گواهی
         if (this.filteredCertificates.length === 0) {
-            console.log("⚠️ No certificates after filter");
             this.slider.innerHTML = `
                 <div style="text-align:center;padding:40px;color:var(--text);">
                     <h3>No certificates found for this filter</h3>
@@ -199,12 +208,9 @@ class CertificateSlider {
             return;
         }
 
-        console.log(`✅ Rendering ${this.filteredCertificates.length} certificates`);
-
         this.speed = Math.max(35, this.filteredCertificates.length * 4);
 
         const certificatesHTML = this.filteredCertificates.map(cert => {
-            console.log("  📄 Adding certificate:", cert.name);
             const previewHTML = cert.downloadUrl
                 ? `<img src="${cert.downloadUrl}" alt="${cert.name}" loading="lazy">`
                 : `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;">
@@ -234,21 +240,23 @@ class CertificateSlider {
     }
 }
 
-// منوی موبایل
+// Mobile Menu Toggle with Hamburger Animation
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
 
 hamburger.addEventListener('click', () => {
     navLinks.classList.toggle('active');
+    hamburger.classList.toggle('active');
 });
 
-// بستن منو بعد از کلیک روی لینک
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
         navLinks.classList.remove('active');
+        hamburger.classList.remove('active');
     });
 });
 
+// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
     console.log("✅ DOM ready, starting CertificateSlider...");
     new CertificateSlider();
