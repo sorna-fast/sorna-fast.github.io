@@ -1,10 +1,13 @@
+// main.js - Certificate Slider with Error Messages in UI
+
 class CertificateSlider {
     constructor() {
         this.slider = document.getElementById('certSlider');
         this.isPaused = false;
-        this.speed = 90; // سرعت پایه
+        this.speed = 90;
         this.allCertificates = [];
         this.filteredCertificates = [];
+        this.errorMessage = null; // ذخیره پیام خطا
         this.init();
     }
 
@@ -17,17 +20,45 @@ class CertificateSlider {
 
     async loadCertificates() {
         const mainApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
+
         try {
+            console.log(`📡 Fetching: ${mainApi}`);
             const response = await fetch(mainApi);
+
+            // ⭐ چک کردن خطاها
+            if (response.status === 403) {
+                const errorData = await response.json().catch(() => ({}));
+                this.errorMessage = `HTTP 403: ${errorData.message || 'Access denied (sanctions/rate limit)'}`;
+                console.error("❌ 403 Error:", this.errorMessage);
+                return; // متوقف کردن
+            }
+
+            if (!response.ok) {
+                this.errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                console.error("❌ HTTP Error:", this.errorMessage);
+                return;
+            }
+
             const folders = await response.json();
+            console.log(`✅ Folders: ${folders.length}`);
+
+            if (folders.length === 0) {
+                this.errorMessage = "No certificate folders found in repository";
+                console.warn("⚠️", this.errorMessage);
+                return;
+            }
+
             const allCerts = [];
 
             for (const folder of folders) {
                 if (folder.type === 'dir') {
+                    console.log(`📂 Folder: ${folder.name}`);
                     const folderApi = `https://api.github.com/repos/sorna-fast/sorna-fast/contents/${folder.path}`;
+
                     try {
                         const folderResponse = await fetch(folderApi);
                         const files = await folderResponse.json();
+
                         const certs = files
                             .filter(file => file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i))
                             .map(file => ({
@@ -38,16 +69,28 @@ class CertificateSlider {
                                 org: this.normalizeOrgName(folder.name),
                                 fullPath: file.path
                             }));
+
+                        console.log(`  ✅ ${certs.length} certificates in ${folder.name}`);
                         allCerts.push(...certs);
                     } catch (error) {
-                        console.warn(`Failed to load folder: ${folder.name}`);
+                        console.warn(`  ⚠️ Failed ${folder.name}:`, error.message);
                     }
                 }
             }
+
+            if (allCerts.length === 0) {
+                this.errorMessage = "No PDF/Image files found in any certificate folder";
+                console.warn("⚠️", this.errorMessage);
+                return;
+            }
+
+            console.log(`✅ Total: ${allCerts.length} certificates`);
             this.allCertificates = allCerts;
             this.filteredCertificates = [...allCerts];
+
         } catch (error) {
-            this.slider.innerHTML = '<p style="color: var(--accent);">Error loading certificates</p>';
+            this.errorMessage = error.message;
+            console.error("❌ Fatal error:", error);
         }
     }
 
@@ -64,6 +107,8 @@ class CertificateSlider {
     }
 
     setupFilters() {
+        if (!this.allCertificates.length) return;
+
         const uniqueOrgs = [...new Set(this.allCertificates.map(cert => cert.org))];
         const filterContainer = document.querySelector('.filter-buttons');
         filterContainer.innerHTML = '';
@@ -105,10 +150,9 @@ class CertificateSlider {
 
         if (speedBtn) {
             speedBtn.addEventListener('click', () => {
-                // تغییر سرعت و آپدیت فوری
                 this.speed = this.speed === 90 ? 35 : 90;
                 speedBtn.textContent = this.speed === 90 ? ' Slow Down' : '⚡ Speed Up';
-                this.updateAnimation(); // ✅ این خط سرعت رو اپدیت میکنه
+                this.updateAnimation();
             });
         }
     }
@@ -123,15 +167,44 @@ class CertificateSlider {
     }
 
     render() {
-        if (this.filteredCertificates.length === 0) {
-            this.slider.innerHTML = '<p style="color: var(--accent); text-align: center; width: 100%;">No certificates found</p>';
+        console.log("🎨 render() called");
+
+        // نمایش پیام خطا اگر وجود داشت
+        if (this.errorMessage) {
+            console.log("❌ Showing error:", this.errorMessage);
+            this.slider.innerHTML = `
+                <div style="text-align:center;padding:40px;color:var(--accent);background:rgba(100,255,218,0.05);border-radius:10px;border:1px solid rgba(100,255,218,0.2);">
+                    <h3 style="color:var(--accent);margin-bottom:15px;">❌ Error Loading Certificates</h3>
+                    <p style="color:var(--white);font-size:1.1rem;">${this.errorMessage}</p>
+                    <p style="margin-top:15px;font-size:0.9rem;color:var(--text);">
+                        Please check the console (F12) for more details or visit GitHub directly:
+                    </p>
+                    <a href="https://github.com/sorna-fast/sorna-fast/tree/master/Certificate" target="_blank" style="color:var(--accent);text-decoration:underline;font-weight:600;">
+                        View Certificates on GitHub
+                    </a>
+                </div>
+            `;
             return;
         }
 
-        // محاسبه سرعت بر اساس تعداد (فقط در رندر اولیه)
+        // پیدا نکردن گواهی
+        if (this.filteredCertificates.length === 0) {
+            console.log("⚠️ No certificates after filter");
+            this.slider.innerHTML = `
+                <div style="text-align:center;padding:40px;color:var(--text);">
+                    <h3>No certificates found for this filter</h3>
+                    <p>Try selecting "All Certificates" or check if files exist in GitHub</p>
+                </div>
+            `;
+            return;
+        }
+
+        console.log(`✅ Rendering ${this.filteredCertificates.length} certificates`);
+
         this.speed = Math.max(40, this.filteredCertificates.length * 4);
 
         const certificatesHTML = this.filteredCertificates.map(cert => {
+            console.log("  📄 Adding certificate:", cert.name);
             const previewHTML = cert.downloadUrl
                 ? `<img src="${cert.downloadUrl}" alt="${cert.name}" loading="lazy">`
                 : `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;">
@@ -151,19 +224,17 @@ class CertificateSlider {
             `;
         }).join('');
 
-        // تکرار برای افکت بی‌نهایت
         this.slider.innerHTML = certificatesHTML + certificatesHTML;
         this.updateAnimation();
     }
 
     updateAnimation() {
-        // ⭐ فقط انیمیشن رو آپدیت میکنه، سرعت رو دوباره محاسبه نمیکنه
         this.slider.style.animation = `slideRTL ${this.speed}s linear infinite`;
         this.slider.style.animationPlayState = this.isPaused ? 'paused' : 'running';
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("✅ Certificate Slider initializing...");
+    console.log("✅ DOM ready, starting CertificateSlider...");
     new CertificateSlider();
 });
