@@ -586,3 +586,27 @@ footer {
         height: 150px;
     }
 }
+
+.education-item {
+    background: var(--light);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 15px;
+    border-left: 4px solid var(--accent);
+}
+
+.education-item h4 {
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.education-item p {
+    margin-bottom: 5px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.education-item p strong {
+    color: var(--white);
+}
