@@ -234,6 +234,21 @@ class CertificateSlider {
     }
 }
 
+// منوی موبایل
+const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
+
+hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+});
+
+// بستن منو بعد از کلیک روی لینک
+document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+    });
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log("✅ DOM ready, starting CertificateSlider...");
     new CertificateSlider();
