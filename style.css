@@ -634,10 +634,9 @@ footer {
     }
     body.menu-open {
         overflow: hidden;
-        height: 100%;
-        position: fixed;
-        /* جلوگیری از اسکرول در iOS Safari */
-        width: 100%;
-        }
+        height: 100vh;
+        position: relative;
+        /* مهم: fixed نیست */
+    }
 
 }

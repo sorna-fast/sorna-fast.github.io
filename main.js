@@ -235,18 +235,31 @@ class CertificateSlider {
 // Mobile Menu Toggle
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
-
+let scrollPosition = 0;
 hamburger.addEventListener('click', () => {
+    const isMenuOpening = !navLinks.classList.contains('active');
+
+    if (isMenuOpening) {
+        // وقتی منو رو باز می‌کنه
+        scrollPosition = window.pageYOffset; // موقعیت فعلی رو ذخیره کن
+        document.body.classList.add('menu-open'); // کلاس اضافه کن
+    } else {
+        // وقتی منو رو می‌بنده
+        document.body.classList.remove('menu-open'); // کلاس رو حذف کن
+        window.scrollTo(0, scrollPosition); // برگرد به موقعیت قبلی
+    }
+
     navLinks.classList.toggle('active');
     hamburger.classList.toggle('active');
-    document.body.classList.toggle('menu-open');
 });
 
+// وقتی روی لینک منو کلیک می‌کنه
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
+        document.body.classList.remove('menu-open');
+        window.scrollTo(0, scrollPosition); // برگرد به موقعیت قبلی
         navLinks.classList.remove('active');
         hamburger.classList.remove('active');
-        document.body.classList.toggle('menu-open');
     });
 });
 
