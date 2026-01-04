@@ -3,7 +3,7 @@
 :root {
     --primary: #0a192f;
     --accent: #64ffda;
-    --text: #8892b0;
+    --text: #b0bad8;
     --light: #112240;
     --white: #e6f1ff;
 }
@@ -498,8 +498,14 @@ footer {
     .hamburger {
         display: flex;
     }
+    nav {
+            padding: 1px 0;
+            /* نوار باریک‌تر */
+        }
+    
 
     .nav-links {
+        top: 70px;
         position: fixed;
         inset: 0;
         /* تمام صفحه: top, right, bottom, left = 0 */
@@ -521,7 +527,6 @@ footer {
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         /* انیمیشن نرم */
     }
-
     .nav-links.active {
         transform: translateX(0);
         /* داخل صفحه */
@@ -627,4 +632,12 @@ footer {
         padding: 6px 15px;
         font-size: 0.9rem;
     }
+    body.menu-open {
+        overflow: hidden;
+        height: 100%;
+        position: fixed;
+        /* جلوگیری از اسکرول در iOS Safari */
+        width: 100%;
+        }
+
 }
