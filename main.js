@@ -19,12 +19,6 @@ class CertificateSlider {
     }
 
     async loadCertificates() {
-        // ⚠️ اگر خطای 403 گرفتی، این روش API است و محدودیت دارد.
-        // برای حل: به GitHub Settings > Developer settings > Personal access tokens برو
-        // و یک توکن بساز، سپس خط زیر رو فعال کن:
-        // const token = 'YOUR_TOKEN_HERE';
-        // const headers = { 'Authorization': `token ${token}` };
-        // و در fetch(mainApi, { headers }) اضافه کن
 
         const mainApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
 
@@ -266,4 +260,92 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("✅ DOM ready, starting CertificateSlider...");
     new CertificateSlider();
+});
+
+
+// Generate dynamic stars for About and Contact sections
+document.addEventListener('DOMContentLoaded', function () {
+    const sections = ['about', 'contact'];
+
+    sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+
+        const starsContainer = section.querySelector('.stars');
+        if (!starsContainer) return;
+
+        // Clear existing stars
+        starsContainer.innerHTML = '';
+
+        // Get section dimensions
+        const width = window.innerWidth;
+        const height = section.offsetHeight;
+
+        // Generate stars based on screen size
+        const starCount = Math.floor((width * height) / 4000); // Density factor
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+
+            // Random position
+            const left = Math.random() * 100; // percentage
+            const top = Math.random() * 100;  // percentage
+
+            // Random size class
+            const sizes = ['small', 'small', 'small', 'medium', 'medium', 'large'];
+            const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
+
+            // Random animation delay
+            const delay = Math.random() * 3;
+            const duration = 2 + Math.random() * 4;
+
+            star.className = `star ${sizeClass}`;
+            star.style.left = `${left}%`;
+            star.style.top = `${top}%`;
+            star.style.animationDelay = `${delay}s`;
+            star.style.animationDuration = `${duration}s`;
+
+            starsContainer.appendChild(star);
+        }
+    });
+
+    // Regenerate stars on resize (debounced)
+    let resizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+            // Trigger regeneration by re-running the star generation
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (!section) return;
+
+                const starsContainer = section.querySelector('.stars');
+                if (!starsContainer) return;
+
+                starsContainer.innerHTML = '';
+
+                const width = window.innerWidth;
+                const height = section.offsetHeight;
+                const starCount = Math.floor((width * height) / 4000);
+
+                for (let i = 0; i < starCount; i++) {
+                    const star = document.createElement('div');
+                    const left = Math.random() * 100;
+                    const top = Math.random() * 100;
+                    const sizes = ['small', 'small', 'small', 'medium', 'medium', 'large'];
+                    const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
+                    const delay = Math.random() * 3;
+                    const duration = 2 + Math.random() * 4;
+
+                    star.className = `star ${sizeClass}`;
+                    star.style.left = `${left}%`;
+                    star.style.top = `${top}%`;
+                    star.style.animationDelay = `${delay}s`;
+                    star.style.animationDuration = `${duration}s`;
+
+                    starsContainer.appendChild(star);
+                }
+            });
+        }, 250);
+    });
 });
