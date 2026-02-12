@@ -139,8 +139,8 @@
                     <h3 style="margin-top: 30px;">Key Skills</h3>
                     <div class="skills-list">
                         {% assign skills =
-                        "Python,Django,FastAPI,Ajax,TensorFlow-Keras,Scikit-Learn,SQL,SQLAlchemy,MongoDB,Pandas,NumPy,Data
-                        Analysis,Git" | split: "," %}
+                        "Python,Django,FastAPI,Ajax,TensorFlow/Keras,Scikit-Learn,SQL/SQLAlchemy,MongoDB,Pandas,NumPy,Data
+                        Analysis,Git,Docker" | split: "," %}
                         {% for skill in skills %}
                         <span class="skill-item">{{ skill }}</span>
                         {% endfor %}
@@ -159,30 +159,36 @@
             <h2 class="section-title">Contact</h2>
             <div class="contact-info">
                 <div class="contact-item">
-                    <h3>Email</h3>
-                    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+                    
+                    <a href="mailto:{{ site.email }}">
+                        <h3>Email</h3>
+                        {{ site.email }}</a>
                 </div>
                 <div class="contact-item">
-                    <h3>Phone</h3>
-                    <a href="tel:{{ site.phone }}">{{ site.phone }}</a>
+                    
+                    <a href="tel:{{ site.phone }}">
+                        <h3>Phone</h3>
+                        {{ site.phone }}</a>
                 </div>
                 <div class="contact-item">
-                    <h3>LinkedIn</h3>
+                    
                     <a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank">
+                        <h3>LinkedIn</h3>
                         linkedin.com/in/{{ site.linkedin }}
                     </a>
                 </div>
                 <div class="contact-item">
-                    <h3>Telegram</h3>
                     <a href="https://t.me/Masoud_Ghasemi_sorna_fast" target="_blank">
+                        <h3>Telegram</h3>
                         @Masoud_Ghasemi_sorna_fast
                     </a>
                 </div>
-            </div>
-            <div class="view-all-link">
-                <a href="https://github.com/sorna-fast" target="_blank" class="btn btn-primary">
-                    View All Projects on GitHub
-                </a>
+                <div class="contact-item">
+                    <a href="https://github.com/sorna-fast" target="_blank">
+                        <h3>GitHub</h3>
+                        sorna-fast
+                    </a>
+                </div>
             </div>
         </div>
     </section>
