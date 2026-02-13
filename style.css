@@ -502,12 +502,53 @@ section {
     gap: 15px;
     margin-top: 20px;
 }
-
 .skill-item {
-    background: var(--light);
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-weight: 500;
+    position: relative;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    /* Gradient from b0bad8 to white and back */
+    background: linear-gradient(to right, #b0bad8 0, #64ffda 10%, #b0bad8 20%);
+    background-size: 200% auto;
+    background-position: 0;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 3s infinite linear;
+    animation-fill-mode: forwards;
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    background-color: var(--light);
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.skill-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 5px 15px rgba(100, 255, 218, 0.2);
+}
+
+/* Shine Animation */
+@keyframes shine {
+    0% {
+        background-position: 0;
+    }
+
+    60% {
+        background-position: 180px;
+    }
+
+    100% {
+        background-position: 180px;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .skill-item {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
 }
 
 /* ===== Contact ===== */
@@ -955,4 +996,8 @@ footer {
 .loader-square:nth-of-type(7) {
     animation-delay: -8.5714285714s;
 }
+
+/* ===== Skills with #b0bad8 Shine Effect ===== */
+
+
 
