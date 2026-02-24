@@ -23,20 +23,20 @@ projects:
     url: "https://github.com/sorna-fast/tb-chest-xray-classifier"
     tags: ["Deep Learning", "TensorFlow","Tuberculosis detection","Computer vision", "Medical AI", "CNN","chest-xray","Fastapi"]
 
-  - name: "SornaFlow"
-    desc: "Organizational workflow platform built with Django, featuring employee management, task assignment, reporting, and Jalali date support."
-    url: "https://github.com/sorna-fast/SornaFlow"
-    tags: ["Django", "mysql database", "docker","Automation"]
+  - name: "super-resolution-cnn-cifar10"
+    desc: "Transform 16×16 low-resolution images to 32×32 high-quality versions using deep learning. Achieves PSNR 28.13 dB with lightweight CNN architecture "
+    url: "https://github.com/sorna-fast/super-resolution-cnn-cifar10"
+    tags: ["computer-vision", "deep-learning", "super-resolution","tensorflow/cnn"]
 
   - name: "EuroSAT CNN Classifier"
     desc: "Satellite Image Classification using CNN - EuroSAT Dataset Deep Learning model achieving 96.4% accuracy in land use recognition TensorFlow implementation with comprehensive analysis and visualizations "
     url: "https://github.com/sorna-fast/eurosat-cnn-classifier"
     tags: ["Python", "TensorFlow", "CNN","Data Augmentation","Image Processing"]
 
-  - name: "Royal Clinic Portal"
-    desc: "Clinic management with online booking"
-    url: "https://github.com/sorna-fast/royal-clinic-project"
-    tags: ["Django", "ajax","mysql database","html css"]
+  - name: "Fraud-detection"
+    desc: "Predicting transaction fraud using classification problems such as Guardian Boosting as well as user interfaces using Streamlite, Accuracy: 98% AUC-ROC "
+    url: "https://github.com/sorna-fast/fraud-detection"
+    tags: ["numpy", "pandas-dataframe","gradientboostingclassifier","randomforestclassifier","xgbclassifier","adaboostclassifier","streamlit-webapp"]
 
   - name: "Django Online Shop"
     desc: "Website project focusing on BKD programming with various features"
