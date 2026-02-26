@@ -192,8 +192,37 @@ nav .container {
     font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto 30px;
+    color: #b0bad8;
+    position: relative;
+    display: inline-block;
 }
+.hero p::before {
+    content: 'Building scalable APIs and AI models';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            #e6f1ff,
+            transparent 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine-sweep 2.5s infinite;
+    pointer-events: none;
+}
+@keyframes shine-sweep {
+    0% {
+        background-position: 200% 0%;
+    }
 
+    100% {
+        background-position: -200% 0%;
+    }
+}
 .cta-buttons {
     display: flex;
     gap: 20px;
@@ -1300,4 +1329,3 @@ footer {
         align-self: flex-start;
     }
 }
-
