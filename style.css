@@ -509,7 +509,7 @@ section {
     font-weight: 600;
     font-size: 0.95rem;
     /* Gradient from b0bad8 to white and back */
-    background: linear-gradient(to right, #b0bad8 0, #64ffda 10%, #b0bad8 20%);
+    background: linear-gradient(to right, #b0bad8 0%, #64ffda 50%, #b0bad8 100%);
     background-size: 200% auto;
     background-position: 0%;
     -webkit-background-clip: text;
