@@ -282,37 +282,36 @@
         <div class="container">
             <h2 class="section-title">Contact</h2>
             <div class="contact-info">
-                <div class="contact-item">
-                    
-                    <a href="mailto:{{ site.email }}">
-                        <h3>Email</h3>
-                        {{ site.email }}</a>
-                </div>
-                <div class="contact-item">
-                    
-                    <a href="tel:{{ site.phone }}">
-                        <h3>Phone</h3>
-                        {{ site.phone }}</a>
-                </div>
-                <div class="contact-item">
-                    
-                    <a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank">
-                        <h3>LinkedIn</h3>
-                        linkedin.com/in/{{ site.linkedin }}
-                    </a>
-                </div>
-                <div class="contact-item">
-                    <a href="https://t.me/Masoud_Ghasemi_sorna_fast" target="_blank">
-                        <h3>Telegram</h3>
-                        @Masoud_Ghasemi_sorna_fast
-                    </a>
-                </div>
-                <div class="contact-item">
-                    <a  href="https://github.com/sorna-fast" target="_blank">
-                        <h3>GitHub</h3>
-                        sorna-fast
-                    </a>
-                </div>
+                <!-- Email -->
+                <a href="mailto:{{ site.email }}" class="contact-item">
+                    <h3>Email</h3>
+                    <span>{{ site.email }}</span>
+                </a>
+
+                <!-- Phone -->
+                <a href="tel:{{ site.phone }}" class="contact-item">
+                    <h3>Phone</h3>
+                    <span>{{ site.phone }}</span>
+                </a>
+
+                <!-- LinkedIn -->
+                <a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener noreferrer"
+                    class="contact-item">
+                    <h3>LinkedIn</h3>
+                    <span>linkedin.com/in/{{ site.linkedin }}</span>
+                </a>
+
+                <!-- Telegram -->
+                <a href="https://t.me/Masoud_Ghasemi_sorna_fast" target="_blank" rel="noopener noreferrer" class="contact-item">
+                    <h3>Telegram</h3>
+                    <span>@Masoud_Ghasemi_sorna_fast</span>
+                </a>
+
+                <!-- GitHub -->
+                <a href="https://github.com/sorna-fast" target="_blank" rel="noopener noreferrer" class="contact-item">
+                    <h3>GitHub</h3>
+                    <span>sorna-fast</span>
+                </a>
             </div>
         </div>
     </section>
