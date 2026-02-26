@@ -560,6 +560,12 @@ section {
     padding: 30px;
     background: var(--light);
     border-radius: 8px;
+    text-decoration: none;
+    /* ✅ خط لینک رو بردار */
+    color: inherit;
+    /* ✅ رنگ متن */
+    cursor: pointer;
+    /* ✅ دست نشون‌گر */
 }
 
 .contact-item h3 {
@@ -851,7 +857,44 @@ footer {
     position: relative;
     z-index: 1;
 }
+/* Contact Cards - Animated Glow Border */
+.contact-item {
+    position: relative;
+    transition: all 0.3s ease;
+}
 
+.contact-item::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #64ffda, transparent, #64ffda);
+    background-size: 200% 100%;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: glow-rotate 2s linear infinite;
+}
+
+.contact-item:hover::before {
+    opacity: 1;
+}
+
+@keyframes glow-rotate {
+    0% {
+        background-position: 0% 50%;
+        filter: blur(0px);
+    }
+
+    50% {
+        filter: blur(2px);
+    }
+
+    100% {
+        background-position: 200% 50%;
+        filter: blur(0px);
+    }
+}
 /* Fallback for no-js */
 .no-js .stars-bg-container {
     background: radial-gradient(ellipse at bottom, #112240 0%, #0a192f 100%);
@@ -1257,3 +1300,4 @@ footer {
         align-self: flex-start;
     }
 }
+
