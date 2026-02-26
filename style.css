@@ -1198,6 +1198,7 @@ footer {
 }
 
 .timeline-title-group {
+    text-align: left !important;
     flex: 1;
 }
 
