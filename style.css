@@ -1139,6 +1139,7 @@ footer {
 
 /* Timeline Content Card */
 .timeline-content {
+    text-align: left;
     width: 45%;
     background: var(--light);
     padding: 30px;
@@ -1260,6 +1261,7 @@ footer {
 
 /* Description */
 .timeline-desc {
+    text-align: left !important;
     color: var(--text);
     line-height: 1.8;
     margin-bottom: 20px;
