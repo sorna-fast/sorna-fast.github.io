@@ -6,22 +6,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ site.title }}</title>
-    <meta name="description" content="{{ site.description }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Masoud Ghasemi</title>
+    <meta name="description" content="Python Backend & AI Engineer">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="./favicon.png" type="image/png">
 </head>
 
 <body>
-    <!-- Navigation -->
-    <nav>
+    <nav id="navbar">
         <div class="container">
             <a href="#home" class="logo"><img src="./icon.png" alt="MG"></a>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
+            <div class="hamburger" aria-label="Toggle menu" tabindex="0">
+                <span></span><span></span><span></span>
             </div>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
@@ -34,23 +35,21 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="container">
-            <a href="#about">
-            <h1>
-                <span class="actual-text">Masoud Ghasemi</span>
-                <span class="hover-text">Masoud Ghasemi</span>
-            </h1>
+            <a href="#about" style="text-decoration:none;">
+                <h1>
+                    <span class="actual-text">Masoud Ghasemi</span>
+                    <span class="hover-text">Masoud Ghasemi</span>
+                </h1>
             </a>
             <h2>Python Backend & AI Engineer</h2>
             <p>Building scalable APIs and AI models</p>
             <div class="cta-buttons">
                 <a href="#experience" class="btn btn-primary">Work Experience</a>
-                <a href="https://github.com/sorna-fast" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://github.com/sorna-fast" class="btn btn-secondary" target="_blank"
+                    rel="noopener noreferrer">GitHub</a>
             </div>
-
-            <!-- Loader Animation from Uiverse.io by ZacharyCrespin -->
             <div class="loader">
                 <div class="loader-square"></div>
                 <div class="loader-square"></div>
@@ -62,13 +61,11 @@
             </div>
         </div>
     </section>
-    <!-- Experience Section -->
+
     <section id="experience" class="experience">
         <div class="container">
             <h2 class="section-title">Work Experience</h2>
             <div class="timeline">
-
-                <!-- Experience 1: Papurasan -->
                 <div class="timeline-item">
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
@@ -86,11 +83,8 @@
                             </div>
                             <span class="timeline-date">2025</span>
                         </div>
-                        <p class="timeline-desc">
-                            Developed a comprehensive workflow management system using Django, implementing automated
-                            processes that increased operational efficiency by 25%. Managed database architecture and
-                            optimized query performance for medium-scale applications.
-                        </p>
+                        <p class="timeline-desc">Developed a comprehensive workflow management system using Django,
+                            implementing automated processes that increased operational efficiency by 25%.</p>
                         <div class="timeline-links">
                             <a href="https://github.com/sorna-fast/SornaFlow" target="_blank" class="project-link">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -104,8 +98,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Experience 2: Royal Clinic -->
                 <div class="timeline-item">
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
@@ -123,11 +115,8 @@
                             </div>
                             <span class="timeline-date">2025</span>
                         </div>
-                        <p class="timeline-desc">
-                            Designed and developed a complete online appointment booking system for a medical clinic.
-                            Implemented patient management, scheduling algorithms, and social authentication features.
-                            Ensured HIPAA-compliant data handling and responsive UI.
-                        </p>
+                        <p class="timeline-desc">Designed and developed a complete online appointment booking system for
+                            a medical clinic with HIPAA-compliant data handling.</p>
                         <div class="timeline-links">
                             <a href="https://github.com/sorna-fast/royal-clinic-project" target="_blank"
                                 class="project-link">
@@ -142,8 +131,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Experience 3: Perjestegan -->
                 <div class="timeline-item">
                     <div class="timeline-marker"></div>
                     <div class="timeline-content">
@@ -161,11 +148,8 @@
                             </div>
                             <span class="timeline-date">2025</span>
                         </div>
-                        <p class="timeline-desc">
-                            Teaching AI and Python programming courses to students. Developed comprehensive curriculum
-                            covering machine learning fundamentals, neural networks, and practical implementations. Mentored
-                            students in building real-world AI projects.
-                        </p>
+                        <p class="timeline-desc">Teaching AI and Python programming courses. Developed comprehensive
+                            curriculum covering ML fundamentals, neural networks, and practical implementations.</p>
                         <div class="timeline-links">
                             <a href="https://github.com/sorna-fast/real-estate-price-prediction-ann" target="_blank"
                                 class="project-link">
@@ -180,37 +164,134 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
-    <!-- Projects Section -->
+
     <section id="projects">
         <div class="container">
             <h2 class="section-title">Projects</h2>
             <div class="projects-grid">
-                {% for project in site.projects %}
+                <!-- Project cards populated directly from _config.yml -->
                 <div class="project-card">
-                    <h3>{{ project.name }}</h3>
-                    <p>{{ project.desc }}</p>
+                    <h3>utkface-deep-learning-service</h3>
+                    <p>A facial recognition project to predict age, gender, race, etc....the project is under
+                        construction.</p>
                     <div class="tags">
-                        {% for tag in project.tags %}
-                        <span class="tag">{{ tag }}</span>
-                        {% endfor %}
+                        <span class="tag">Deep Learning</span>
+                        <span class="tag">TensorFlow</span>
+                        <span class="tag">CNN</span>
+                        <span class="tag">Fastapi</span>
                     </div>
-                    <a href="{{ project.url }}" target="_blank" class="project-link">View Code →</a>
+                    <a href="https://github.com/sorna-fast/utkface-deep-learning-service" target="_blank"
+                        class="project-link">View Code →</a>
                 </div>
-                {% endfor %}
+                <div class="project-card">
+                    <h3>TB Chest X-Ray Classifier</h3>
+                    <p>TB Chest X-Ray Classifier - Deep learning model for Tuberculosis detection using CNN architecture
+                        with 99.5% accuracy and 0.999 AUC score.</p>
+                    <div class="tags">
+                        <span class="tag">Deep Learning</span>
+                        <span class="tag">TensorFlow</span>
+                        <span class="tag">Tuberculosis detection</span>
+                        <span class="tag">Computer vision</span>
+                        <span class="tag">Medical AI</span>
+                        <span class="tag">CNN</span>
+                        <span class="tag">chest-xray</span>
+                        <span class="tag">Fastapi</span>
+                    </div>
+                    <a href="https://github.com/sorna-fast/tb-chest-xray-classifier" target="_blank"
+                        class="project-link">View Code →</a>
+                </div>
+                <div class="project-card">
+                    <h3>super-resolution-cnn-cifar10</h3>
+                    <p>Transform 16×16 low-resolution images to 32×32 high-quality versions using deep learning.
+                        Achieves PSNR 28.13 dB with lightweight CNN architecture</p>
+                    <div class="tags">
+                        <span class="tag">computer-vision</span>
+                        <span class="tag">deep-learning</span>
+                        <span class="tag">super-resolution</span>
+                        <span class="tag">tensorflow/cnn</span>
+                    </div>
+                    <a href="https://github.com/sorna-fast/super-resolution-cnn-cifar10" target="_blank"
+                        class="project-link">View Code →</a>
+                </div>
+                <div class="project-card">
+                    <h3>EuroSAT CNN Classifier</h3>
+                    <p>Satellite Image Classification using CNN - EuroSAT Dataset Deep Learning model achieving 96.4%
+                        accuracy in land use recognition TensorFlow implementation with comprehensive analysis and
+                        visualizations</p>
+                    <div class="tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">TensorFlow</span>
+                        <span class="tag">CNN</span>
+                        <span class="tag">Data Augmentation</span>
+                        <span class="tag">Image Processing</span>
+                    </div>
+                    <a href="https://github.com/sorna-fast/eurosat-cnn-classifier" target="_blank"
+                        class="project-link">View Code →</a>
+                </div>
+                <div class="project-card">
+                    <h3>Fraud-detection</h3>
+                    <p>Predicting transaction fraud using classification problems such as Guardian Boosting as well as
+                        user interfaces using Streamlite, Accuracy: 98% AUC-ROC</p>
+                    <div class="tags">
+                        <span class="tag">numpy</span>
+                        <span class="tag">pandas-dataframe</span>
+                        <span class="tag">gradientboostingclassifier</span>
+                        <span class="tag">randomforestclassifier</span>
+                        <span class="tag">xgbclassifier</span>
+                        <span class="tag">adaboostclassifier</span>
+                        <span class="tag">streamlit-webapp</span>
+                    </div>
+                    <a href="https://github.com/sorna-fast/fraud-detection" target="_blank" class="project-link">View
+                        Code →</a>
+                </div>
+                <div class="project-card">
+                    <h3>Django Online Shop</h3>
+                    <p>Website project focusing on BKD programming with various features</p>
+                    <div class="tags">
+                        <span class="tag">Django</span>
+                        <span class="tag">ajax</span>
+                        <span class="tag">mysql database</span>
+                        <span class="tag">html css</span>
+                    </div>
+                    <a href="https://github.com/sorna-fast/django-online-shop" target="_blank" class="project-link">View
+                        Code →</a>
+                </div>
+                <div class="project-card">
+                    <h3>media-database-cs50sql</h3>
+                    <p>Final project for CS50 SQL – A normalized media database to manage movies, series, contributors,
+                        users, comments, and views.</p>
+                    <div class="tags">
+                        <span class="tag">SQL</span>
+                        <span class="tag">SQL-SERVER</span>
+                        <span class="tag">SQL-Queries</span>
+                        <span class="tag">SQL-Schema</span>
+                    </div>
+                    <a href="https://github.com/sorna-fast/media-database-cs50sql" target="_blank"
+                        class="project-link">View Code →</a>
+                </div>
+                <div class="project-card">
+                    <h3>food-store-database-mongodb</h3>
+                    <p>Food store database with all orders and database records</p>
+                    <div class="tags">
+                        <span class="tag">MongoDB</span>
+                        <span class="tag">NoSQL Database</span>
+                        <span class="tag">NoSQL Queries</span>
+                        <span class="tag">Nosql store</span>
+                    </div>
+                    <a href="https://github.com/sorna-fast/food-store-database-mongodb" target="_blank"
+                        class="project-link">View Code →</a>
+                </div>
             </div>
             <div class="view-all-link">
-                <a href="https://github.com/sorna-fast?tab=repositories" target="_blank" class="btn btn-primary">
-                    More Projects →
-                </a>
+                <a href="https://github.com/sorna-fast?tab=repositories" target="_blank" class="btn btn-primary">More
+                    Projects →</a>
             </div>
         </div>
     </section>
 
-    <!-- Certificates Section -->
     <section id="certificates" class="certificates">
         <div class="container">
             <h2 class="section-title">Certificates</h2>
@@ -224,19 +305,16 @@
                 <div class="certificates-track" id="certSlider"></div>
             </div>
             <div class="slider-controls">
-                <button class="control-btn" id="pauseBtn"> Pause</button>
+                <button class="control-btn" id="pauseBtn">⏸ Pause</button>
                 <button class="control-btn" id="speedBtn">⚡ Speed Up</button>
             </div>
             <div class="view-all-link">
                 <a href="https://github.com/sorna-fast/sorna-fast/tree/master/Certificate" target="_blank"
-                    class="btn btn-primary">
-                    View All Certificates on GitHub →
-                </a>
+                    class="btn btn-primary">View All Certificates on GitHub →</a>
             </div>
         </div>
     </section>
 
-    <!-- About Section with Stars Background -->
     <section id="about">
         <div class="stars-bg-container">
             <div class="stars"></div>
@@ -247,34 +325,25 @@
                 <img src="./profile.png" alt="Masoud Ghasemi" class="profile-img">
                 <div class="about-text">
                     <h3>Backend & AI Developer</h3>
-                    <p style="direction: ltr; text-align: left;">implementing scalable APIs, database management, and
-                        developing robust architectures using Python. <br>
-                        Proven track record in building machine learning models with over 98% accuracy in image processing
-                        and medical diagnostics, utilizing TensorFlow, Keras, and Scikit-learn. <br>
-                        Eager to collaborate in innovative teams to develop intelligent and scalable
-                        systems in the fields of data analytics and backend services.</p>
-                    <h3 style="margin-top: 30px;">University Education</h3>
+                    <p style="direction:ltr;text-align:left;">Implementing scalable APIs, database management, and
+                        developing robust architectures using Python.<br>Proven track record in building machine
+                        learning models with over 98% accuracy in image processing and medical diagnostics, utilizing
+                        TensorFlow, Keras, and Scikit-learn.<br>Eager to collaborate in innovative teams to develop
+                        intelligent and scalable systems in the fields of data analytics and backend services.</p>
+                    <h3 style="margin-top:30px;">University Education</h3>
                     <div class="education-item">
                         <h4>Computer Engineering Student</h4>
                         <p><strong>Payam Noor University</strong></p>
                         <p>Bachelor's Degree (B.Sc.) - In Progress</p>
                         <p>2023 - Present</p>
                     </div>
-                    <h3 style="margin-top: 30px;">Key Skills</h3>
-                    <div class="skills-list" >
-                        {% assign skills =
-                        "Python,Django,FastAPI,Ajax,TensorFlow/Keras,Scikit-Learn,SQL/SQLAlchemy,MongoDB,Pandas,NumPy,Data
-                        Analysis,Git,Docker" | split: "," %}
-                        {% for skill in skills %}
-                        <span class="skill-item">{{ skill }}</span>
-                        {% endfor %}
-                    </div>
+                    <h3 style="margin-top:30px;">Key Skills</h3>
+                    <div class="skills-list" id="skillsList"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section with Stars Background -->
     <section id="contact">
         <div class="stars-bg-container">
             <div class="stars"></div>
@@ -282,46 +351,35 @@
         <div class="container">
             <h2 class="section-title">Contact</h2>
             <div class="contact-info">
-                <!-- Email -->
-                <a href="mailto:{{ site.email }}" class="contact-item">
-                    <h3>Email</h3>
-                    <span>{{ site.email }}</span>
+                <a href="mailto:masudpythongit@gmail.com" class="contact-item">
+                    <h3>Email</h3><span>masudpythongit@gmail.com</span>
                 </a>
-
-                <!-- Phone -->
-                <a href="tel:{{ site.phone }}" class="contact-item">
-                    <h3>Phone</h3>
-                    <span>{{ site.phone }}</span>
+                <a href="tel:(+98) 9010361944" class="contact-item">
+                    <h3>Phone</h3><span>(+98) 9010361944</span>
                 </a>
-
-                <!-- LinkedIn -->
-                <a href="https://linkedin.com/in/{{ site.linkedin }}" target="_blank" rel="noopener noreferrer"
+                <a href="https://linkedin.com/in/masoud-ghasemi-748412381" target="_blank" rel="noopener noreferrer"
                     class="contact-item">
-                    <h3>LinkedIn</h3>
-                    <span>linkedin.com/in/{{ site.linkedin }}</span>
+                    <h3>LinkedIn</h3><span>linkedin.com/in/masoud-ghasemi-748412381</span>
                 </a>
-
-                <!-- Telegram -->
-                <a href="https://t.me/Masoud_Ghasemi_sorna_fast" target="_blank" rel="noopener noreferrer" class="contact-item">
-                    <h3>Telegram</h3>
-                    <span>@Masoud_Ghasemi_sorna_fast</span>
+                <a href="https://t.me/Masoud_Ghasemi_sorna_fast" target="_blank" rel="noopener noreferrer"
+                    class="contact-item">
+                    <h3>Telegram</h3><span>@Masoud_Ghasemi_sorna_fast</span>
                 </a>
-
-                <!-- GitHub -->
                 <a href="https://github.com/sorna-fast" target="_blank" rel="noopener noreferrer" class="contact-item">
-                    <h3>GitHub</h3>
-                    <span>sorna-fast</span>
+                    <h3>GitHub</h3><span>sorna-fast</span>
                 </a>
             </div>
         </div>
     </section>
-    <!-- Footer -->
+
     <footer>
         <div class="container">
             <p>&copy; 2025 Masoud Ghasemi (sorna-fast).</p>
         </div>
     </footer>
+
     <script src="./main.js"></script>
+
 </body>
 
 </html>

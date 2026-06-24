@@ -1,5 +1,4 @@
-// main.js - Original API-based Certificate Loading (FIXED)
-
+// ===== Certificate Slider =====
 class CertificateSlider {
     constructor() {
         this.slider = document.getElementById('certSlider');
@@ -10,343 +9,226 @@ class CertificateSlider {
         this.errorMessage = null;
         this.init();
     }
-
     async init() {
         await this.loadCertificates();
         this.setupFilters();
         this.setupControls();
         this.render();
     }
-
     async loadCertificates() {
-
         const mainApi = 'https://api.github.com/repos/sorna-fast/sorna-fast/contents/Certificate';
-
         try {
-            console.log(`📡 Fetching: ${mainApi}`);
             const response = await fetch(mainApi);
-
             if (response.status === 403) {
-                const errorData = await response.json().catch(() => ({}));
-                this.errorMessage = `GitHub API Rate Limit (403): ${errorData.message || 'Try again in 1 hour'}`;
-                console.error("❌ 403 Error:", this.errorMessage);
+                const err = await response.json().catch(() => ({}));
+                this.errorMessage = `GitHub API Rate Limit (403): ${err.message || 'Try again in 1 hour'}`;
                 return;
             }
-
-            if (!response.ok) {
-                this.errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-                console.error("❌ HTTP Error:", this.errorMessage);
-                return;
-            }
-
+            if (!response.ok) { this.errorMessage = `HTTP ${response.status}`; return; }
             const folders = await response.json();
-            console.log(`✅ Found ${folders.length} folders`);
-
-            if (folders.length === 0) {
-                this.errorMessage = "No certificate folders found";
-                console.warn("⚠️", this.errorMessage);
-                return;
-            }
-
+            if (!folders.length) { this.errorMessage = "No certificate folders found"; return; }
             const allCerts = [];
-
             for (const folder of folders) {
-                if (folder.type === 'dir') {
-                    console.log(`📂 Processing folder: ${folder.name}`);
-                    const folderApi = `https://api.github.com/repos/sorna-fast/sorna-fast/contents/${folder.path}`;
-
-                    try {
-                        const folderResponse = await fetch(folderApi);
-                        const files = await folderResponse.json();
-
-                        const certs = files
-                            .filter(file => file.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i))
-                            .map(file => ({
-                                name: file.name.replace(/\.[^/.]+$/, ""),
-                                url: file.html_url,
-                                downloadUrl: file.download_url,
-                                type: file.name.endsWith('.pdf') ? 'pdf' : 'image',
-                                org: this.normalizeOrgName(folder.name),
-                                fullPath: file.path
-                            }));
-
-                        console.log(`  ✅ ${certs.length} certificates in ${folder.name}`);
-                        allCerts.push(...certs);
-                    } catch (error) {
-                        console.warn(`  ⚠️ Failed ${folder.name}:`, error.message);
-                    }
-                }
+                if (folder.type !== 'dir') continue;
+                try {
+                    const fr = await fetch(`https://api.github.com/repos/sorna-fast/sorna-fast/contents/${folder.path}`);
+                    const files = await fr.json();
+                    const certs = files.filter(f => f.name.match(/\.(jpg|jpeg|png|gif|pdf)$/i)).map(f => ({
+                        name: f.name.replace(/\.[^/.]+$/, ""),
+                        url: f.html_url,
+                        downloadUrl: f.download_url,
+                        type: f.name.endsWith('.pdf') ? 'pdf' : 'image',
+                        org: this.normalizeOrg(folder.name),
+                        fullPath: f.path
+                    }));
+                    allCerts.push(...certs);
+                } catch (e) { console.warn(`Failed ${folder.name}:`, e.message); }
             }
-
-            if (allCerts.length === 0) {
-                this.errorMessage = "No PDF/Image files found in any folder";
-                console.warn("⚠️", this.errorMessage);
-                return;
-            }
-
-            console.log(`✅ ${allCerts.length} total certificates loaded`);
+            if (!allCerts.length) { this.errorMessage = "No PDF/Image files found"; return; }
             this.allCertificates = allCerts;
             this.filteredCertificates = [...allCerts];
-
-        } catch (error) {
-            this.errorMessage = `Failed to load certificates: ${error.message}`;
-            console.error("❌ Fatal error:", error);
-        }
+        } catch (e) { this.errorMessage = `Failed: ${e.message}`; }
     }
-
-    normalizeOrgName(folderName) {
-        const nameMap = {
-            'Iran-Technical-and-Vocational-Training-Organization-(TVTO)': 'TVTO',
-            'LINKEDIN-LEARNING': 'LinkedIn',
-            'MSRT-of-Iran': 'MSRT',
-            'CS50': 'Harvard',
-            'IRAN-DIGITAL': 'Iran Digital',
-            'Urbino-Carlo': 'Urbino',
-            'intellipaat': 'Intellipaat',
-            'Daneshjooyar': 'Daneshjooyar',
-            'Faraders': 'Faraders',
-            'Kaggle': 'Kaggle'
-        };
-        return nameMap[folderName] || folderName.replace(/[-_]/g, ' ');
+    normalizeOrg(name) {
+        const map = { 'Iran-Technical-and-Vocational-Training-Organization-(TVTO)': 'TVTO', 'LINKEDIN-LEARNING': 'LinkedIn', 'MSRT-of-Iran': 'MSRT', 'CS50': 'Harvard', 'IRAN-DIGITAL': 'Iran Digital', 'Urbino-Carlo': 'Urbino', 'intellipaat': 'Intellipaat', 'Daneshjooyar': 'Daneshjooyar', 'Faraders': 'Faraders', 'Kaggle': 'Kaggle' };
+        return map[name] || name.replace(/[-_]/g, ' ');
     }
-
     setupFilters() {
         if (!this.allCertificates.length) return;
-
-        const uniqueOrgs = [...new Set(this.allCertificates.map(cert => cert.org))];
-        const filterContainer = document.querySelector('.filter-buttons');
-        filterContainer.innerHTML = '';
-
+        const uniqueOrgs = [...new Set(this.allCertificates.map(c => c.org))];
+        const fc = document.querySelector('.filter-buttons');
+        fc.innerHTML = '';
         const allBtn = document.createElement('button');
         allBtn.className = 'filter-btn active';
         allBtn.dataset.org = 'all';
         allBtn.textContent = 'All Certificates';
-        filterContainer.appendChild(allBtn);
-
+        fc.appendChild(allBtn);
         uniqueOrgs.forEach(org => {
             const btn = document.createElement('button');
             btn.className = 'filter-btn';
             btn.dataset.org = org.toLowerCase();
             btn.textContent = org;
-            filterContainer.appendChild(btn);
+            fc.appendChild(btn);
         });
-
-        filterContainer.addEventListener('click', (e) => {
+        fc.addEventListener('click', e => {
             if (e.target.classList.contains('filter-btn')) {
-                filterContainer.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                fc.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 this.filter(e.target.dataset.org);
             }
         });
     }
-
     setupControls() {
         const pauseBtn = document.getElementById('pauseBtn');
         const speedBtn = document.getElementById('speedBtn');
-
-        if (pauseBtn) {
-            pauseBtn.addEventListener('click', () => {
-                this.isPaused = !this.isPaused;
-                pauseBtn.textContent = this.isPaused ? ' Play' : ' Pause';
-                this.updateAnimation();
-            });
-        }
-
-        if (speedBtn) {
-            speedBtn.addEventListener('click', () => {
-                this.speed = this.speed === 90 ? 35 : 90;
-                speedBtn.textContent = this.speed === 90 ? ' Slow Down' : '⚡ Speed Up';
-                this.updateAnimation();
-            });
-        }
+        if (pauseBtn) pauseBtn.addEventListener('click', () => {
+            this.isPaused = !this.isPaused;
+            pauseBtn.textContent = this.isPaused ? '▶ Play' : '⏸ Pause';
+            this.updateAnimation();
+        });
+        if (speedBtn) speedBtn.addEventListener('click', () => {
+            this.speed = this.speed === 90 ? 35 : 90;
+            speedBtn.textContent = this.speed === 90 ? '🐢 Slow Down' : '⚡ Speed Up';
+            this.updateAnimation();
+        });
     }
-
     filter(org) {
-        if (org === 'all') {
-            this.filteredCertificates = [...this.allCertificates];
-        } else {
-            this.filteredCertificates = this.allCertificates.filter(cert => cert.org.toLowerCase() === org);
-        }
+        this.filteredCertificates = org === 'all' ? [...this.allCertificates] : this.allCertificates.filter(c => c.org.toLowerCase() === org);
         this.render();
     }
-
     render() {
         if (this.errorMessage) {
-            this.slider.innerHTML = `
-                <div style="text-align:center;padding:40px;color:var(--accent);background:rgba(100,255,218,0.05);border-radius:10px;">
-                    <h3>❌ Certificate Loading Error</h3>
-                    <p>${this.errorMessage}</p>
-                    <p style="font-size:0.9rem;margin-top:15px;">
-                        If rate limited: wait 1 hour or add GitHub token
-                    </p>
-                </div>
-            `;
+            this.slider.innerHTML = `<div style="text-align:center;padding:40px;color:var(--accent);background:rgba(100,255,218,0.05);border-radius:10px;"><h3>⚠️ Certificate Loading Error</h3><p>${this.errorMessage}</p></div>`;
             return;
         }
-
-        if (this.filteredCertificates.length === 0) {
-            this.slider.innerHTML = `
-                <div style="text-align:center;padding:40px;color:var(--text);">
-                    <h3>No certificates found</h3>
-                    <p>Try selecting "All Certificates"</p>
-                </div>
-            `;
+        if (!this.filteredCertificates.length) {
+            this.slider.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-secondary);"><h3>No certificates found</h3><p>Try selecting "All Certificates"</p></div>`;
             return;
         }
-
         this.speed = Math.max(35, this.filteredCertificates.length * 4);
-
-        const certificatesHTML = this.filteredCertificates.map(cert => {
-            const previewHTML = cert.downloadUrl
-                ? `<img src="${cert.downloadUrl}" alt="${cert.name}" loading="lazy">`
-                : `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;">
-                     <span style="font-size:1.5rem;color:var(--accent);margin-bottom:10px;">DOCUMENT</span>
-                     <span style="font-size:0.8rem;color:var(--text);">PDF FILE</span>
-                   </div>`;
-
-            return `
-                <div class="certificate-card" onclick="window.open('${cert.url}', '_blank')">
-                    <div class="cert-preview">
-                        ${previewHTML}
-                    </div>
-                    <span class="org-tag">${cert.org.toUpperCase()}</span>
-                    <h4>${cert.name}</h4>
-                    <span class="cert-type">${cert.type.toUpperCase()}</span>
-                </div>
-            `;
+        const html = this.filteredCertificates.map(c => {
+            const preview = c.downloadUrl ? `<img src="${c.downloadUrl}" alt="${c.name}" loading="lazy">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;"><span style="font-size:1.5rem;color:var(--accent);">📄</span><span style="font-size:0.75rem;color:var(--text-muted);">PDF</span></div>`;
+            return `<div class="certificate-card" onclick="window.open('${c.url}','_blank')"><div class="cert-preview">${preview}</div><span class="org-tag">${c.org.toUpperCase()}</span><h4>${c.name}</h4><span class="cert-type">${c.type.toUpperCase()}</span></div>`;
         }).join('');
-
-        this.slider.innerHTML = certificatesHTML + certificatesHTML;
+        this.slider.innerHTML = html + html;
         this.updateAnimation();
     }
-
     updateAnimation() {
         this.slider.style.animation = `slideRTL ${this.speed}s linear infinite`;
         this.slider.style.animationPlayState = this.isPaused ? 'paused' : 'running';
     }
 }
 
-// Mobile Menu Toggle
+// ===== Mobile Menu (بدون پرش اسکرول) =====
+const body = document.body;
+const html = document.documentElement;
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
 let scrollPosition = 0;
+
+function lockBody() {
+    scrollPosition = window.pageYOffset;
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollPosition}px`;
+    body.style.width = '100%';
+    body.style.overflow = 'hidden';
+}
+
+function unlockBody() {
+    body.style.position = '';
+    body.style.top = '';
+    body.style.width = '';
+    body.style.overflow = '';
+    const prevBehavior = html.style.scrollBehavior;
+    html.style.scrollBehavior = 'auto';
+    window.scrollTo(0, scrollPosition);
+    requestAnimationFrame(() => {
+        html.style.scrollBehavior = prevBehavior;
+    });
+}
+
+function openMenu() {
+    lockBody();
+    navLinks.classList.add('active');
+    hamburger.classList.add('active');
+}
+
+function closeMenu() {
+    navLinks.classList.remove('active');
+    hamburger.classList.remove('active');
+    unlockBody();
+}
+
 hamburger.addEventListener('click', () => {
-    const isMenuOpening = !navLinks.classList.contains('active');
-
-    if (isMenuOpening) {
-        // وقتی منو رو باز می‌کنه
-        scrollPosition = window.pageYOffset; // موقعیت فعلی رو ذخیره کن
-        document.body.classList.add('menu-open'); // کلاس اضافه کن
+    if (navLinks.classList.contains('active')) {
+        closeMenu();
     } else {
-        // وقتی منو رو می‌بنده
-        document.body.classList.remove('menu-open'); // کلاس رو حذف کن
-        window.scrollTo(0, scrollPosition); // برگرد به موقعیت قبلی
+        openMenu();
     }
-
-    navLinks.classList.toggle('active');
-    hamburger.classList.toggle('active');
 });
 
-// وقتی روی لینک منو کلیک می‌کنه
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
-        document.body.classList.remove('menu-open');
-        window.scrollTo(0, scrollPosition); // برگرد به موقعیت قبلی
-        navLinks.classList.remove('active');
-        hamburger.classList.remove('active');
+        closeMenu();
     });
 });
 
+// ===== Nav scroll effect =====
+window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 50) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+});
+
+// ===== Stars =====
+function generateStars() {
+    document.querySelectorAll('#about .stars, #contact .stars').forEach(container => {
+        container.innerHTML = '';
+        const section = container.closest('section');
+        const w = window.innerWidth;
+        const h = section.offsetHeight || 600;
+        const count = Math.floor((w * h) / 3500);
+        for (let i = 0; i < count; i++) {
+            const star = document.createElement('div');
+            const sizes = ['small', 'small', 'small', 'medium', 'medium', 'large'];
+            star.className = `star ${sizes[Math.floor(Math.random() * sizes.length)]}`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            star.style.animationDuration = `${2 + Math.random() * 4}s`;
+            container.appendChild(star);
+        }
+    });
+}
+
+// ===== Populate dynamic content =====
+function populateContent() {
+    const skills = ['Python', 'Django', 'FastAPI', 'Ajax', 'TensorFlow/Keras', 'Scikit-Learn', 'SQL/SQLAlchemy', 'MongoDB', 'Pandas', 'NumPy', 'Data Analysis', 'Git', 'Docker'];
+    const skillsList = document.getElementById('skillsList');
+    if (skillsList) skillsList.innerHTML = skills.map(s => `<span class="skill-item">${s}</span>`).join('');
+
+    const projects = [
+        { name: 'SornaFlow', desc: 'Workflow management system with automated processes', tags: ['Django', 'PostgreSQL', 'Docker'], url: 'https://github.com/sorna-fast/SornaFlow' },
+        { name: 'Royal Clinic', desc: 'Online appointment booking for medical clinics', tags: ['Django', 'Social Auth', 'HIPAA'], url: 'https://github.com/sorna-fast/royal-clinic-project' },
+        { name: 'Real Estate AI', desc: 'Price prediction using Artificial Neural Networks', tags: ['TensorFlow', 'Keras', 'Pandas'], url: 'https://github.com/sorna-fast/real-estate-price-prediction-ann' },
+    ];
+    const grid = document.getElementById('projectsGrid');
+    if (grid) grid.innerHTML = projects.map(p => `
+                <div class="project-card">
+                    <h3>${p.name}</h3><p>${p.desc}</p>
+                    <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+                    <a href="${p.url}" target="_blank" class="project-link">View Code →</a>
+                </div>`).join('');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("✅ DOM ready, starting CertificateSlider...");
+    populateContent();
+    generateStars();
     new CertificateSlider();
 });
 
-
-// Generate dynamic stars for About and Contact sections
-document.addEventListener('DOMContentLoaded', function () {
-    const sections = ['about', 'contact'];
-
-    sections.forEach(sectionId => {
-        const section = document.getElementById(sectionId);
-        if (!section) return;
-
-        const starsContainer = section.querySelector('.stars');
-        if (!starsContainer) return;
-
-        // Clear existing stars
-        starsContainer.innerHTML = '';
-
-        // Get section dimensions
-        const width = window.innerWidth;
-        const height = section.offsetHeight;
-
-        // Generate stars based on screen size
-        const starCount = Math.floor((width * height) / 4000); // Density factor
-
-        for (let i = 0; i < starCount; i++) {
-            const star = document.createElement('div');
-
-            // Random position
-            const left = Math.random() * 100; // percentage
-            const top = Math.random() * 100;  // percentage
-
-            // Random size class
-            const sizes = ['small', 'small', 'small', 'medium', 'medium', 'large'];
-            const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
-
-            // Random animation delay
-            const delay = Math.random() * 3;
-            const duration = 2 + Math.random() * 4;
-
-            star.className = `star ${sizeClass}`;
-            star.style.left = `${left}%`;
-            star.style.top = `${top}%`;
-            star.style.animationDelay = `${delay}s`;
-            star.style.animationDuration = `${duration}s`;
-
-            starsContainer.appendChild(star);
-        }
-    });
-
-    // Regenerate stars on resize (debounced)
-    let resizeTimer;
-    window.addEventListener('resize', function () {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function () {
-            // Trigger regeneration by re-running the star generation
-            sections.forEach(sectionId => {
-                const section = document.getElementById(sectionId);
-                if (!section) return;
-
-                const starsContainer = section.querySelector('.stars');
-                if (!starsContainer) return;
-
-                starsContainer.innerHTML = '';
-
-                const width = window.innerWidth;
-                const height = section.offsetHeight;
-                const starCount = Math.floor((width * height) / 4000);
-
-                for (let i = 0; i < starCount; i++) {
-                    const star = document.createElement('div');
-                    const left = Math.random() * 100;
-                    const top = Math.random() * 100;
-                    const sizes = ['small', 'small', 'small', 'medium', 'medium', 'large'];
-                    const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
-                    const delay = Math.random() * 3;
-                    const duration = 2 + Math.random() * 4;
-
-                    star.className = `star ${sizeClass}`;
-                    star.style.left = `${left}%`;
-                    star.style.top = `${top}%`;
-                    star.style.animationDelay = `${delay}s`;
-                    star.style.animationDuration = `${duration}s`;
-
-                    starsContainer.appendChild(star);
-                }
-            });
-        }, 250);
-    });
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(generateStars, 300);
 });
-
