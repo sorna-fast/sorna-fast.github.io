@@ -616,22 +616,35 @@ section {
     text-align: left;
 }
 
+/* خطوط اتصال دسکتاپ – کاملاً درصدی */
 .timeline-content::before {
+    display: none;
+}
+
+/* حذف خطوط قبلی */
+
+.timeline-item::before {
     content: '';
     position: absolute;
-    top: 28px;
-    width: 28px;
+    top: 24px;
     height: 2px;
     background: var(--accent);
     opacity: 0.6;
+    z-index: 5;
 }
 
-.timeline-item:nth-child(odd) .timeline-content::before {
-    right: -28px;
+.timeline-item:nth-child(odd)::before {
+    left: 44%;
+    /* لبهٔ سمت راست محتوای چپ‌چین */
+    right: 50%;
+    /* مرکز خط عمودی */
 }
 
-.timeline-item:nth-child(even) .timeline-content::before {
-    left: -28px;
+.timeline-item:nth-child(even)::before {
+    left: 50%;
+    /* مرکز خط عمودی */
+    right: 44%;
+    /* لبهٔ سمت چپ محتوای راست‌چین (معادل 56% از چپ) */
 }
 
 .timeline-header {
@@ -1310,6 +1323,7 @@ footer p {
 }
 
 /* ===================== RESPONSIVE ===================== */
+/* ===================== RESPONSIVE ===================== */
 @media (max-width: 768px) {
     nav {
         top: 8px;
@@ -1410,27 +1424,43 @@ footer p {
         text-align: center;
     }
 
+    /* تایم‌لاین موبایل */
     .timeline::before {
-        left: 18px;
+        left: 8%;
+        /* خط عمودی */
+        transform: translateX(-50%);
     }
 
     .timeline-marker {
-        left: 18px;
+        left: 8%;
+        /* نشانگر روی خط عمودی */
+        transform: translateX(-50%);
     }
 
     .timeline-content {
-        width: calc(100% - 50px);
-        margin-left: 44px !important;
+        width: 80%;
+        /* عرض کارت */
+        margin-left: 14% !important;
+        /* لبهٔ چپ کارت */
         margin-right: 0 !important;
         text-align: left !important;
         padding: 20px 18px;
         border-radius: var(--radius);
     }
 
-    .timeline-content::before {
-        left: -22px !important;
-        right: auto !important;
-        width: 22px;
+    /* خط افقی اتصال – override قوانین دسکتاپ با specificity بالاتر */
+    .timeline-item::before,
+    .timeline-item:nth-child(odd)::before,
+    .timeline-item:nth-child(even)::before {
+        display: block;
+        left: 8%;
+        right: auto;
+        width: calc(14% - 8%);
+        top: 23px;
+        height: 2px;
+        background: var(--accent);
+        opacity: 0.6;
+        z-index: 5;
     }
 
     .certificate-card {
@@ -1481,6 +1511,28 @@ footer p {
 
     section {
         padding: 60px 0;
+    }
+
+    .timeline::before {
+        left: 6%;
+    }
+
+    .timeline-marker {
+        left: 6%;
+    }
+
+    .timeline-content {
+        width: 82%;
+        margin-left: 12% !important;
+    }
+
+    .timeline-item::before,
+    .timeline-item:nth-child(odd)::before,
+    .timeline-item:nth-child(even)::before {
+        left: 6%;
+        right: auto;
+        width: calc(12% - 6%);
+        top: 23px;
     }
 
     .certificate-card {
