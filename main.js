@@ -1,3 +1,114 @@
+// ===== Scroll Reveal Animation (Auto-inject CSS) =====
+(function injectRevealCSS() {
+    if (document.getElementById('reveal-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'reveal-styles';
+    style.textContent = `
+        .reveal-hidden {
+            opacity: 0;
+            transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 1.1s cubic-bezier(0.22, 1, 0.36, 1),
+                        filter 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform, filter;
+            filter: blur(6px);
+        }
+        .reveal-hidden[data-reveal="fade-up"]    { transform: translateY(40px); }
+        .reveal-hidden[data-reveal="fade-down"]  { transform: translateY(-40px); }
+        .reveal-hidden[data-reveal="fade-left"]   { transform: translateX(-40px); }
+        .reveal-hidden[data-reveal="fade-right"]  { transform: translateX(40px); }
+        .reveal-hidden[data-reveal="scale-in"]    { transform: scale(0.92); filter: blur(4px); }
+        .reveal-hidden[data-reveal="fade-in"]    { transform: translate(0); filter: blur(8px); }
+
+        .reveal-visible {
+            opacity: 1 !important;
+            transform: translate(0) scale(1) !important;
+            filter: blur(0) !important;
+        }
+
+        /* Reduced motion respect */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal-hidden {
+                opacity: 1 !important;
+                transform: none !important;
+                filter: none !important;
+                transition: none !important;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
+class ScrollReveal {
+    constructor(options = {}) {
+        this.defaults = {
+            threshold: 0.08,
+            rootMargin: '0px 0px -40px 0px',
+            once: true
+        };
+        this.options = { ...this.defaults, ...options };
+        this.observer = new IntersectionObserver(this.onIntersect.bind(this), {
+            threshold: this.options.threshold,
+            rootMargin: this.options.rootMargin
+        });
+        this.init();
+    }
+
+    init() {
+        // Elements already marked with data-reveal
+        document.querySelectorAll('[data-reveal]').forEach(el => this.observe(el));
+        // Auto-apply to common layout elements (excluding hero to preserve loader/text visibility)
+        this.autoApply();
+    }
+
+    autoApply() {
+        const map = [
+            { sel: '.section-title', anim: 'fade-up', stagger: 0 },
+            { sel: '.timeline-item', anim: 'fade-up', stagger: 150 },
+            { sel: '.timeline-header', anim: 'fade-up', stagger: 0 },
+            { sel: '.timeline-desc', anim: 'fade-up', stagger: 80 },
+            { sel: '.timeline-links', anim: 'fade-up', stagger: 160 },
+            { sel: '.project-card', anim: 'fade-up', stagger: 120 },
+            { sel: '.certificate-card', anim: 'scale-in', stagger: 100 },
+            { sel: '.contact-item', anim: 'fade-up', stagger: 120 },
+            { sel: '.education-item', anim: 'fade-left', stagger: 0 },
+            { sel: '.skill-item', anim: 'scale-in', stagger: 80 },
+            { sel: '.about-content', anim: 'fade-up', stagger: 0 },
+            { sel: '.filter-btn', anim: 'scale-in', stagger: 60 },
+            { sel: '.view-all-link', anim: 'fade-up', stagger: 0 },
+            { sel: '.slider-controls', anim: 'fade-up', stagger: 0 },
+        ];
+
+        map.forEach(({ sel, anim, stagger }) => {
+            document.querySelectorAll(sel).forEach((el, i) => {
+                if (el.hasAttribute('data-reveal')) return;
+                el.setAttribute('data-reveal', anim);
+                if (stagger > 0) {
+                    el.style.transitionDelay = `${i * stagger}ms`;
+                }
+                this.observe(el);
+            });
+        });
+    }
+
+    observe(el) {
+        el.classList.add('reveal-hidden');
+        this.observer.observe(el);
+    }
+
+    onIntersect(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                el.classList.add('reveal-visible');
+                el.classList.remove('reveal-hidden');
+                if (this.options.once) {
+                    this.observer.unobserve(el);
+                }
+            }
+        });
+    }
+}
+
 // ===== Certificate Slider =====
 class CertificateSlider {
     constructor() {
@@ -225,6 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     populateContent();
     generateStars();
     new CertificateSlider();
+    new ScrollReveal();
 });
 
 let resizeTimer;
