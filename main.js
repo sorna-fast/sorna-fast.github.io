@@ -6,18 +6,20 @@
     style.textContent = `
         .reveal-hidden {
             opacity: 0;
-            transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1),
-                        transform 1.1s cubic-bezier(0.22, 1, 0.36, 1),
-                        filter 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: opacity 1.3s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 1.3s cubic-bezier(0.22, 1, 0.36, 1),
+                        filter 1.3s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: opacity, transform, filter;
-            filter: blur(6px);
+            filter: blur(10px);
         }
-        .reveal-hidden[data-reveal="fade-up"]    { transform: translateY(40px); }
-        .reveal-hidden[data-reveal="fade-down"]  { transform: translateY(-40px); }
-        .reveal-hidden[data-reveal="fade-left"]   { transform: translateX(-40px); }
-        .reveal-hidden[data-reveal="fade-right"]  { transform: translateX(40px); }
-        .reveal-hidden[data-reveal="scale-in"]    { transform: scale(0.92); filter: blur(4px); }
-        .reveal-hidden[data-reveal="fade-in"]    { transform: translate(0); filter: blur(8px); }
+        .reveal-hidden[data-reveal="fade-up"]      { transform: translateY(60px); }
+        .reveal-hidden[data-reveal="fade-down"]    { transform: translateY(-60px); }
+        .reveal-hidden[data-reveal="fade-left"]     { transform: translateX(-60px); }
+        .reveal-hidden[data-reveal="fade-right"]    { transform: translateX(60px); }
+        .reveal-hidden[data-reveal="scale-in"]      { transform: scale(0.82); filter: blur(6px); }
+        .reveal-hidden[data-reveal="fade-in"]       { transform: translate(0); filter: blur(12px); }
+        .reveal-hidden[data-reveal="slide-left"]    { transform: translateX(80px); }
+        .reveal-hidden[data-reveal="slide-right"]   { transform: translateX(-80px); }
 
         .reveal-visible {
             opacity: 1 !important;
@@ -25,9 +27,57 @@
             filter: blur(0) !important;
         }
 
+        /* Section title underline draw */
+        .section-title.reveal-hidden::after {
+            transform: scaleX(0);
+            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
+        }
+        .section-title.reveal-visible::after {
+            transform: scaleX(1) !important;
+        }
+
+        /* Timeline marker pop with bounce */
+        .timeline-marker.reveal-hidden {
+            transform: translateX(-50%) scale(0) !important;
+            filter: blur(4px);
+            transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s,
+                        filter 0.8s ease 0.2s,
+                        opacity 0.8s ease 0.2s;
+        }
+        .timeline-marker.reveal-visible {
+            transform: translateX(-50%) scale(1) !important;
+            filter: blur(0) !important;
+        }
+
+        /* Timeline connector line draw */
+        .timeline-item::before {
+            transform-origin: left center;
+            transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s;
+        }
+        .timeline-item.reveal-hidden::before {
+            transform: scaleX(0);
+        }
+        .timeline-item.reveal-visible::before {
+            transform: scaleX(1);
+        }
+
+        /* Profile image special */
+        .profile-img.reveal-hidden {
+            transform: scale(0.9) translateY(40px);
+            filter: blur(8px);
+        }
+        .profile-img.reveal-visible {
+            transform: scale(1) translateY(0) !important;
+            filter: blur(0) !important;
+        }
+
         /* Reduced motion respect */
         @media (prefers-reduced-motion: reduce) {
-            .reveal-hidden {
+            .reveal-hidden,
+            .timeline-marker.reveal-hidden,
+            .section-title.reveal-hidden::after,
+            .timeline-item.reveal-hidden::before,
+            .profile-img.reveal-hidden {
                 opacity: 1 !important;
                 transform: none !important;
                 filter: none !important;
@@ -41,8 +91,8 @@
 class ScrollReveal {
     constructor(options = {}) {
         this.defaults = {
-            threshold: 0.08,
-            rootMargin: '0px 0px -40px 0px',
+            threshold: 0.06,
+            rootMargin: '0px 0px -60px 0px',
             once: true
         };
         this.options = { ...this.defaults, ...options };
@@ -54,26 +104,42 @@ class ScrollReveal {
     }
 
     init() {
-        // Elements already marked with data-reveal
         document.querySelectorAll('[data-reveal]').forEach(el => this.observe(el));
-        // Auto-apply to common layout elements (excluding hero to preserve loader/text visibility)
         this.autoApply();
     }
 
     autoApply() {
         const map = [
+            // Section titles: elegant fade-up + underline draw
             { sel: '.section-title', anim: 'fade-up', stagger: 0 },
-            { sel: '.timeline-item', anim: 'fade-up', stagger: 150 },
+
+            // Timeline: dramatic staggered entrance
+            { sel: '.timeline-item', anim: 'fade-up', stagger: 350 },
+            { sel: '.timeline-marker', anim: 'scale-in', stagger: 350 },
+            { sel: '.timeline-content', anim: 'fade-up', stagger: 350 },
             { sel: '.timeline-header', anim: 'fade-up', stagger: 0 },
-            { sel: '.timeline-desc', anim: 'fade-up', stagger: 80 },
-            { sel: '.timeline-links', anim: 'fade-up', stagger: 160 },
-            { sel: '.project-card', anim: 'fade-up', stagger: 120 },
-            { sel: '.certificate-card', anim: 'scale-in', stagger: 100 },
-            { sel: '.contact-item', anim: 'fade-up', stagger: 120 },
-            { sel: '.education-item', anim: 'fade-left', stagger: 0 },
-            { sel: '.skill-item', anim: 'scale-in', stagger: 80 },
+            { sel: '.timeline-desc', anim: 'fade-up', stagger: 120 },
+            { sel: '.timeline-links', anim: 'fade-up', stagger: 240 },
+
+            // Projects: scale-in with good stagger
+            { sel: '.project-card', anim: 'scale-in', stagger: 160 },
+
+            // Certificates: slide in from right
+            { sel: '.certificate-card', anim: 'slide-left', stagger: 120 },
+
+            // Contact: fade up gently
+            { sel: '.contact-item', anim: 'fade-up', stagger: 140 },
+
+            // About Me: rich multi-layer reveal
+            { sel: '.profile-img', anim: 'scale-in', stagger: 0 },
+            { sel: '.about-text > h3', anim: 'fade-up', stagger: 0 },
+            { sel: '.about-text > p', anim: 'fade-up', stagger: 150 },
+            { sel: '.education-item', anim: 'fade-left', stagger: 200 },
+            { sel: '.skill-item', anim: 'scale-in', stagger: 90 },
             { sel: '.about-content', anim: 'fade-up', stagger: 0 },
-            { sel: '.filter-btn', anim: 'scale-in', stagger: 60 },
+
+            // Filter buttons: pop in
+            { sel: '.filter-btn', anim: 'scale-in', stagger: 70 },
             { sel: '.view-all-link', anim: 'fade-up', stagger: 0 },
             { sel: '.slider-controls', anim: 'fade-up', stagger: 0 },
         ];
