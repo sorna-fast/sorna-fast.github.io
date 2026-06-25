@@ -1,4 +1,309 @@
-// ===== Scroll Reveal Animation (Auto-inject CSS) =====
+// ===== Loading Screen =====
+(function injectLoadingCSS() {
+    if (document.getElementById('loading-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'loading-styles';
+    style.textContent = `
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 32px;
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.8s;
+        }
+        #loading-screen.done {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #loading-screen .loader {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            transform: rotate(45deg);
+            opacity: 0.9;
+        }
+        #loading-screen .loader-square {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 22px;
+            height: 22px;
+            margin: 2px;
+            border-radius: 3px;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-dim);
+            animation: square-animation 10s ease-in-out infinite both;
+        }
+        #loading-screen .loader-square:nth-of-type(1) { animation-delay: 0s; }
+        #loading-screen .loader-square:nth-of-type(2) { animation-delay: -1.4286s; }
+        #loading-screen .loader-square:nth-of-type(3) { animation-delay: -2.8571s; }
+        #loading-screen .loader-square:nth-of-type(4) { animation-delay: -4.2857s; }
+        #loading-screen .loader-square:nth-of-type(5) { animation-delay: -5.7143s; }
+        #loading-screen .loader-square:nth-of-type(6) { animation-delay: -7.1429s; }
+        #loading-screen .loader-square:nth-of-type(7) { animation-delay: -8.5714s; }
+        #loading-screen .loading-text {
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            opacity: 0.7;
+            animation: loadingPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+        @keyframes square-animation {
+            0%, 10.5% { left: 0; top: 0; }
+            12.5%, 23% { left: 26px; top: 0; }
+            25%, 35.5% { left: 52px; top: 0; }
+            37.5%, 48% { left: 52px; top: 26px; }
+            50%, 60.5% { left: 26px; top: 26px; }
+            62.5%, 73% { left: 26px; top: 52px; }
+            75%, 85.5% { left: 0; top: 52px; }
+            87.5%, 98% { left: 0; top: 26px; }
+            100% { left: 0; top: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    const loader = document.createElement('div');
+    loader.id = 'loading-screen';
+    loader.innerHTML = `
+        <div class="loader">
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+            <div class="loader-square"></div>
+        </div>
+        <div class="loading-text">Loading</div>
+    `;
+    document.body.prepend(loader);
+
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            loader.classList.add('done');
+            setTimeout(() => loader.remove(), 900);
+        }, 1200);
+    });
+})();
+
+// ===== Noise Texture Overlay =====
+(function injectNoiseCSS() {
+    if (document.getElementById('noise-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'noise-styles';
+    style.textContent = `
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 256px 256px;
+        }
+    `;
+    document.head.appendChild(style);
+    const noise = document.createElement('div');
+    noise.className = 'noise-overlay';
+    document.body.appendChild(noise);
+})();
+
+// ===== Scroll Progress Bar =====
+(function injectProgressCSS() {
+    if (document.getElementById('progress-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'progress-styles';
+    style.textContent = `
+        #scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--gradient-accent);
+            z-index: 10001;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+    `;
+    document.head.appendChild(style);
+    const bar = document.createElement('div');
+    bar.id = 'scroll-progress';
+    document.body.appendChild(bar);
+
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        bar.style.width = pct + '%';
+    }, { passive: true });
+})();
+
+// ===== Magnetic Buttons =====
+(function injectMagneticCSS() {
+    if (document.getElementById('magnetic-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'magnetic-styles';
+    style.textContent = `
+        .magnetic {
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+    `;
+    document.head.appendChild(style);
+
+    const magneticTargets = '.btn, .project-link, .filter-btn, .control-btn';
+    const magneticEls = [];
+
+    function initMagnetic() {
+        document.querySelectorAll(magneticTargets).forEach(el => {
+            if (el.classList.contains('magnetic')) return;
+            el.classList.add('magnetic');
+            magneticEls.push(el);
+        });
+    }
+
+    document.addEventListener('mousemove', e => {
+        magneticEls.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+            const maxDist = 80;
+            if (dist < maxDist) {
+                const force = (1 - dist / maxDist) * 12;
+                const dx = (e.clientX - cx) / dist * force;
+                const dy = (e.clientY - cy) / dist * force;
+                el.style.transform = `translate(${dx}px, ${dy}px)`;
+            } else {
+                el.style.transform = '';
+            }
+        });
+    });
+
+    const observer = new MutationObserver(initMagnetic);
+    observer.observe(document.body, { childList: true, subtree: true });
+    initMagnetic();
+})();
+
+// ===== Project 3D Tilt =====
+(function injectTiltCSS() {
+    if (document.getElementById('tilt-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'tilt-styles';
+    style.textContent = `
+        .project-card {
+            transform-style: preserve-3d;
+            perspective: 800px;
+        }
+        .project-card .tilt-inner {
+            transition: transform 0.15s ease-out;
+            transform-style: preserve-3d;
+        }
+        .project-card:hover .tilt-inner {
+            transition: transform 0.3s ease-out;
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
+function initTilt() {
+    document.querySelectorAll('.project-card').forEach(card => {
+        if (card.querySelector('.tilt-inner')) return;
+        const inner = document.createElement('div');
+        inner.className = 'tilt-inner';
+        while (card.firstChild) inner.appendChild(card.firstChild);
+        card.appendChild(inner);
+
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
+            const rotateX = (y - 0.5) * -12;
+            const rotateY = (x - 0.5) * 12;
+            inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            inner.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
+        });
+    });
+}
+
+// ===== FIXED Stars & Parallax =====
+const starContainers = new Map();
+
+function generateStars() {
+    document.querySelectorAll('#about .stars, #contact .stars').forEach(container => {
+        container.innerHTML = '';
+        const section = container.closest('section');
+        const w = window.innerWidth;
+        const h = section.offsetHeight || 600;
+        // Increased density for better visibility (was 3500)
+        const count = Math.floor((w * h) / 3500);
+        const stars = [];
+        for (let i = 0; i < count; i++) {
+            const star = document.createElement('div');
+            const sizes = ['small', 'small', 'small', 'medium', 'medium', 'large'];
+            const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
+            star.className = `star ${sizeClass}`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            star.style.animationDuration = `${2 + Math.random() * 4}s`;
+            // Store original position for parallax
+            star.dataset.originalTop = star.style.top;
+            // Reduced parallax speeds (was 0.3/0.5/0.8)
+            star.dataset.speed = sizeClass === 'small' ? 0.15 : sizeClass === 'medium' ? 0.25 : 0.4;
+            container.appendChild(star);
+            stars.push(star);
+        }
+        starContainers.set(container, stars);
+    });
+}
+
+function updateParallaxStars() {
+    const scrollY = window.scrollY;
+    starContainers.forEach((stars, container) => {
+        const containerRect = container.getBoundingClientRect();
+        const containerTop = containerRect.top + scrollY;
+
+        stars.forEach(star => {
+            const speed = parseFloat(star.dataset.speed) || 0.15;
+            const sectionScroll = Math.max(0, scrollY - containerTop + window.innerHeight);
+            const offset = sectionScroll * speed * 0.3;  // Gentler movement
+            star.style.transform = `translateY(${offset * 0.5}px)`;
+        });
+    });
+}
+
+// ===== Smooth Scroll (CSS-based) =====
+(function injectSmoothScrollCSS() {
+    if (document.getElementById('smooth-scroll-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'smooth-scroll-styles';
+    style.textContent = `
+        html {
+            scroll-behavior: smooth;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
+// ===== Scroll Reveal Animation =====
 (function injectRevealCSS() {
     if (document.getElementById('reveal-styles')) return;
     const style = document.createElement('style');
@@ -6,11 +311,12 @@
     style.textContent = `
         .reveal-hidden {
             opacity: 0;
-            transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                        filter 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-            will-change: opacity, transform, filter;
-            filter: blur(4px);
+            transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        filter 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        clip-path 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform, filter, clip-path;
+            filter: blur(3px);
         }
         .reveal-hidden[data-reveal="fade-up"]      { transform: translateY(30px); }
         .reveal-hidden[data-reveal="fade-down"]    { transform: translateY(-30px); }
@@ -20,39 +326,71 @@
         .reveal-hidden[data-reveal="fade-in"]       { transform: translate(0); filter: blur(5px); }
         .reveal-hidden[data-reveal="slide-left"]    { transform: translateX(40px); }
         .reveal-hidden[data-reveal="slide-right"]   { transform: translateX(-40px); }
+        .reveal-hidden[data-reveal="tilt-up"]       { transform: perspective(800px) rotateX(15deg) translateY(40px); filter: blur(4px); }
+        .reveal-hidden[data-reveal="clip-circle"]   { clip-path: circle(0% at 50% 50%); filter: blur(6px); }
+        .reveal-hidden[data-reveal="clip-reveal"]    { clip-path: inset(0 100% 0 0); filter: blur(4px); }
 
         .reveal-visible {
             opacity: 1 !important;
-            transform: translate(0) scale(1) !important;
+            transform: translate(0) scale(1) rotateX(0) !important;
             filter: blur(0) !important;
+            clip-path: circle(100% at 50% 50%) !important;
+        }
+        .reveal-visible[data-reveal="clip-reveal"] {
+            clip-path: inset(0 0% 0 0) !important;
         }
 
-        /* Section title underline draw */
+        .section-title.reveal-hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            filter: blur(2px);
+            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+        }
+        .section-title.reveal-visible {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            filter: blur(0) !important;
+            animation: glitchText 0.4s ease 0.1s;
+        }
+        @keyframes glitchText {
+            0%, 100% { text-shadow: none; }
+            20% { text-shadow: 2px 0 var(--accent), -2px 0 #ff6b6b; }
+            40% { text-shadow: -2px 0 var(--accent), 2px 0 #ffc107; }
+            60% { text-shadow: 1px 0 var(--accent), -1px 0 #ff6b6b; }
+        }
         .section-title.reveal-hidden::after {
             transform: scaleX(0);
-            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
         }
         .section-title.reveal-visible::after {
             transform: scaleX(1) !important;
         }
 
-        /* Timeline marker pop */
+        .timeline::before {
+            transform-origin: top center;
+            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .timeline.reveal-hidden::before {
+            transform: scaleY(0);
+        }
+        .timeline.reveal-visible::before {
+            transform: scaleY(1) !important;
+        }
+
         .timeline-marker.reveal-hidden {
             transform: translateX(-50%) scale(0) !important;
             filter: blur(2px);
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s,
-                        filter 0.4s ease 0.1s,
-                        opacity 0.4s ease 0.1s;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s,
+                        filter 0.4s ease 0.3s, opacity 0.4s ease 0.3s;
         }
         .timeline-marker.reveal-visible {
             transform: translateX(-50%) scale(1) !important;
             filter: blur(0) !important;
         }
 
-        /* Timeline connector line draw */
         .timeline-item::before {
             transform-origin: left center;
-            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
         }
         .timeline-item.reveal-hidden::before {
             transform: scaleX(0);
@@ -61,26 +399,50 @@
             transform: scaleX(1);
         }
 
-        /* Profile image */
-        .profile-img.reveal-hidden {
-            transform: scale(0.95) translateY(20px);
-            filter: blur(4px);
+        .bio-line {
+            display: block;
+            opacity: 0;
+            transform: translateY(15px);
+            filter: blur(2px);
+            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
         }
-        .profile-img.reveal-visible {
-            transform: scale(1) translateY(0) !important;
+        .bio-line.reveal-visible {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
             filter: blur(0) !important;
         }
 
-        /* Reduced motion respect */
+        .contact-item.reveal-hidden {
+            transform: translateY(40px);
+            opacity: 0;
+            filter: blur(3px);
+            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+        }
+        .contact-item.reveal-visible {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            filter: blur(0) !important;
+        }
+
+        .filter-btn.reveal-hidden {
+            transform: perspective(400px) rotateY(-90deg);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+        }
+        .filter-btn.reveal-visible {
+            transform: perspective(400px) rotateY(0) !important;
+            opacity: 1 !important;
+        }
+
         @media (prefers-reduced-motion: reduce) {
-            .reveal-hidden,
-            .timeline-marker.reveal-hidden,
-            .section-title.reveal-hidden::after,
-            .timeline-item.reveal-hidden::before,
-            .profile-img.reveal-hidden {
+            .reveal-hidden, .bio-line.reveal-hidden, .filter-btn.reveal-hidden,
+            .timeline-marker.reveal-hidden, .section-title.reveal-hidden,
+            .timeline.reveal-hidden::before, .timeline-item.reveal-hidden::before {
                 opacity: 1 !important;
                 transform: none !important;
                 filter: none !important;
+                clip-path: none !important;
+                animation: none !important;
                 transition: none !important;
             }
         }
@@ -91,8 +453,8 @@
 class ScrollReveal {
     constructor(options = {}) {
         this.defaults = {
-            threshold: 0.15,
-            rootMargin: '0px 0px 20px 0px',
+            threshold: 0.12,
+            rootMargin: '0px 0px -30px 0px',
             once: true
         };
         this.options = { ...this.defaults, ...options };
@@ -106,29 +468,46 @@ class ScrollReveal {
     init() {
         document.querySelectorAll('[data-reveal]').forEach(el => this.observe(el));
         this.autoApply();
+        this.setupBioLines();
+    }
+
+    setupBioLines() {
+        const bioP = document.querySelector('.about-text > p');
+        if (!bioP) return;
+        const html = bioP.innerHTML;
+        const lines = html.split('<br>');
+        bioP.innerHTML = '';
+        lines.forEach((line, i) => {
+            const span = document.createElement('span');
+            span.className = 'bio-line';
+            span.innerHTML = line;
+            span.style.transitionDelay = `${i * 120}ms`;
+            bioP.appendChild(span);
+            this.observe(span);
+        });
     }
 
     autoApply() {
         const map = [
-            { sel: '.section-title',        anim: 'fade-up',    stagger: 0 },
-            { sel: '.timeline-item',        anim: 'fade-up',    stagger: 80 },
-            { sel: '.timeline-marker',      anim: 'scale-in',   stagger: 80 },
-            { sel: '.timeline-content',     anim: 'fade-up',    stagger: 80 },
-            { sel: '.timeline-header',      anim: 'fade-up',    stagger: 0 },
-            { sel: '.timeline-desc',        anim: 'fade-up',    stagger: 40 },
-            { sel: '.timeline-links',       anim: 'fade-up',    stagger: 80 },
-            { sel: '.project-card',         anim: 'scale-in',   stagger: 60 },
-            { sel: '.certificate-card',     anim: 'slide-left', stagger: 50 },
-            { sel: '.contact-item',         anim: 'fade-up',    stagger: 60 },
-            { sel: '.profile-img',          anim: 'scale-in',   stagger: 0 },
-            { sel: '.about-text > h3',      anim: 'fade-up',    stagger: 0 },
-            { sel: '.about-text > p',       anim: 'fade-up',    stagger: 60 },
-            { sel: '.education-item',       anim: 'fade-left',  stagger: 80 },
-            { sel: '.skill-item',          anim: 'scale-in',   stagger: 40 },
-            { sel: '.about-content',        anim: 'fade-up',    stagger: 0 },
-            { sel: '.filter-btn',          anim: 'scale-in',   stagger: 30 },
-            { sel: '.view-all-link',       anim: 'fade-up',    stagger: 0 },
-            { sel: '.slider-controls',     anim: 'fade-up',    stagger: 0 },
+            { sel: '.section-title', anim: 'fade-up', stagger: 0 },
+            { sel: '.timeline', anim: 'fade-in', stagger: 0 },
+            { sel: '.timeline-item', anim: 'fade-up', stagger: 120 },
+            { sel: '.timeline-marker', anim: 'scale-in', stagger: 120 },
+            { sel: '.timeline-content', anim: 'fade-up', stagger: 120 },
+            { sel: '.timeline-header', anim: 'fade-up', stagger: 0 },
+            { sel: '.timeline-desc', anim: 'fade-up', stagger: 60 },
+            { sel: '.timeline-links', anim: 'fade-up', stagger: 100 },
+            { sel: '.project-card', anim: 'tilt-up', stagger: 80 },
+            { sel: '.certificate-card', anim: 'slide-left', stagger: 60 },
+            { sel: '.contact-item', anim: 'fade-up', stagger: 80 },
+            { sel: '.profile-img', anim: 'clip-circle', stagger: 0 },
+            { sel: '.about-text > h3', anim: 'fade-up', stagger: 0 },
+            { sel: '.education-item', anim: 'fade-left', stagger: 100 },
+            { sel: '.skill-item', anim: 'scale-in', stagger: 50 },
+            { sel: '.about-content', anim: 'fade-up', stagger: 0 },
+            { sel: '.filter-btn', anim: 'scale-in', stagger: 40 },
+            { sel: '.view-all-link', anim: 'fade-up', stagger: 0 },
+            { sel: '.slider-controls', anim: 'fade-up', stagger: 0 },
         ];
 
         map.forEach(({ sel, anim, stagger }) => {
@@ -136,7 +515,7 @@ class ScrollReveal {
                 if (el.hasAttribute('data-reveal')) return;
                 el.setAttribute('data-reveal', anim);
                 if (stagger > 0) {
-                    el.style.transitionDelay = `${Math.min(i * stagger, 400)}ms`;
+                    el.style.transitionDelay = `${Math.min(i * stagger, 500)}ms`;
                 }
                 this.observe(el);
             });
@@ -344,27 +723,6 @@ window.addEventListener('scroll', () => {
     else nav.classList.remove('scrolled');
 });
 
-// ===== Stars =====
-function generateStars() {
-    document.querySelectorAll('#about .stars, #contact .stars').forEach(container => {
-        container.innerHTML = '';
-        const section = container.closest('section');
-        const w = window.innerWidth;
-        const h = section.offsetHeight || 600;
-        const count = Math.floor((w * h) / 3500);
-        for (let i = 0; i < count; i++) {
-            const star = document.createElement('div');
-            const sizes = ['small', 'small', 'small', 'medium', 'medium', 'large'];
-            star.className = `star ${sizes[Math.floor(Math.random() * sizes.length)]}`;
-            star.style.left = `${Math.random() * 100}%`;
-            star.style.top = `${Math.random() * 100}%`;
-            star.style.animationDelay = `${Math.random() * 3}s`;
-            star.style.animationDuration = `${2 + Math.random() * 4}s`;
-            container.appendChild(star);
-        }
-    });
-}
-
 // ===== Populate dynamic content =====
 function populateContent() {
     const skills = ['Python', 'Django', 'FastAPI', 'Ajax', 'TensorFlow/Keras', 'Scikit-Learn', 'SQL/SQLAlchemy', 'MongoDB', 'Pandas', 'NumPy', 'Data Analysis', 'Git', 'Docker'];
@@ -385,15 +743,23 @@ function populateContent() {
                 </div>`).join('');
 }
 
+// ===== Init =====
 document.addEventListener('DOMContentLoaded', () => {
     populateContent();
     generateStars();
+    initTilt();
     new CertificateSlider();
     new ScrollReveal();
 });
 
+// Parallax scroll handler
+window.addEventListener('scroll', updateParallaxStars, { passive: true });
+
+// Resize handler
 let resizeTimer;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(generateStars, 300);
+    resizeTimer = setTimeout(() => {
+        generateStars();
+    }, 300);
 });
