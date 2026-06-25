@@ -729,14 +729,4 @@ document.addEventListener('DOMContentLoaded', () => {
     new ScrollReveal();
 });
 
-// REMOVED: Parallax scroll handler for stars (stars are now static)
-// window.addEventListener('scroll', updateParallaxStars, { passive: true });
 
-// Resize handler
-let resizeTimer;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-        generateStars();
-    }, 300);
-});
