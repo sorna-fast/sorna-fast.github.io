@@ -248,7 +248,7 @@ function generateStars() {
         const w = section.offsetWidth || window.innerWidth;
         const h = section.offsetHeight || 600;
         // Good density for visibility
-        const count = Math.floor((w * h) / 2000);
+        const count = Math.floor((w * h) / 6000);
         for (let i = 0; i < count; i++) {
             const star = document.createElement('div');
             const sizes = ['small', 'small', 'small', 'small', 'medium', 'medium', 'large'];
