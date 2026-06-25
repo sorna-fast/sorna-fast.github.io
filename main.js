@@ -240,50 +240,27 @@ function initTilt() {
     });
 }
 
-// ===== FIXED Stars & Parallax =====
-const starContainers = new Map();
-
+// ===== FIXED Static Twinkling Stars (NO parallax) =====
 function generateStars() {
     document.querySelectorAll('#about .stars, #contact .stars').forEach(container => {
         container.innerHTML = '';
         const section = container.closest('section');
-        const w = window.innerWidth;
+        const w = section.offsetWidth || window.innerWidth;
         const h = section.offsetHeight || 600;
-        // Increased density for better visibility (was 3500)
-        const count = Math.floor((w * h) / 3500);
-        const stars = [];
+        // Good density for visibility
+        const count = Math.floor((w * h) / 2000);
         for (let i = 0; i < count; i++) {
             const star = document.createElement('div');
-            const sizes = ['small', 'small', 'small', 'medium', 'medium', 'large'];
+            const sizes = ['small', 'small', 'small', 'small', 'medium', 'medium', 'large'];
             const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
             star.className = `star ${sizeClass}`;
             star.style.left = `${Math.random() * 100}%`;
             star.style.top = `${Math.random() * 100}%`;
-            star.style.animationDelay = `${Math.random() * 3}s`;
-            star.style.animationDuration = `${2 + Math.random() * 4}s`;
-            // Store original position for parallax
-            star.dataset.originalTop = star.style.top;
-            // Reduced parallax speeds (was 0.3/0.5/0.8)
-            star.dataset.speed = sizeClass === 'small' ? 0.15 : sizeClass === 'medium' ? 0.25 : 0.4;
+            // Random twinkle timing for natural effect
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            star.style.animationDuration = `${2 + Math.random() * 3}s`;
             container.appendChild(star);
-            stars.push(star);
         }
-        starContainers.set(container, stars);
-    });
-}
-
-function updateParallaxStars() {
-    const scrollY = window.scrollY;
-    starContainers.forEach((stars, container) => {
-        const containerRect = container.getBoundingClientRect();
-        const containerTop = containerRect.top + scrollY;
-
-        stars.forEach(star => {
-            const speed = parseFloat(star.dataset.speed) || 0.15;
-            const sectionScroll = Math.max(0, scrollY - containerTop + window.innerHeight);
-            const offset = sectionScroll * speed * 0.3;  // Gentler movement
-            star.style.transform = `translateY(${offset * 0.5}px)`;
-        });
     });
 }
 
@@ -500,7 +477,7 @@ class ScrollReveal {
             { sel: '.project-card', anim: 'tilt-up', stagger: 80 },
             { sel: '.certificate-card', anim: 'slide-left', stagger: 60 },
             { sel: '.contact-item', anim: 'fade-up', stagger: 80 },
-            { sel: '.profile-img', anim: 'clip-circle', stagger: 0 },
+            { sel: '.profile-img', anim: 'scale-in', stagger: 0 },
             { sel: '.about-text > h3', anim: 'fade-up', stagger: 0 },
             { sel: '.education-item', anim: 'fade-left', stagger: 100 },
             { sel: '.skill-item', anim: 'scale-in', stagger: 50 },
@@ -752,8 +729,8 @@ document.addEventListener('DOMContentLoaded', () => {
     new ScrollReveal();
 });
 
-// Parallax scroll handler
-window.addEventListener('scroll', updateParallaxStars, { passive: true });
+// REMOVED: Parallax scroll handler for stars (stars are now static)
+// window.addEventListener('scroll', updateParallaxStars, { passive: true });
 
 // Resize handler
 let resizeTimer;
