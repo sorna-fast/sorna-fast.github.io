@@ -36,7 +36,10 @@ html {
     scroll-padding-top: 80px;
     overflow-x: hidden;
 }
-
+#certSlider {
+    will-change: transform;
+    backface-visibility: hidden;
+}
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.7;

@@ -14,7 +14,7 @@
             justify-content: center;
             flex-direction: column;
             gap: 32px;
-            transition: opacity 0.0s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.8s;
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.8s;
         }
         #loading-screen.done {
             opacity: 0;
@@ -134,7 +134,7 @@
             height: 2px;
             background: var(--gradient-accent);
             z-index: 10001;
-            transition: width 0.0s linear;
+            transition: width 0.1s linear;
             box-shadow: 0 0 10px var(--accent-glow);
         }
     `;
@@ -151,19 +151,20 @@
     }, { passive: true });
 })();
 
-// ===== Magnetic Buttons =====
+// ===== Magnetic Buttons (بدون .filter-btn) =====
 (function injectMagneticCSS() {
     if (document.getElementById('magnetic-styles')) return;
     const style = document.createElement('style');
     style.id = 'magnetic-styles';
     style.textContent = `
         .magnetic {
-            transition: transform 0.0s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
         }
     `;
     document.head.appendChild(style);
 
-    const magneticTargets = '.btn, .project-link, .filter-btn, .control-btn';
+    // ⚠️ تغییر: حذف .filter-btn از لیست مغناطیسی
+    const magneticTargets = '.btn, .project-link, .control-btn';
     const magneticEls = [];
 
     function initMagnetic() {
@@ -208,11 +209,11 @@
             perspective: 800px;
         }
         .project-card .tilt-inner {
-            transition: transform 0.0s ease-out;
+            transition: transform 0.15s ease-out;
             transform-style: preserve-3d;
         }
         .project-card:hover .tilt-inner {
-            transition: transform 0.0s ease-out;
+            transition: transform 0.3s ease-out;
         }
     `;
     document.head.appendChild(style);
@@ -240,14 +241,13 @@ function initTilt() {
     });
 }
 
-// ===== FIXED Static Twinkling Stars (NO parallax) =====
+// ===== FIXED Static Twinkling Stars =====
 function generateStars() {
     document.querySelectorAll('#about .stars, #contact .stars').forEach(container => {
         container.innerHTML = '';
         const section = container.closest('section');
         const w = section.offsetWidth || window.innerWidth;
         const h = section.offsetHeight || 600;
-        // Good density for visibility
         const count = Math.floor((w * h) / 6000);
         for (let i = 0; i < count; i++) {
             const star = document.createElement('div');
@@ -256,7 +256,6 @@ function generateStars() {
             star.className = `star ${sizeClass}`;
             star.style.left = `${Math.random() * 100}%`;
             star.style.top = `${Math.random() * 100}%`;
-            // Random twinkle timing for natural effect
             star.style.animationDelay = `${Math.random() * 5}s`;
             star.style.animationDuration = `${2 + Math.random() * 3}s`;
             container.appendChild(star);
@@ -264,7 +263,7 @@ function generateStars() {
     });
 }
 
-// ===== Smooth Scroll (CSS-based) =====
+// ===== Smooth Scroll =====
 (function injectSmoothScrollCSS() {
     if (document.getElementById('smooth-scroll-styles')) return;
     const style = document.createElement('style');
@@ -288,10 +287,10 @@ function generateStars() {
     style.textContent = `
         .reveal-hidden {
             opacity: 0;
-            transition: opacity 0.0s cubic-bezier(0.22, 1, 0.36, 1),
-                        transform 0.0s cubic-bezier(0.22, 1, 0.36, 1),
-                        filter 0.0s cubic-bezier(0.22, 1, 0.36, 1),
-                        clip-path 0.0s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        filter 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        clip-path 0.8s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: opacity, transform, filter, clip-path;
             filter: blur(3px);
         }
@@ -321,7 +320,7 @@ function generateStars() {
             opacity: 0;
             transform: translateY(20px);
             filter: blur(2px);
-            transition: opacity 0.0s ease, transform 0.0s ease, filter 0.5s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
         }
         .section-title.reveal-visible {
             opacity: 1 !important;
@@ -337,7 +336,7 @@ function generateStars() {
         }
         .section-title.reveal-hidden::after {
             transform: scaleX(0);
-            transition: transform 0.0s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
         }
         .section-title.reveal-visible::after {
             transform: scaleX(1) !important;
@@ -345,7 +344,7 @@ function generateStars() {
 
         .timeline::before {
             transform-origin: top center;
-            transition: transform 0s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .timeline.reveal-hidden::before {
             transform: scaleY(0);
@@ -357,7 +356,7 @@ function generateStars() {
         .timeline-marker.reveal-hidden {
             transform: translateX(-50%) scale(0) !important;
             filter: blur(2px);
-            transition: transform 0.0s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s,
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s,
                         filter 0.4s ease 0.3s, opacity 0.4s ease 0.3s;
         }
         .timeline-marker.reveal-visible {
@@ -367,7 +366,7 @@ function generateStars() {
 
         .timeline-item::before {
             transform-origin: left center;
-            transition: transform 0.0s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
         }
         .timeline-item.reveal-hidden::before {
             transform: scaleX(0);
@@ -381,7 +380,7 @@ function generateStars() {
             opacity: 0;
             transform: translateY(15px);
             filter: blur(2px);
-            transition: opacity 0.0s ease, transform 0.5s ease, filter 0.5s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
         }
         .bio-line.reveal-visible {
             opacity: 1 !important;
@@ -393,7 +392,7 @@ function generateStars() {
             transform: translateY(40px);
             opacity: 0;
             filter: blur(3px);
-            transition: opacity 0.0s ease, transform 0.5s ease, filter 0.5s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
         }
         .contact-item.reveal-visible {
             opacity: 1 !important;
@@ -404,7 +403,7 @@ function generateStars() {
         .filter-btn.reveal-hidden {
             transform: perspective(400px) rotateY(-90deg);
             opacity: 0;
-            transition: transform 0.0s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
         }
         .filter-btn.reveal-visible {
             transform: perspective(400px) rotateY(0) !important;
@@ -639,7 +638,7 @@ class CertificateSlider {
     }
 }
 
-// ===== Mobile Menu (بدون پرش اسکرول) =====
+// ===== Mobile Menu =====
 const body = document.body;
 const html = document.documentElement;
 const hamburger = document.querySelector('.hamburger');
@@ -728,5 +727,3 @@ document.addEventListener('DOMContentLoaded', () => {
     new CertificateSlider();
     new ScrollReveal();
 });
-
-
