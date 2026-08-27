@@ -108,6 +108,8 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    will-change: transform;
+
 }
 
 nav.scrolled {
@@ -1329,19 +1331,22 @@ footer p {
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 768px) {
     nav {
-        top: 8px;
-        left: 12px;
-        right: 12px;
-        width: auto;
-        max-width: none;
-        transform: none;
-        border-radius: 40px;
-        padding: 6px 16px;
-        background: rgba(17, 24, 39, 0.85);
-        backdrop-filter: blur(20px);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+            top: 8px;
+            left: 12px;
+            right: 12px;
+            width: auto;
+            max-width: none;
+            transform: none;
+            border-radius: 40px;
+            padding: 6px 16px;
+            background: rgba(17, 24, 39, 0.98);
+            /* 🔧 کدرتر شد تا حذف بلور مشخص نشود */
+            backdrop-filter: none !important;
+            /* 🔧 حذف بلور در موبایل (قاتل FPS) */
+            -webkit-backdrop-filter: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
     }
 
     nav .container {
@@ -1358,8 +1363,9 @@ footer p {
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        background: rgba(7, 11, 20, 0.97);
-        backdrop-filter: blur(30px);
+        background: rgba(7, 11, 20, 0.99);
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
         width: 100%;
         height: 100vh;
         padding: 0;
@@ -1551,4 +1557,37 @@ footer p {
     .contact-info {
         grid-template-columns: 1fr;
     }
+}
+
+
+
+
+.project-card,
+.certificate-card,
+.timeline-content,
+.contact-item,
+.education-item {
+    contain: layout style paint;
+}
+
+
+section:not(.hero) {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 800px;
+}
+
+
+.stars-bg-container {
+    contain: strict;
+}
+
+.star {
+    will-change: opacity;
+}
+
+
+.project-card,
+.timeline-content,
+.contact-item {
+    will-change: transform, box-shadow;
 }

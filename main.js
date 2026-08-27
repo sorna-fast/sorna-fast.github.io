@@ -121,7 +121,7 @@
     document.body.appendChild(noise);
 })();
 
-// ===== Scroll Progress Bar =====
+// ===== Scroll Progress Bar (OPTIMIZED) =====
 (function injectProgressCSS() {
     if (document.getElementById('progress-styles')) return;
     const style = document.createElement('style');
@@ -143,15 +143,23 @@
     bar.id = 'scroll-progress';
     document.body.appendChild(bar);
 
+    // 🔧 بهینه‌سازی با requestAnimationFrame
+    let scrollTicking = false;
     window.addEventListener('scroll', () => {
-        const scrollTop = window.scrollY;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-        bar.style.width = pct + '%';
+        if (!scrollTicking) {
+            requestAnimationFrame(() => {
+                const scrollTop = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                bar.style.width = pct + '%';
+                scrollTicking = false;
+            });
+            scrollTicking = true;
+        }
     }, { passive: true });
 })();
 
-// ===== Magnetic Buttons (بدون .filter-btn) =====
+// ===== Magnetic Buttons (OPTIMIZED) =====
 (function injectMagneticCSS() {
     if (document.getElementById('magnetic-styles')) return;
     const style = document.createElement('style');
@@ -163,7 +171,6 @@
     `;
     document.head.appendChild(style);
 
-    // ⚠️ تغییر: حذف .filter-btn از لیست مغناطیسی
     const magneticTargets = '.btn, .project-link, .control-btn';
     const magneticEls = [];
 
@@ -175,21 +182,27 @@
         });
     }
 
+    // 🔧 بهینه‌سازی با requestAnimationFrame
+    let magneticRaf = null;
     document.addEventListener('mousemove', e => {
-        magneticEls.forEach(el => {
-            const rect = el.getBoundingClientRect();
-            const cx = rect.left + rect.width / 2;
-            const cy = rect.top + rect.height / 2;
-            const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-            const maxDist = 80;
-            if (dist < maxDist) {
-                const force = (1 - dist / maxDist) * 12;
-                const dx = (e.clientX - cx) / dist * force;
-                const dy = (e.clientY - cy) / dist * force;
-                el.style.transform = `translate(${dx}px, ${dy}px)`;
-            } else {
-                el.style.transform = '';
-            }
+        if (magneticRaf) return;
+        magneticRaf = requestAnimationFrame(() => {
+            magneticEls.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+                const maxDist = 80;
+                if (dist < maxDist) {
+                    const force = (1 - dist / maxDist) * 12;
+                    const dx = (e.clientX - cx) / dist * force;
+                    const dy = (e.clientY - cy) / dist * force;
+                    el.style.transform = `translate(${dx}px, ${dy}px)`;
+                } else {
+                    el.style.transform = '';
+                }
+            });
+            magneticRaf = null;
         });
     });
 
@@ -227,15 +240,21 @@ function initTilt() {
         while (card.firstChild) inner.appendChild(card.firstChild);
         card.appendChild(inner);
 
+        // 🔧 بهینه‌سازی با requestAnimationFrame
         card.addEventListener('mousemove', e => {
-            const rect = card.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width;
-            const y = (e.clientY - rect.top) / rect.height;
-            const rotateX = (y - 0.5) * -12;
-            const rotateY = (x - 0.5) * 12;
-            inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+            if (card._tiltRaf) cancelAnimationFrame(card._tiltRaf);
+            card._tiltRaf = requestAnimationFrame(() => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width;
+                const y = (e.clientY - rect.top) / rect.height;
+                const rotateX = (y - 0.5) * -12;
+                const rotateY = (x - 0.5) * 12;
+                inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+                card._tiltRaf = null;
+            });
         });
         card.addEventListener('mouseleave', () => {
+            if (card._tiltRaf) cancelAnimationFrame(card._tiltRaf);
             inner.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
         });
     });
@@ -279,7 +298,7 @@ function generateStars() {
     document.head.appendChild(style);
 })();
 
-// ===== Scroll Reveal Animation =====
+// ===== Scroll Reveal Animation (OPTIMIZED - filter removed from transition) =====
 (function injectRevealCSS() {
     if (document.getElementById('reveal-styles')) return;
     const style = document.createElement('style');
@@ -288,10 +307,9 @@ function generateStars() {
         .reveal-hidden {
             opacity: 0;
             transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                        filter 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                        clip-path 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-            will-change: opacity, transform, filter, clip-path;
+                        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            /* 🔧 filter و clip-path از transition حذف شدند برای افزایش عملکرد */
+            will-change: opacity, transform;
             filter: blur(3px);
         }
         .reveal-hidden[data-reveal="fade-up"]      { transform: translateY(30px); }
@@ -320,7 +338,8 @@ function generateStars() {
             opacity: 0;
             transform: translateY(20px);
             filter: blur(2px);
-            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            /* 🔧 filter از transition حذف شد */
         }
         .section-title.reveal-visible {
             opacity: 1 !important;
@@ -357,7 +376,8 @@ function generateStars() {
             transform: translateX(-50%) scale(0) !important;
             filter: blur(2px);
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s,
-                        filter 0.4s ease 0.3s, opacity 0.4s ease 0.3s;
+                        opacity 0.4s ease 0.3s;
+            /* 🔧 filter از transition حذف شد */
         }
         .timeline-marker.reveal-visible {
             transform: translateX(-50%) scale(1) !important;
@@ -380,7 +400,8 @@ function generateStars() {
             opacity: 0;
             transform: translateY(15px);
             filter: blur(2px);
-            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            /* 🔧 filter از transition حذف شد */
         }
         .bio-line.reveal-visible {
             opacity: 1 !important;
@@ -392,7 +413,8 @@ function generateStars() {
             transform: translateY(40px);
             opacity: 0;
             filter: blur(3px);
-            transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            /* 🔧 filter از transition حذف شد */
         }
         .contact-item.reveal-visible {
             opacity: 1 !important;
