@@ -5,38 +5,21 @@
     style.id = 'loading-styles';
     style.textContent = `
         #loading-screen {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-primary);
-            z-index: 99999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 32px;
+            position: fixed; inset: 0;
+            background: var(--bg-primary); z-index: 99999;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 32px;
             transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.8s;
         }
-        #loading-screen.done {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+        #loading-screen.done { opacity: 0; visibility: hidden; pointer-events: none; }
         #loading-screen .loader {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            transform: rotate(45deg);
-            opacity: 0.9;
+            position: relative; width: 80px; height: 80px;
+            transform: rotate(45deg); opacity: 0.9;
         }
         #loading-screen .loader-square {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 22px;
-            height: 22px;
-            margin: 2px;
-            border-radius: 3px;
-            background: var(--accent);
+            position: absolute; top: 0; left: 0;
+            width: 22px; height: 22px; margin: 2px;
+            border-radius: 3px; background: var(--accent);
             box-shadow: 0 0 8px var(--accent-dim);
             animation: square-animation 10s ease-in-out infinite both;
         }
@@ -48,18 +31,12 @@
         #loading-screen .loader-square:nth-of-type(6) { animation-delay: -7.1429s; }
         #loading-screen .loader-square:nth-of-type(7) { animation-delay: -8.5714s; }
         #loading-screen .loading-text {
-            color: var(--accent);
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            opacity: 0.7;
+            color: var(--accent); font-size: 0.85rem;
+            font-weight: 500; letter-spacing: 0.15em;
+            text-transform: uppercase; opacity: 0.7;
             animation: loadingPulse 1.5s ease-in-out infinite;
         }
-        @keyframes loadingPulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.9; }
-        }
+        @keyframes loadingPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.9; } }
         @keyframes square-animation {
             0%, 10.5% { left: 0; top: 0; }
             12.5%, 23% { left: 26px; top: 0; }
@@ -78,12 +55,9 @@
     loader.id = 'loading-screen';
     loader.innerHTML = `
         <div class="loader">
-            <div class="loader-square"></div>
-            <div class="loader-square"></div>
-            <div class="loader-square"></div>
-            <div class="loader-square"></div>
-            <div class="loader-square"></div>
-            <div class="loader-square"></div>
+            <div class="loader-square"></div><div class="loader-square"></div>
+            <div class="loader-square"></div><div class="loader-square"></div>
+            <div class="loader-square"></div><div class="loader-square"></div>
             <div class="loader-square"></div>
         </div>
         <div class="loading-text">Loading</div>
@@ -98,17 +72,15 @@
     });
 })();
 
-// ===== Noise Texture Overlay =====
+// ===== Noise Texture =====
 (function injectNoiseCSS() {
     if (document.getElementById('noise-styles')) return;
     const style = document.createElement('style');
     style.id = 'noise-styles';
     style.textContent = `
         .noise-overlay {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 9998;
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 9998;
             opacity: 0.025;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
             background-repeat: repeat;
@@ -121,17 +93,15 @@
     document.body.appendChild(noise);
 })();
 
-// ===== Scroll Progress Bar (OPTIMIZED) =====
+// ===== Scroll Progress Bar =====
 (function injectProgressCSS() {
     if (document.getElementById('progress-styles')) return;
     const style = document.createElement('style');
     style.id = 'progress-styles';
     style.textContent = `
         #scroll-progress {
-            position: fixed;
-            top: 0; left: 0;
-            width: 0%;
-            height: 2px;
+            position: fixed; top: 0; left: 0;
+            width: 0%; height: 2px;
             background: var(--gradient-accent);
             z-index: 10001;
             transition: width 0.1s linear;
@@ -143,7 +113,6 @@
     bar.id = 'scroll-progress';
     document.body.appendChild(bar);
 
-    // 🔧 بهینه‌سازی با requestAnimationFrame
     let scrollTicking = false;
     window.addEventListener('scroll', () => {
         if (!scrollTicking) {
@@ -159,16 +128,12 @@
     }, { passive: true });
 })();
 
-// ===== Magnetic Buttons (OPTIMIZED) =====
+// ===== Magnetic Buttons =====
 (function injectMagneticCSS() {
     if (document.getElementById('magnetic-styles')) return;
     const style = document.createElement('style');
     style.id = 'magnetic-styles';
-    style.textContent = `
-        .magnetic {
-            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-    `;
+    style.textContent = `.magnetic { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }`;
     document.head.appendChild(style);
 
     const magneticTargets = '.btn, .project-link, .control-btn';
@@ -182,7 +147,6 @@
         });
     }
 
-    // 🔧 بهینه‌سازی با requestAnimationFrame
     let magneticRaf = null;
     document.addEventListener('mousemove', e => {
         if (magneticRaf) return;
@@ -217,17 +181,8 @@
     const style = document.createElement('style');
     style.id = 'tilt-styles';
     style.textContent = `
-        .project-card {
-            transform-style: preserve-3d;
-            perspective: 800px;
-        }
-        .project-card .tilt-inner {
-            transition: transform 0.15s ease-out;
-            transform-style: preserve-3d;
-        }
-        .project-card:hover .tilt-inner {
-            transition: transform 0.3s ease-out;
-        }
+        .project-card { transform-style: preserve-3d; perspective: 800px; }
+        .project-card .tilt-inner { transition: transform 0.15s ease-out; transform-style: preserve-3d; }
     `;
     document.head.appendChild(style);
 })();
@@ -240,7 +195,6 @@ function initTilt() {
         while (card.firstChild) inner.appendChild(card.firstChild);
         card.appendChild(inner);
 
-        // 🔧 بهینه‌سازی با requestAnimationFrame
         card.addEventListener('mousemove', e => {
             if (card._tiltRaf) cancelAnimationFrame(card._tiltRaf);
             card._tiltRaf = requestAnimationFrame(() => {
@@ -260,7 +214,7 @@ function initTilt() {
     });
 }
 
-// ===== FIXED Static Twinkling Stars =====
+// ===== Stars =====
 function generateStars() {
     document.querySelectorAll('#about .stars, #contact .stars').forEach(container => {
         container.innerHTML = '';
@@ -271,8 +225,7 @@ function generateStars() {
         for (let i = 0; i < count; i++) {
             const star = document.createElement('div');
             const sizes = ['small', 'small', 'small', 'small', 'medium', 'medium', 'large'];
-            const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
-            star.className = `star ${sizeClass}`;
+            star.className = `star ${sizes[Math.floor(Math.random() * sizes.length)]}`;
             star.style.left = `${Math.random() * 100}%`;
             star.style.top = `${Math.random() * 100}%`;
             star.style.animationDelay = `${Math.random() * 5}s`;
@@ -287,18 +240,11 @@ function generateStars() {
     if (document.getElementById('smooth-scroll-styles')) return;
     const style = document.createElement('style');
     style.id = 'smooth-scroll-styles';
-    style.textContent = `
-        html {
-            scroll-behavior: smooth;
-        }
-        @media (prefers-reduced-motion: reduce) {
-            html { scroll-behavior: auto; }
-        }
-    `;
+    style.textContent = `html { scroll-behavior: smooth; } @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }`;
     document.head.appendChild(style);
 })();
 
-// ===== Scroll Reveal Animation (OPTIMIZED - filter removed from transition) =====
+// ===== Scroll Reveal =====
 (function injectRevealCSS() {
     if (document.getElementById('reveal-styles')) return;
     const style = document.createElement('style');
@@ -306,23 +252,20 @@ function generateStars() {
     style.textContent = `
         .reveal-hidden {
             opacity: 0;
-            transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-                        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-            /* 🔧 filter و clip-path از transition حذف شدند برای افزایش عملکرد */
-            will-change: opacity, transform;
-            filter: blur(3px);
+            transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: opacity, transform; filter: blur(3px);
         }
-        .reveal-hidden[data-reveal="fade-up"]      { transform: translateY(30px); }
-        .reveal-hidden[data-reveal="fade-down"]    { transform: translateY(-30px); }
-        .reveal-hidden[data-reveal="fade-left"]     { transform: translateX(-30px); }
-        .reveal-hidden[data-reveal="fade-right"]    { transform: translateX(30px); }
-        .reveal-hidden[data-reveal="scale-in"]      { transform: scale(0.92); filter: blur(3px); }
-        .reveal-hidden[data-reveal="fade-in"]       { transform: translate(0); filter: blur(5px); }
-        .reveal-hidden[data-reveal="slide-left"]    { transform: translateX(40px); }
-        .reveal-hidden[data-reveal="slide-right"]   { transform: translateX(-40px); }
-        .reveal-hidden[data-reveal="tilt-up"]       { transform: perspective(800px) rotateX(15deg) translateY(40px); filter: blur(4px); }
-        .reveal-hidden[data-reveal="clip-circle"]   { clip-path: circle(0% at 50% 50%); filter: blur(6px); }
-        .reveal-hidden[data-reveal="clip-reveal"]    { clip-path: inset(0 100% 0 0); filter: blur(4px); }
+        .reveal-hidden[data-reveal="fade-up"] { transform: translateY(30px); }
+        .reveal-hidden[data-reveal="fade-down"] { transform: translateY(-30px); }
+        .reveal-hidden[data-reveal="fade-left"] { transform: translateX(-30px); }
+        .reveal-hidden[data-reveal="fade-right"] { transform: translateX(30px); }
+        .reveal-hidden[data-reveal="scale-in"] { transform: scale(0.92); filter: blur(3px); }
+        .reveal-hidden[data-reveal="fade-in"] { transform: translate(0); filter: blur(5px); }
+        .reveal-hidden[data-reveal="slide-left"] { transform: translateX(40px); }
+        .reveal-hidden[data-reveal="slide-right"] { transform: translateX(-40px); }
+        .reveal-hidden[data-reveal="tilt-up"] { transform: perspective(800px) rotateX(15deg) translateY(40px); filter: blur(4px); }
+        .reveal-hidden[data-reveal="clip-circle"] { clip-path: circle(0% at 50% 50%); filter: blur(6px); }
+        .reveal-hidden[data-reveal="clip-reveal"] { clip-path: inset(0 100% 0 0); filter: blur(4px); }
 
         .reveal-visible {
             opacity: 1 !important;
@@ -330,118 +273,39 @@ function generateStars() {
             filter: blur(0) !important;
             clip-path: circle(100% at 50% 50%) !important;
         }
-        .reveal-visible[data-reveal="clip-reveal"] {
-            clip-path: inset(0 0% 0 0) !important;
-        }
+        .reveal-visible[data-reveal="clip-reveal"] { clip-path: inset(0 0% 0 0) !important; }
 
-        .section-title.reveal-hidden {
-            opacity: 0;
-            transform: translateY(20px);
-            filter: blur(2px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            /* 🔧 filter از transition حذف شد */
-        }
-        .section-title.reveal-visible {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-            filter: blur(0) !important;
-            animation: glitchText 0.4s ease 0.1s;
-        }
+        .section-title.reveal-hidden { opacity: 0; transform: translateY(20px); filter: blur(2px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .section-title.reveal-visible { opacity: 1 !important; transform: translateY(0) !important; filter: blur(0) !important; animation: glitchText 0.4s ease 0.1s; }
         @keyframes glitchText {
             0%, 100% { text-shadow: none; }
             20% { text-shadow: 2px 0 var(--accent), -2px 0 #ff6b6b; }
             40% { text-shadow: -2px 0 var(--accent), 2px 0 #ffc107; }
             60% { text-shadow: 1px 0 var(--accent), -1px 0 #ff6b6b; }
         }
-        .section-title.reveal-hidden::after {
-            transform: scaleX(0);
-            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
-        }
-        .section-title.reveal-visible::after {
-            transform: scaleX(1) !important;
-        }
+        .section-title.reveal-hidden::after { transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s; }
+        .section-title.reveal-visible::after { transform: scaleX(1) !important; }
 
-        .timeline::before {
-            transform-origin: top center;
-            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .timeline.reveal-hidden::before {
-            transform: scaleY(0);
-        }
-        .timeline.reveal-visible::before {
-            transform: scaleY(1) !important;
-        }
+        .timeline::before { transform-origin: top center; transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+        .timeline.reveal-hidden::before { transform: scaleY(0); }
+        .timeline.reveal-visible::before { transform: scaleY(1) !important; }
 
-        .timeline-marker.reveal-hidden {
-            transform: translateX(-50%) scale(0) !important;
-            filter: blur(2px);
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s,
-                        opacity 0.4s ease 0.3s;
-            /* 🔧 filter از transition حذف شد */
-        }
-        .timeline-marker.reveal-visible {
-            transform: translateX(-50%) scale(1) !important;
-            filter: blur(0) !important;
-        }
+        .bio-line { display: block; opacity: 0; transform: translateY(15px); filter: blur(2px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .bio-line.reveal-visible { opacity: 1 !important; transform: translateY(0) !important; filter: blur(0) !important; }
 
-        .timeline-item::before {
-            transform-origin: left center;
-            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.4s;
-        }
-        .timeline-item.reveal-hidden::before {
-            transform: scaleX(0);
-        }
-        .timeline-item.reveal-visible::before {
-            transform: scaleX(1);
-        }
+        .contact-item.reveal-hidden { transform: translateY(40px); opacity: 0; filter: blur(3px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .contact-item.reveal-visible { opacity: 1 !important; transform: translateY(0) !important; filter: blur(0) !important; }
 
-        .bio-line {
-            display: block;
-            opacity: 0;
-            transform: translateY(15px);
-            filter: blur(2px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            /* 🔧 filter از transition حذف شد */
-        }
-        .bio-line.reveal-visible {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-            filter: blur(0) !important;
-        }
-
-        .contact-item.reveal-hidden {
-            transform: translateY(40px);
-            opacity: 0;
-            filter: blur(3px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            /* 🔧 filter از transition حذف شد */
-        }
-        .contact-item.reveal-visible {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-            filter: blur(0) !important;
-        }
-
-        .filter-btn.reveal-hidden {
-            transform: perspective(400px) rotateY(-90deg);
-            opacity: 0;
-            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
-        }
-        .filter-btn.reveal-visible {
-            transform: perspective(400px) rotateY(0) !important;
-            opacity: 1 !important;
-        }
+        .filter-btn.reveal-hidden { transform: perspective(400px) rotateY(-90deg); opacity: 0; transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease; }
+        .filter-btn.reveal-visible { transform: perspective(400px) rotateY(0) !important; opacity: 1 !important; }
 
         @media (prefers-reduced-motion: reduce) {
             .reveal-hidden, .bio-line.reveal-hidden, .filter-btn.reveal-hidden,
             .timeline-marker.reveal-hidden, .section-title.reveal-hidden,
             .timeline.reveal-hidden::before, .timeline-item.reveal-hidden::before {
-                opacity: 1 !important;
-                transform: none !important;
-                filter: none !important;
-                clip-path: none !important;
-                animation: none !important;
-                transition: none !important;
+                opacity: 1 !important; transform: none !important;
+                filter: none !important; clip-path: none !important;
+                animation: none !important; transition: none !important;
             }
         }
     `;
@@ -450,11 +314,7 @@ function generateStars() {
 
 class ScrollReveal {
     constructor(options = {}) {
-        this.defaults = {
-            threshold: 0.12,
-            rootMargin: '0px 0px -30px 0px',
-            once: true
-        };
+        this.defaults = { threshold: 0.12, rootMargin: '0px 0px -30px 0px', once: true };
         this.options = { ...this.defaults, ...options };
         this.observer = new IntersectionObserver(this.onIntersect.bind(this), {
             threshold: this.options.threshold,
@@ -507,14 +367,11 @@ class ScrollReveal {
             { sel: '.view-all-link', anim: 'fade-up', stagger: 0 },
             { sel: '.slider-controls', anim: 'fade-up', stagger: 0 },
         ];
-
         map.forEach(({ sel, anim, stagger }) => {
             document.querySelectorAll(sel).forEach((el, i) => {
                 if (el.hasAttribute('data-reveal')) return;
                 el.setAttribute('data-reveal', anim);
-                if (stagger > 0) {
-                    el.style.transitionDelay = `${Math.min(i * stagger, 500)}ms`;
-                }
+                if (stagger > 0) el.style.transitionDelay = `${Math.min(i * stagger, 500)}ms`;
                 this.observe(el);
             });
         });
@@ -528,15 +385,228 @@ class ScrollReveal {
     onIntersect(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const el = entry.target;
-                el.classList.add('reveal-visible');
-                el.classList.remove('reveal-hidden');
-                if (this.options.once) {
-                    this.observer.unobserve(el);
-                }
+                entry.target.classList.add('reveal-visible');
+                entry.target.classList.remove('reveal-hidden');
+                if (this.options.once) this.observer.unobserve(entry.target);
             }
         });
     }
+}
+
+// ===== i18n - Multi Language System =====
+const translations = {
+    en: {
+        dir: 'ltr',
+        pageTitle: 'Masoud Ghasemi',
+        nav: { home: 'Home', experience: 'Experience', projects: 'Projects', certificates: 'Certificates', about: 'About', contact: 'Contact' },
+        hero: {
+            name: 'Masoud Ghasemi',
+            title: 'Python Backend & AI Engineer',
+            subtitle: 'Building scalable APIs and AI models',
+            cta1: 'Work Experience',
+            cta2: 'GitHub'
+        },
+        experience: {
+            title: 'Work Experience',
+            item1: { title: 'Django Backend Developer', company: 'Papurasan Company', date: '2025', desc: 'Developed a comprehensive workflow management system using Django, implementing automated processes that increased operational efficiency by 25%.', link: 'View Project: SornaFlow' },
+            item2: { title: 'Django Backend Developer', company: 'Royal Clinic', date: '2025', desc: 'Designed and developed a complete online appointment booking system for a medical clinic with HIPAA-compliant data handling.', link: 'View Project: Royal Clinic' },
+            item3: { title: 'AI Instructor', company: 'Perjestegan Institute', date: '2025', desc: 'Teaching AI and Python programming courses. Developed comprehensive curriculum covering ML fundamentals, neural networks, and practical implementations.', link: 'Sample Project: Real Estate Prediction' }
+        },
+        projects: {
+            title: 'Projects', viewAll: 'More Projects →', viewCode: 'View Code →',
+            items: [
+                { name: 'utkface-deep-learning-service', desc: 'A facial recognition project to predict age, gender, race, etc....the project is under construction.', tags: ['Deep Learning', 'TensorFlow', 'CNN', 'Fastapi'], url: 'https://github.com/sorna-fast/utkface-deep-learning-service' },
+                { name: 'TB Chest X-Ray Classifier', desc: 'Deep learning model for Tuberculosis detection using CNN architecture with 99.5% accuracy and 0.999 AUC score.', tags: ['Deep Learning', 'TensorFlow', 'Tuberculosis detection', 'Computer vision', 'Medical AI', 'CNN', 'chest-xray', 'Fastapi'], url: 'https://github.com/sorna-fast/tb-chest-xray-classifier' },
+                { name: 'super-resolution-cnn-cifar10', desc: 'Transform 16×16 low-resolution images to 32×32 high-quality versions using deep learning. Achieves PSNR 28.13 dB with lightweight CNN architecture', tags: ['computer-vision', 'deep-learning', 'super-resolution', 'tensorflow/cnn'], url: 'https://github.com/sorna-fast/super-resolution-cnn-cifar10' },
+                { name: 'EuroSAT CNN Classifier', desc: 'Satellite Image Classification using CNN - EuroSAT Dataset Deep Learning model achieving 96.4% accuracy in land use recognition TensorFlow implementation with comprehensive analysis and visualizations', tags: ['Python', 'TensorFlow', 'CNN', 'Data Augmentation', 'Image Processing'], url: 'https://github.com/sorna-fast/eurosat-cnn-classifier' },
+                { name: 'Fraud-detection', desc: 'Predicting transaction fraud using classification problems such as Guardian Boosting as well as user interfaces using Streamlite, Accuracy: 98% AUC-ROC', tags: ['numpy', 'pandas-dataframe', 'gradientboostingclassifier', 'randomforestclassifier', 'xgbclassifier', 'adaboostclassifier', 'streamlit-webapp'], url: 'https://github.com/sorna-fast/fraud-detection' },
+                { name: 'Django Online Shop', desc: 'Website project focusing on BKD programming with various features', tags: ['Django', 'ajax', 'mysql database', 'html css'], url: 'https://github.com/sorna-fast/django-online-shop' },
+                { name: 'media-database-cs50sql', desc: 'Final project for CS50 SQL – A normalized media database to manage movies, series, contributors, users, comments, and views.', tags: ['SQL', 'SQL-SERVER', 'SQL-Queries', 'SQL-Schema'], url: 'https://github.com/sorna-fast/media-database-cs50sql' },
+                { name: 'food-store-database-mongodb', desc: 'Food store database with all orders and database records', tags: ['MongoDB', 'NoSQL Database', 'NoSQL Queries', 'Nosql store'], url: 'https://github.com/sorna-fast/food-store-database-mongodb' }
+            ]
+        },
+        certificates: { title: 'Certificates', pause: '⏸ Pause', play: '▶ Play', speed: '⚡ Speed Up', slow: '🐢 Slow Down', viewAll: 'View All Certificates on GitHub →', allBtn: 'All Certificates', error: '⚠️ Certificate Loading Error', notFound: 'No certificates found', tryAll: 'Try selecting "All Certificates"' },
+        about: {
+            title: 'About Me', role: 'Backend & AI Developer',
+            bio: 'Implementing scalable APIs, database management, and developing robust architectures using Python.<br>Proven track record in building machine learning models with over 98% accuracy in image processing and medical diagnostics, utilizing TensorFlow, Keras, and Scikit-learn.<br>Eager to collaborate in innovative teams to develop intelligent and scalable systems in the fields of data analytics and backend services.',
+            education: { title: 'University Education', degree: 'Computer Engineering Student', university: 'Payam Noor University', level: "Bachelor's Degree (B.Sc.) - In Progress", period: '2023 - Present' },
+            skillsTitle: 'Key Skills',
+            skills: ['Python', 'Django', 'FastAPI', 'Ajax', 'TensorFlow/Keras', 'Scikit-Learn', 'SQL/SQLAlchemy', 'MongoDB', 'Pandas', 'NumPy', 'Data Analysis', 'Git', 'Docker']
+        },
+        contact: { title: 'Contact', email: 'Email', phone: 'Phone' },
+        footer: { text: '© 2025 Masoud Ghasemi (sorna-fast).' }
+    },
+    fa: {
+        dir: 'rtl',
+        pageTitle: 'مسعود قاسمی',
+        nav: { home: 'خانه', experience: 'تجربیات', projects: 'پروژه‌ها', certificates: 'گواهینامه‌ها', about: 'درباره من', contact: 'تماس' },
+        hero: {
+            name: 'مسعود قاسمی',
+            title: 'مهندس بک‌اند پایتون و هوش مصنوعی',
+            subtitle: 'ساخت APIهای مقیاس‌پذیر و مدل‌های هوش مصنوعی',
+            cta1: 'تجربیات کاری',
+            cta2: 'گیت‌هاب'
+        },
+        experience: {
+            title: 'تجربیات کاری',
+            item1: { title: 'توسعه‌دهنده بک‌اند جنگو', company: 'شرکت پاپوراسان', date: '۲۰۲۵', desc: 'توسعه یک سیستم جامع مدیریت گردش کار با استفاده از جنگو، پیاده‌سازی فرآیندهای خودکار که کارایی عملیاتی را ۲۵٪ افزایش داد.', link: 'مشاهده پروژه: سورنا فلو' },
+            item2: { title: 'توسعه‌دهنده بک‌اند جنگو', company: 'کلینیک رویال', date: '۲۰۲۵', desc: 'طراحی و توسعه یک سیستم کامل نوبت‌دهی آنلاین برای کلینیک پزشکی با مدیریت داده‌های منطبق بر HIPAA.', link: 'مشاهده پروژه: کلینیک رویال' },
+            item3: { title: 'مدرس هوش مصنوعی', company: 'مؤسسه پرژستگان', date: '۲۰۲۵', desc: 'تدریس دوره‌های هوش مصنوعی و برنامه‌نویسی پایتون. توسعه سرفصل‌های جامع شامل مبانی یادگیری ماشین، شبکه‌های عصبی و پیاده‌سازی‌های عملی.', link: 'پروژه نمونه: پیش‌بینی املاک' }
+        },
+        projects: {
+            title: 'پروژه‌ها', viewAll: '← پروژه‌های بیشتر', viewCode: '← مشاهده کد',
+            items: [
+                { name: 'سرویس یادگیری عمیق چهره', desc: 'پروژه تشخیص چهره برای پیش‌بینی سن، جنسیت، نژاد و... پروژه در حال ساخت است.', tags: ['یادگیری عمیق', 'تنسورفلو', 'CNN', 'FastAPI'], url: 'https://github.com/sorna-fast/utkface-deep-learning-service' },
+                { name: 'دسته‌بند اشعه ایکس قفسه سینه', desc: 'مدل یادگیری عمیق برای تشخیص سل با معماری CNN با دقت ۹۹.۵٪ و امتیاز AUC ۰.۹۹۹.', tags: ['یادگیری عمیق', 'تنسورفلو', 'تشخیص سل', 'بینایی ماشین', 'هوش مصنوعی پزشکی', 'CNN'], url: 'https://github.com/sorna-fast/tb-chest-xray-classifier' },
+                { name: 'افزایش وضوح تصویر با CNN', desc: 'تبدیل تصاویر ۱۶×۱۶ با وضوح پایین به نسخه‌های ۳۲×۳۲ با کیفیت بالا با استفاده از یادگیری عمیق.', tags: ['بینایی ماشین', 'یادگیری عمیق', 'افزایش وضوح', 'تنسورفلو'], url: 'https://github.com/sorna-fast/super-resolution-cnn-cifar10' },
+                { name: 'دسته‌بند تصاویر ماهواره‌ای', desc: 'دسته‌بندی تصاویر ماهواره‌ای با CNN - مدل یادگیری عمیق روی دیتاست EuroSAT با دقت ۹۶.۴٪.', tags: ['پایتون', 'تنسورفلو', 'CNN', 'افزایش داده', 'پردازش تصویر'], url: 'https://github.com/sorna-fast/eurosat-cnn-classifier' },
+                { name: 'تشخیص تقلب', desc: 'پیش‌بینی تقلب در تراکنش‌ها با استفاده از الگوریتم‌های دسته‌بندی مانند گرادیان بوستینگ، دقت: ۹۸٪ AUC-ROC.', tags: ['نامپای', 'پانداس', 'گرادیان بوستینگ', 'جنگل تصادفی', 'استریم‌لیت'], url: 'https://github.com/sorna-fast/fraud-detection' },
+                { name: 'فروشگاه آنلاین جنگو', desc: 'پروژه وب‌سایت با تمرکز بر برنامه‌نویسی بک‌اند با امکانات متنوع.', tags: ['جنگو', 'آجاکس', 'دیتابیس MySQL', 'HTML/CSS'], url: 'https://github.com/sorna-fast/django-online-shop' },
+                { name: 'دیتابیس رسانه CS50', desc: 'پروژه نهایی CS50 SQL – یک دیتابیس نرمال‌سازی شده برای مدیریت فیلم‌ها، سریال‌ها، مشارکت‌کنندگان، کاربران و نظرات.', tags: ['SQL', 'SQL-SERVER', 'کوئری‌های SQL', 'اسکیما'], url: 'https://github.com/sorna-fast/media-database-cs50sql' },
+                { name: 'دیتابیس فروشگاه مواد غذایی', desc: 'دیتابیس فروشگاه مواد غذایی با تمام سفارشات و رکوردهای دیتابیس.', tags: ['مانگودی‌بی', 'دیتابیس NoSQL', 'کوئری‌های NoSQL'], url: 'https://github.com/sorna-fast/food-store-database-mongodb' }
+            ]
+        },
+        certificates: { title: 'گواهینامه‌ها', pause: '⏸ توقف', play: '▶ پخش', speed: '⚡ افزایش سرعت', slow: '🐢 کاهش سرعت', viewAll: '← مشاهده همه گواهینامه‌ها در گیت‌هاب', allBtn: 'همه گواهینامه‌ها', error: '⚠️ خطا در بارگذاری', notFound: 'گواهینامه‌ای یافت نشد', tryAll: '«همه گواهینامه‌ها» را انتخاب کنید' },
+        about: {
+            title: 'درباره من', role: 'توسعه‌دهنده بک‌اند و هوش مصنوعی',
+            bio: 'پیاده‌سازی APIهای مقیاس‌پذیر، مدیریت دیتابیس و توسعه معماری‌های قدرتمند با استفاده از پایتون.<br>سابقه اثبات‌شده در ساخت مدل‌های یادگیری ماشین با دقت بیش از ۹۸٪ در پردازش تصویر و تشخیص پزشکی، با استفاده از تنسورفلو، کراس و سایکیت‌لرن.<br>مشتاق همکاری در تیم‌های نوآور برای توسعه سیستم‌های هوشمند و مقیاس‌پذیر در حوزه‌های تحلیل داده و سرویس‌های بک‌اند.',
+            education: { title: 'تحصیلات دانشگاهی', degree: 'دانشجوی مهندسی کامپیوتر', university: 'دانشگاه پیام نور', level: 'کارشناسی - در حال تحصیل', period: '۱۴۰۲ - اکنون' },
+            skillsTitle: 'مهارت‌های کلیدی',
+            skills: ['Python', 'Django', 'FastAPI', 'Ajax', 'TensorFlow/Keras', 'Scikit-Learn', 'SQL/SQLAlchemy', 'MongoDB', 'Pandas', 'NumPy', 'Data Analysis', 'Git', 'Docker']
+        },
+        contact: { title: 'تماس', email: 'ایمیل', phone: 'تلفن' },
+        footer: { text: '© ۲۰۲۵ مسعود قاسمی (sorna-fast).' }
+    },
+    de: {
+        dir: 'ltr',
+        pageTitle: 'Masoud Ghasemi',
+        nav: { home: 'Startseite', experience: 'Erfahrung', projects: 'Projekte', certificates: 'Zertifikate', about: 'Über mich', contact: 'Kontakt' },
+        hero: {
+            name: 'Masoud Ghasemi',
+            title: 'Python Backend & KI-Ingenieur',
+            subtitle: 'Entwicklung skalierbarer APIs und KI-Modelle',
+            cta1: 'Berufserfahrung',
+            cta2: 'GitHub'
+        },
+        experience: {
+            title: 'Berufserfahrung',
+            item1: { title: 'Django Backend-Entwickler', company: 'Papurasan Unternehmen', date: '2025', desc: 'Entwicklung eines umfassenden Workflow-Management-Systems mit Django, Implementierung automatisierter Prozesse, die die operative Effizienz um 25% steigerten.', link: 'Projekt ansehen: SornaFlow' },
+            item2: { title: 'Django Backend-Entwickler', company: 'Royal Clinic', date: '2025', desc: 'Entwurf und Entwicklung eines kompletten Online-Terminbuchungssystems für eine medizinische Klinik mit HIPAA-konformer Datenverarbeitung.', link: 'Projekt ansehen: Royal Clinic' },
+            item3: { title: 'KI-Dozent', company: 'Perjestegan Institut', date: '2025', desc: 'Unterrichten von KI- und Python-Programmierkursen. Entwicklung umfassender Lehrpläne zu ML-Grundlagen, neuronalen Netzen und praktischen Implementierungen.', link: 'Beispielprojekt: Immobilienpreisvorhersage' }
+        },
+        projects: {
+            title: 'Projekte', viewAll: 'Mehr Projekte →', viewCode: 'Code ansehen →',
+            items: [
+                { name: 'utkface-deep-learning-service', desc: 'Ein Gesichtserkennungsprojekt zur Vorhersage von Alter, Geschlecht, Ethnie usw. Das Projekt ist im Aufbau.', tags: ['Deep Learning', 'TensorFlow', 'CNN', 'FastAPI'], url: 'https://github.com/sorna-fast/utkface-deep-learning-service' },
+                { name: 'TB Röntgen-Thorax-Klassifikator', desc: 'Deep-Learning-Modell zur Tuberkulose-Erkennung mit CNN-Architektur, 99,5% Genauigkeit und 0,999 AUC-Wert.', tags: ['Deep Learning', 'TensorFlow', 'Tuberkulose', 'Computer Vision', 'Medizinische KI', 'CNN'], url: 'https://github.com/sorna-fast/tb-chest-xray-classifier' },
+                { name: 'super-resolution-cnn-cifar10', desc: 'Transformation von 16×16 niedrigauflösenden Bildern in 32×32 hochqualitative Versionen mit Deep Learning.', tags: ['Computer Vision', 'Deep Learning', 'Super-Resolution', 'TensorFlow'], url: 'https://github.com/sorna-fast/super-resolution-cnn-cifar10' },
+                { name: 'EuroSAT CNN-Klassifikator', desc: 'Satellitenbildklassifikation mit CNN - EuroSAT-Dataset Deep-Learning-Modell mit 96,4% Genauigkeit bei der Landnutzungserkennung.', tags: ['Python', 'TensorFlow', 'CNN', 'Data Augmentation', 'Bildverarbeitung'], url: 'https://github.com/sorna-fast/eurosat-cnn-classifier' },
+                { name: 'Betrugserkennung', desc: 'Vorhersage von Transaktionsbetrug mit Klassifikationsverfahren wie Gradient Boosting. Genauigkeit: 98% AUC-ROC.', tags: ['NumPy', 'Pandas', 'Gradient Boosting', 'Random Forest', 'Streamlit'], url: 'https://github.com/sorna-fast/fraud-detection' },
+                { name: 'Django Online-Shop', desc: 'Website-Projekt mit Fokus auf Backend-Programmierung mit verschiedenen Funktionen.', tags: ['Django', 'Ajax', 'MySQL', 'HTML/CSS'], url: 'https://github.com/sorna-fast/django-online-shop' },
+                { name: 'media-database-cs50sql', desc: 'Abschlussprojekt für CS50 SQL – Eine normalisierte Mediendatenbank zur Verwaltung von Filmen, Serien, Mitwirkenden, Nutzern und Kommentaren.', tags: ['SQL', 'SQL-SERVER', 'SQL-Queries', 'SQL-Schema'], url: 'https://github.com/sorna-fast/media-database-cs50sql' },
+                { name: 'food-store-database-mongodb', desc: 'Lebensmittelgeschäft-Datenbank mit allen Bestellungen und Datenbankeinträgen.', tags: ['MongoDB', 'NoSQL-Datenbank', 'NoSQL-Queries'], url: 'https://github.com/sorna-fast/food-store-database-mongodb' }
+            ]
+        },
+        certificates: { title: 'Zertifikate', pause: '⏸ Pause', play: '▶ Abspielen', speed: '⚡ Schneller', slow: '🐢 Langsamer', viewAll: 'Alle Zertifikate auf GitHub ansehen →', allBtn: 'Alle Zertifikate', error: '⚠️ Fehler beim Laden', notFound: 'Keine Zertifikate gefunden', tryAll: 'Wählen Sie „Alle Zertifikate"' },
+        about: {
+            title: 'Über mich', role: 'Backend & KI-Entwickler',
+            bio: 'Implementierung skalierbarer APIs, Datenbankmanagement und Entwicklung robuster Architekturen mit Python.<br>Nachgewiesene Erfahrung beim Aufbau von Machine-Learning-Modellen mit über 98% Genauigkeit in Bildverarbeitung und medizinischer Diagnostik mit TensorFlow, Keras und Scikit-learn.<br>Interessiert an der Zusammenarbeit in innovativen Teams zur Entwicklung intelligenter und skalierbarer Systeme in den Bereichen Datenanalyse und Backend-Dienste.',
+            education: { title: 'Hochschulbildung', degree: 'Student der Informatik', university: 'Payam Noor Universität', level: 'Bachelor (B.Sc.) - Laufend', period: '2023 - Gegenwart' },
+            skillsTitle: 'Kernkompetenzen',
+            skills: ['Python', 'Django', 'FastAPI', 'Ajax', 'TensorFlow/Keras', 'Scikit-Learn', 'SQL/SQLAlchemy', 'MongoDB', 'Pandas', 'NumPy', 'Datenanalyse', 'Git', 'Docker']
+        },
+        contact: { title: 'Kontakt', email: 'E-Mail', phone: 'Telefon' },
+        footer: { text: '© 2025 Masoud Ghasemi (sorna-fast).' }
+    }
+};
+
+let currentLang = localStorage.getItem('site-lang') || 'en';
+
+function getTranslation(key) {
+    const keys = key.split('.');
+    let obj = translations[currentLang];
+    for (const k of keys) {
+        if (obj && obj[k] !== undefined) {
+            obj = obj[k];
+        } else {
+            obj = translations['en'];
+            for (const ek of keys) {
+                if (obj && obj[ek] !== undefined) {
+                    obj = obj[ek];
+                } else {
+                    return key;
+                }
+            }
+            return obj;
+        }
+    }
+    return obj;
+}
+
+function applyLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('site-lang', lang);
+
+    const dir = translations[lang].dir;
+    document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('lang', lang);
+
+    // 🔧 تغییر عنوان تب مرورگر
+    document.title = translations[lang].pageTitle || 'Masoud Ghasemi';
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const translation = getTranslation(key);
+        if (translation) {
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = translation;
+            } else {
+                el.innerHTML = translation;
+            }
+        }
+    });
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+    // 🔧 به‌روزرسانی data-text برای hero subtitle
+    const heroP = document.querySelector('.hero p[data-i18n="hero.subtitle"]');
+    if (heroP) {
+        heroP.setAttribute('data-text', getTranslation('hero.subtitle'));
+    }
+
+    populateContent();
+    generateStars();
+
+    const pauseBtn = document.getElementById('pauseBtn');
+    const speedBtn = document.getElementById('speedBtn');
+    if (pauseBtn && window._certSliderInstance) {
+        pauseBtn.textContent = window._certSliderInstance.isPaused
+            ? getTranslation('certificates.play')
+            : getTranslation('certificates.pause');
+    }
+    if (speedBtn && window._certSliderInstance) {
+        speedBtn.textContent = window._certSliderInstance.speed === 90
+            ? getTranslation('certificates.speed')
+            : getTranslation('certificates.slow');
+    }
+
+    // 🔧 به‌روزرسانی انیمیشن گواهی‌ها
+    if (window._certSliderInstance) {
+        window._certSliderInstance.updateAnimation();
+    }
+}
+
+function initLanguageSwitcher() {
+    const switcher = document.getElementById('langSwitcher');
+    if (!switcher) return;
+    switcher.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            applyLanguage(btn.dataset.lang);
+        });
+    });
+    applyLanguage(currentLang);
 }
 
 // ===== Certificate Slider =====
@@ -548,6 +618,7 @@ class CertificateSlider {
         this.allCertificates = [];
         this.filteredCertificates = [];
         this.errorMessage = null;
+        window._certSliderInstance = this;
         this.init();
     }
     async init() {
@@ -602,7 +673,7 @@ class CertificateSlider {
         const allBtn = document.createElement('button');
         allBtn.className = 'filter-btn active';
         allBtn.dataset.org = 'all';
-        allBtn.textContent = 'All Certificates';
+        allBtn.textContent = getTranslation('certificates.allBtn');
         fc.appendChild(allBtn);
         uniqueOrgs.forEach(org => {
             const btn = document.createElement('button');
@@ -624,12 +695,16 @@ class CertificateSlider {
         const speedBtn = document.getElementById('speedBtn');
         if (pauseBtn) pauseBtn.addEventListener('click', () => {
             this.isPaused = !this.isPaused;
-            pauseBtn.textContent = this.isPaused ? '▶ Play' : '⏸ Pause';
+            pauseBtn.textContent = this.isPaused
+                ? getTranslation('certificates.play')
+                : getTranslation('certificates.pause');
             this.updateAnimation();
         });
         if (speedBtn) speedBtn.addEventListener('click', () => {
             this.speed = this.speed === 90 ? 35 : 90;
-            speedBtn.textContent = this.speed === 90 ? '🐢 Slow Down' : '⚡ Speed Up';
+            speedBtn.textContent = this.speed === 90
+                ? getTranslation('certificates.speed')
+                : getTranslation('certificates.slow');
             this.updateAnimation();
         });
     }
@@ -639,11 +714,11 @@ class CertificateSlider {
     }
     render() {
         if (this.errorMessage) {
-            this.slider.innerHTML = `<div style="text-align:center;padding:40px;color:var(--accent);background:rgba(100,255,218,0.05);border-radius:10px;"><h3>⚠️ Certificate Loading Error</h3><p>${this.errorMessage}</p></div>`;
+            this.slider.innerHTML = `<div style="text-align:center;padding:40px;color:var(--accent);background:rgba(100,255,218,0.05);border-radius:10px;"><h3>${getTranslation('certificates.error')}</h3><p>${this.errorMessage}</p></div>`;
             return;
         }
         if (!this.filteredCertificates.length) {
-            this.slider.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-secondary);"><h3>No certificates found</h3><p>Try selecting "All Certificates"</p></div>`;
+            this.slider.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-secondary);"><h3>${getTranslation('certificates.notFound')}</h3><p>${getTranslation('certificates.tryAll')}</p></div>`;
             return;
         }
         this.speed = Math.max(35, this.filteredCertificates.length * 4);
@@ -656,6 +731,7 @@ class CertificateSlider {
     }
     updateAnimation() {
         this.slider.style.animation = `slideRTL ${this.speed}s linear infinite`;
+        this.slider.style.animationDirection = 'normal';
         this.slider.style.animationPlayState = this.isPaused ? 'paused' : 'running';
     }
 }
@@ -683,38 +759,21 @@ function unlockBody() {
     const prevBehavior = html.style.scrollBehavior;
     html.style.scrollBehavior = 'auto';
     window.scrollTo(0, scrollPosition);
-    requestAnimationFrame(() => {
-        html.style.scrollBehavior = prevBehavior;
-    });
+    requestAnimationFrame(() => { html.style.scrollBehavior = prevBehavior; });
 }
 
-function openMenu() {
-    lockBody();
-    navLinks.classList.add('active');
-    hamburger.classList.add('active');
-}
-
-function closeMenu() {
-    navLinks.classList.remove('active');
-    hamburger.classList.remove('active');
-    unlockBody();
-}
+function openMenu() { lockBody(); navLinks.classList.add('active'); hamburger.classList.add('active'); }
+function closeMenu() { navLinks.classList.remove('active'); hamburger.classList.remove('active'); unlockBody(); }
 
 hamburger.addEventListener('click', () => {
-    if (navLinks.classList.contains('active')) {
-        closeMenu();
-    } else {
-        openMenu();
-    }
+    if (navLinks.classList.contains('active')) closeMenu();
+    else openMenu();
 });
 
 document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('click', () => {
-        closeMenu();
-    });
+    link.addEventListener('click', () => closeMenu());
 });
 
-// ===== Nav scroll effect =====
 window.addEventListener('scroll', () => {
     const nav = document.getElementById('navbar');
     if (window.scrollY > 50) nav.classList.add('scrolled');
@@ -723,29 +782,350 @@ window.addEventListener('scroll', () => {
 
 // ===== Populate dynamic content =====
 function populateContent() {
-    const skills = ['Python', 'Django', 'FastAPI', 'Ajax', 'TensorFlow/Keras', 'Scikit-Learn', 'SQL/SQLAlchemy', 'MongoDB', 'Pandas', 'NumPy', 'Data Analysis', 'Git', 'Docker'];
-    const skillsList = document.getElementById('skillsList');
-    if (skillsList) skillsList.innerHTML = skills.map(s => `<span class="skill-item">${s}</span>`).join('');
+    const t = translations[currentLang];
 
-    const projects = [
-        { name: 'SornaFlow', desc: 'Workflow management system with automated processes', tags: ['Django', 'PostgreSQL', 'Docker'], url: 'https://github.com/sorna-fast/SornaFlow' },
-        { name: 'Royal Clinic', desc: 'Online appointment booking for medical clinics', tags: ['Django', 'Social Auth', 'HIPAA'], url: 'https://github.com/sorna-fast/royal-clinic-project' },
-        { name: 'Real Estate AI', desc: 'Price prediction using Artificial Neural Networks', tags: ['TensorFlow', 'Keras', 'Pandas'], url: 'https://github.com/sorna-fast/real-estate-price-prediction-ann' },
-    ];
+    const skillsList = document.getElementById('skillsList');
+    if (skillsList) {
+        const skills = translations.en.about.skills;
+        skillsList.innerHTML = skills.map(s => `<span class="skill-item">${s}</span>`).join('');
+        requestAnimationFrame(() => {
+            skillsList.querySelectorAll('.skill-item').forEach(item => {
+                item.style.animation = 'none';
+                requestAnimationFrame(() => { item.style.animation = ''; });
+            });
+        });
+    }
+
     const grid = document.getElementById('projectsGrid');
-    if (grid) grid.innerHTML = projects.map(p => `
-                <div class="project-card">
-                    <h3>${p.name}</h3><p>${p.desc}</p>
-                    <div class="tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
-                    <a href="${p.url}" target="_blank" class="project-link">View Code →</a>
-                </div>`).join('');
+    if (grid) {
+        grid.innerHTML = t.projects.items.map(p => `
+            <div class="project-card">
+                <h3>${p.name}</h3>
+                <p>${p.desc}</p>
+                <div class="tags">${p.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+                <a href="${p.url}" target="_blank" class="project-link">${t.projects.viewCode}</a>
+            </div>
+        `).join('');
+        initTilt();
+    }
 }
+
+// ===== CursorGrid =====
+(function initCursorGrid() {
+    const experienceSection = document.querySelector('.experience');
+    if (!experienceSection) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'cursor-grid-canvas';
+    canvas.style.cssText = `
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        z-index: 0; pointer-events: none;
+        border-radius: inherit;
+    `;
+    experienceSection.insertBefore(canvas, experienceSection.firstChild);
+
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    const CONFIG = {
+        cellSize: 70, color: '#64ffda',
+        radius: 180, falloff: 'smooth',
+        holdTime: 400, fadeDuration: 800,
+        lineWidth: 1.2, maxOpacity: 0.5,
+        fillOpacity: 0.03, gridOpacity: 0.04,
+        cellRadius: 0, clickPulse: true, pulseSpeed: 600
+    };
+
+    const FALLOFF_CURVES = {
+        linear: t => t,
+        smooth: t => t * t * (3 - 2 * t),
+        sharp: t => t * t * t
+    };
+
+    const hexToRgb = hex => {
+        const h = hex.replace('#', '');
+        const v = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+        const num = parseInt(v.slice(0, 6), 16);
+        return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+    };
+
+    let cols = 0, rows = 0, offX = 0, offY = 0;
+    let alphas = new Float32Array(0);
+    let touched = new Float64Array(0);
+    let w = 0, h = 0;
+    const pulses = [];
+    let raf = 0, running = false, lastFrame = 0;
+
+    const rebuild = () => {
+        w = experienceSection.offsetWidth;
+        h = experienceSection.offsetHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        canvas.style.width = `${w}px`;
+        canvas.style.height = `${h}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        cols = Math.ceil(w / CONFIG.cellSize) + 1;
+        rows = Math.ceil(h / CONFIG.cellSize) + 1;
+        offX = (w - cols * CONFIG.cellSize) / 2;
+        offY = (h - rows * CONFIG.cellSize) / 2;
+        alphas = new Float32Array(cols * rows);
+        touched = new Float64Array(cols * rows);
+    };
+
+    const cellCenter = i => {
+        const cx = offX + (i % cols) * CONFIG.cellSize + CONFIG.cellSize / 2;
+        const cy = offY + Math.floor(i / cols) * CONFIG.cellSize + CONFIG.cellSize / 2;
+        return [cx, cy];
+    };
+
+    const energize = (x, y, boost) => {
+        const r = Math.max(CONFIG.radius, 1);
+        const ease = FALLOFF_CURVES[CONFIG.falloff] ?? FALLOFF_CURVES.linear;
+        const now = performance.now();
+        const minCol = Math.max(0, Math.floor((x - r - offX) / CONFIG.cellSize));
+        const maxCol = Math.min(cols - 1, Math.floor((x + r - offX) / CONFIG.cellSize));
+        const minRow = Math.max(0, Math.floor((y - r - offY) / CONFIG.cellSize));
+        const maxRow = Math.min(rows - 1, Math.floor((y + r - offY) / CONFIG.cellSize));
+        for (let cRow = minRow; cRow <= maxRow; cRow++) {
+            for (let cCol = minCol; cCol <= maxCol; cCol++) {
+                const i = cRow * cols + cCol;
+                const [cx, cy] = cellCenter(i);
+                const dist = Math.hypot(cx - x, cy - y);
+                if (dist > r) continue;
+                const level = ease(1 - dist / r) * CONFIG.maxOpacity * (boost ?? 1);
+                if (level > alphas[i]) { alphas[i] = level; touched[i] = now; }
+                else if (level > 0) { touched[i] = now; }
+            }
+        }
+    };
+
+    const draw = now => {
+        const dt = Math.min(now - lastFrame, 50);
+        lastFrame = now;
+        ctx.clearRect(0, 0, w, h);
+        const [cr, cg, cb] = hexToRgb(CONFIG.color);
+
+        if (CONFIG.gridOpacity > 0) {
+            ctx.strokeStyle = `rgba(${cr}, ${cg}, ${cb}, ${CONFIG.gridOpacity})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let cCol = 0; cCol <= cols; cCol++) {
+                const x = Math.round(offX + cCol * CONFIG.cellSize) + 0.5;
+                ctx.moveTo(x, 0); ctx.lineTo(x, h);
+            }
+            for (let cRow = 0; cRow <= rows; cRow++) {
+                const y = Math.round(offY + cRow * CONFIG.cellSize) + 0.5;
+                ctx.moveTo(0, y); ctx.lineTo(w, y);
+            }
+            ctx.stroke();
+        }
+
+        for (let pi = pulses.length - 1; pi >= 0; pi--) {
+            const pulse = pulses[pi];
+            const age = (now - pulse.t0) / 1000;
+            const ringR = age * CONFIG.pulseSpeed;
+            if (ringR > Math.hypot(w, h)) { pulses.splice(pi, 1); continue; }
+            const band = CONFIG.cellSize;
+            const minCol = Math.max(0, Math.floor((pulse.x - ringR - band - offX) / CONFIG.cellSize));
+            const maxCol = Math.min(cols - 1, Math.floor((pulse.x + ringR + band - offX) / CONFIG.cellSize));
+            const minRow = Math.max(0, Math.floor((pulse.y - ringR - band - offY) / CONFIG.cellSize));
+            const maxRow = Math.min(rows - 1, Math.floor((pulse.y + ringR + band - offY) / CONFIG.cellSize));
+            for (let cRow = minRow; cRow <= maxRow; cRow++) {
+                for (let cCol = minCol; cCol <= maxCol; cCol++) {
+                    const i = cRow * cols + cCol;
+                    const [cx, cy] = cellCenter(i);
+                    const dist = Math.hypot(cx - pulse.x, cy - pulse.y);
+                    if (Math.abs(dist - ringR) < band / 2 && CONFIG.maxOpacity > alphas[i]) {
+                        alphas[i] = CONFIG.maxOpacity; touched[i] = now;
+                    }
+                }
+            }
+        }
+
+        let anyVisible = pulses.length > 0;
+        const fadeStep = dt / Math.max(CONFIG.fadeDuration, 16);
+        const half = CONFIG.cellSize / 2;
+
+        for (let i = 0; i < alphas.length; i++) {
+            let a = alphas[i];
+            if (a <= 0) continue;
+            if (now - touched[i] > CONFIG.holdTime) {
+                a = Math.max(0, a - fadeStep);
+                alphas[i] = a;
+                if (a <= 0) continue;
+            }
+            anyVisible = true;
+
+            const [cx, cy] = cellCenter(i);
+            const gradient = ctx.createRadialGradient(cx, cy, half * 0.1, cx, cy, CONFIG.cellSize);
+            gradient.addColorStop(0, `rgba(${cr}, ${cg}, ${cb}, ${a})`);
+            gradient.addColorStop(1, `rgba(${cr}, ${cg}, ${cb}, 0)`);
+
+            const x = cx - half + 0.5;
+            const y = cy - half + 0.5;
+            const s = CONFIG.cellSize - 1;
+
+            ctx.beginPath();
+            if (CONFIG.cellRadius > 0) ctx.roundRect(x, y, s, s, CONFIG.cellRadius);
+            else ctx.rect(x, y, s, s);
+            if (CONFIG.fillOpacity > 0) {
+                ctx.fillStyle = `rgba(${cr}, ${cg}, ${cb}, ${a * CONFIG.fillOpacity})`;
+                ctx.fill();
+            }
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = CONFIG.lineWidth;
+            ctx.stroke();
+        }
+
+        if (anyVisible) { raf = requestAnimationFrame(draw); }
+        else {
+            running = false;
+            if (CONFIG.gridOpacity <= 0) ctx.clearRect(0, 0, w, h);
+        }
+    };
+
+    const wake = () => {
+        if (running) return;
+        running = true;
+        lastFrame = performance.now();
+        raf = requestAnimationFrame(draw);
+    };
+
+    const toLocal = e => {
+        const rect = experienceSection.getBoundingClientRect();
+        return [e.clientX - rect.left, e.clientY - rect.top];
+    };
+
+    const onPointerMove = e => { const [x, y] = toLocal(e); energize(x, y); wake(); };
+    const onPointerDown = e => {
+        if (!CONFIG.clickPulse) return;
+        const [x, y] = toLocal(e);
+        pulses.push({ x, y, t0: performance.now() });
+        wake();
+    };
+
+    const ro = new ResizeObserver(() => { rebuild(); wake(); });
+    ro.observe(experienceSection);
+    rebuild();
+
+    experienceSection.addEventListener('pointermove', onPointerMove);
+    experienceSection.addEventListener('pointerdown', onPointerDown);
+
+    window.addEventListener('unload', () => {
+        cancelAnimationFrame(raf);
+        ro.disconnect();
+        experienceSection.removeEventListener('pointermove', onPointerMove);
+        experienceSection.removeEventListener('pointerdown', onPointerDown);
+    });
+})();
+
+// ===== ClickSpark =====
+(function initClickSpark() {
+    const CONFIG = {
+        sparkColor: '#64ffda', sparkSize: 12,
+        sparkRadius: 25, sparkCount: 10,
+        duration: 500, lineWidth: 2, easing: 'ease-out'
+    };
+
+    const easeFuncs = {
+        'linear': t => t,
+        'ease-in': t => t * t,
+        'ease-in-out': t => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
+        'ease-out': t => t * (2 - t)
+    };
+    const easeFunc = easeFuncs[CONFIG.easing] || easeFuncs['ease-out'];
+
+    const canvas = document.createElement('canvas');
+    canvas.id = 'click-spark-canvas';
+    canvas.style.cssText = `
+        position: fixed; top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        pointer-events: none; z-index: 99998;
+        display: block; user-select: none;
+    `;
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const sparks = [];
+    let animationId = null;
+    let isAnimating = false;
+
+    const resizeCanvas = () => {
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const draw = (timestamp) => {
+        ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr);
+
+        for (let i = sparks.length - 1; i >= 0; i--) {
+            const spark = sparks[i];
+            const elapsed = timestamp - spark.startTime;
+            if (elapsed >= CONFIG.duration) { sparks.splice(i, 1); continue; }
+
+            const progress = elapsed / CONFIG.duration;
+            const eased = easeFunc(progress);
+            const distance = eased * CONFIG.sparkRadius;
+            const lineLength = CONFIG.sparkSize * (1 - eased);
+            const opacity = 1 - eased;
+
+            const x1 = spark.x + distance * Math.cos(spark.angle);
+            const y1 = spark.y + distance * Math.sin(spark.angle);
+            const x2 = spark.x + (distance + lineLength) * Math.cos(spark.angle);
+            const y2 = spark.y + (distance + lineLength) * Math.sin(spark.angle);
+
+            ctx.strokeStyle = CONFIG.sparkColor;
+            ctx.globalAlpha = opacity;
+            ctx.lineWidth = CONFIG.lineWidth;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        ctx.globalAlpha = 1;
+        if (sparks.length > 0) animationId = requestAnimationFrame(draw);
+        else { isAnimating = false; cancelAnimationFrame(animationId); }
+    };
+
+    const startAnimation = () => {
+        if (!isAnimating) {
+            isAnimating = true;
+            animationId = requestAnimationFrame(draw);
+        }
+    };
+
+    const handleClick = (e) => {
+        const x = e.clientX; const y = e.clientY;
+        const now = performance.now();
+        const newSparks = Array.from({ length: CONFIG.sparkCount }, (_, i) => ({
+            x, y, angle: (2 * Math.PI * i) / CONFIG.sparkCount, startTime: now
+        }));
+        sparks.push(...newSparks);
+        startAnimation();
+    };
+
+    document.addEventListener('click', handleClick);
+
+    window.addEventListener('unload', () => {
+        cancelAnimationFrame(animationId);
+        document.removeEventListener('click', handleClick);
+        window.removeEventListener('resize', resizeCanvas);
+    });
+})();
 
 // ===== Init =====
 document.addEventListener('DOMContentLoaded', () => {
     populateContent();
     generateStars();
     initTilt();
+    initLanguageSwitcher();
     new CertificateSlider();
     new ScrollReveal();
 });
