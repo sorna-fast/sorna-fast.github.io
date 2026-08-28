@@ -1357,7 +1357,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroSection = document.querySelector('#home');
     if (!heroSection) return;
 
-    // تنظیمات - هماهنگ با رنگ‌های سایت
+    // تنظیمات - مچ با رنگ‌های سایت (بدون موس)
     const CONFIG = {
         colors: ['#64ffda', '#48c9b0', '#38b2a0', '#64ffda', '#48c9b0', '#38b2a0', '#64ffda', '#e6f1ff'],
         backgroundColor: '#0a192f',
@@ -1370,11 +1370,7 @@ document.addEventListener('DOMContentLoaded', () => {
         twinkle: 1,
         zoom: 3,
         backgroundGlow: 0.5,
-        opacity: 0.55,
-        mouseInteraction: true,
-        mouseStrength: 0.5,
-        mouseRadius: 1,
-        mouseDampening: 0.15
+        opacity: 0.55
     };
 
     const MAX_COLORS = 8;
@@ -1393,14 +1389,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const count = base.length;
         const arr = [];
         for (let i = 0; i < MAX_COLORS; i++) arr.push(hexToRGB(base[Math.min(i, base.length - 1)]));
-        const avg = [0, 0, 0];
-        for (let i = 0; i < count; i++) {
-            avg[0] += arr[i][0];
-            avg[1] += arr[i][1];
-            avg[2] += arr[i][2];
-        }
-        avg[0] /= count; avg[1] /= count; avg[2] /= count;
-        return { arr, count, avg };
+        return { arr, count };
     };
 
     const vertexShaderSource = `
@@ -1417,7 +1406,6 @@ document.addEventListener('DOMContentLoaded', () => {
         precision highp float;
 
         uniform vec3  iResolution;
-        uniform vec2  iMouse;
         uniform float iTime;
 
         uniform vec3  uColor0;
@@ -1431,7 +1419,6 @@ document.addEventListener('DOMContentLoaded', () => {
         uniform int   uColorCount;
 
         uniform vec3  uBgColor;
-        uniform vec3  uMouseColor;
         uniform float uSpeed;
         uniform int   uStreakCount;
         uniform float uStreakWidth;
@@ -1442,9 +1429,6 @@ document.addEventListener('DOMContentLoaded', () => {
         uniform float uZoom;
         uniform float uBgGlow;
         uniform float uOpacity;
-        uniform float uMouseEnabled;
-        uniform float uMouseStrength;
-        uniform float uMouseRadius;
 
         varying vec2 vUv;
 
@@ -1501,14 +1485,6 @@ document.addEventListener('DOMContentLoaded', () => {
             vec2 P = vec2(2.0, 1.0) * uv0 - (r / r.x) * vec2(0.0, 1.0);
             vec4 O = vec4(uBgColor * 90.0 * uBgGlow / (1e3 * dot(P, P) + 6.0), 0.0);
 
-            float mGlow = 0.0;
-            if (uMouseEnabled > 0.5) {
-                vec2 mN = (iMouse + iMouse - r) / r.x;
-                float md = length(uv0 - mN);
-                mGlow = exp(-md * md / max(uMouseRadius * uMouseRadius, 1e-4)) * uMouseStrength;
-                O.rgb += uMouseColor * mGlow * 0.25;
-            }
-
             float zr = 5e-4 * uStreakWidth;
             vec2 rr = vec2(max(length(fw), 1e-5));
             float tail = 19.0 / max(uStreakLength, 0.05);
@@ -1522,7 +1498,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 float h = fract(8663.0 * ic);
                 vec3 col = palette(h);
                 float weight = mix(1.5, 1.0 + sin(T + 7.0 * h + 4.0), uTwinkle);
-                weight *= (1.0 + mGlow * 2.0);
                 vec2 inner = vec2(length(max(Pp, vec2(-1.0, 0.0))), length(Pp) - zr) - zr;
                 vec2 sm = vec2(1.0) - smoothstep(-rr, rr, inner);
                 O.rgb += dot(sm, vec2(exp(tail * Pp.y), 3.0)) * col * weight;
@@ -1634,14 +1609,12 @@ document.addEventListener('DOMContentLoaded', () => {
     gl.enableVertexAttribArray(uvLoc);
     gl.vertexAttribPointer(uvLoc, 2, gl.FLOAT, false, 0, 0);
 
-    // Uniform locations
-    const { arr, count, avg } = prepColors(CONFIG.colors);
+    // Uniform locations (بدون موس)
+    const { arr, count } = prepColors(CONFIG.colors);
     const uniforms = {
         iResolution: gl.getUniformLocation(program, 'iResolution'),
-        iMouse: gl.getUniformLocation(program, 'iMouse'),
         iTime: gl.getUniformLocation(program, 'iTime'),
         uBgColor: gl.getUniformLocation(program, 'uBgColor'),
-        uMouseColor: gl.getUniformLocation(program, 'uMouseColor'),
         uSpeed: gl.getUniformLocation(program, 'uSpeed'),
         uStreakCount: gl.getUniformLocation(program, 'uStreakCount'),
         uStreakWidth: gl.getUniformLocation(program, 'uStreakWidth'),
@@ -1651,10 +1624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         uTwinkle: gl.getUniformLocation(program, 'uTwinkle'),
         uZoom: gl.getUniformLocation(program, 'uZoom'),
         uBgGlow: gl.getUniformLocation(program, 'uBgGlow'),
-        uOpacity: gl.getUniformLocation(program, 'uOpacity'),
-        uMouseEnabled: gl.getUniformLocation(program, 'uMouseEnabled'),
-        uMouseStrength: gl.getUniformLocation(program, 'uMouseStrength'),
-        uMouseRadius: gl.getUniformLocation(program, 'uMouseRadius')
+        uOpacity: gl.getUniformLocation(program, 'uOpacity')
     };
 
     const colorLocs = [];
@@ -1663,14 +1633,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const colorCountLoc = gl.getUniformLocation(program, 'uColorCount');
 
-    // ست کردن uniforms ثابت
+    // ست کردن uniforms ثابت (بدون هیچ موسی)
     const setStaticUniforms = () => {
         for (let i = 0; i < MAX_COLORS; i++) {
             gl.uniform3fv(colorLocs[i], arr[i]);
         }
         gl.uniform1i(colorCountLoc, count);
         gl.uniform3fv(uniforms.uBgColor, hexToRGB(CONFIG.backgroundColor));
-        gl.uniform3fv(uniforms.uMouseColor, avg);
         gl.uniform1f(uniforms.uSpeed, CONFIG.speed);
         gl.uniform1i(uniforms.uStreakCount, Math.max(1, Math.min(16, Math.round(CONFIG.streakCount))));
         gl.uniform1f(uniforms.uStreakWidth, CONFIG.streakWidth);
@@ -1681,15 +1650,9 @@ document.addEventListener('DOMContentLoaded', () => {
         gl.uniform1f(uniforms.uZoom, CONFIG.zoom);
         gl.uniform1f(uniforms.uBgGlow, CONFIG.backgroundGlow);
         gl.uniform1f(uniforms.uOpacity, CONFIG.opacity);
-        gl.uniform1f(uniforms.uMouseEnabled, CONFIG.mouseInteraction ? 1 : 0);
-        gl.uniform1f(uniforms.uMouseStrength, CONFIG.mouseStrength);
-        gl.uniform1f(uniforms.uMouseRadius, CONFIG.mouseRadius);
     };
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    let mouseX = 0, mouseY = 0;
-    let targetMouseX = 0, targetMouseY = 0;
-    let lastTime = 0;
 
     const resize = () => {
         const rect = heroSection.getBoundingClientRect();
@@ -1702,56 +1665,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resize();
 
-    // Mouse interaction (روی hero section چون canvas pointer-events: none دارد)
-    const onPointerMove = e => {
-        if (!CONFIG.mouseInteraction) return;
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) * dpr;
-        const y = (rect.height - (e.clientY - rect.top)) * dpr;
-        targetMouseX = x;
-        targetMouseY = y;
-        if (CONFIG.mouseDampening <= 0) {
-            mouseX = x;
-            mouseY = y;
-        }
-    };
-
-    if (CONFIG.mouseInteraction) {
-        heroSection.addEventListener('pointermove', onPointerMove);
-    }
-
-    // Render loop
+    // Render loop (بدون منطق موس)
     let rafId = null;
     let running = false;
 
     const render = t => {
         if (!running) return;
         rafId = requestAnimationFrame(render);
-
         gl.uniform1f(uniforms.iTime, t * 0.001);
-
-        // Mouse dampening
-        if (CONFIG.mouseDampening > 0) {
-            if (!lastTime) lastTime = t;
-            const dt = (t - lastTime) / 1000;
-            lastTime = t;
-            const tau = Math.max(1e-4, CONFIG.mouseDampening);
-            let factor = 1 - Math.exp(-dt / tau);
-            if (factor > 1) factor = 1;
-            mouseX += (targetMouseX - mouseX) * factor;
-            mouseY += (targetMouseY - mouseY) * factor;
-        } else {
-            lastTime = t;
-        }
-
-        gl.uniform2fv(uniforms.iMouse, [mouseX, mouseY]);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
 
     const start = () => {
         if (running) return;
         running = true;
-        lastTime = 0;
         rafId = requestAnimationFrame(render);
     };
 
@@ -1781,8 +1708,5 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('unload', () => {
         stop();
         observer.disconnect();
-        if (CONFIG.mouseInteraction) {
-            heroSection.removeEventListener('pointermove', onPointerMove);
-        }
     });
 })();
