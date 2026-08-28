@@ -670,6 +670,7 @@ section {
     width: 100%;
     mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    direction: ltr !important;
 }
 
 .certificates-track {
@@ -679,6 +680,7 @@ section {
     animation: slideRTL 30s linear infinite;
     will-change: transform;
     padding: 8px 0;
+    direction: ltr !important;
 }
 
 .certificates-track:hover {
@@ -1746,3 +1748,26 @@ a {
     cursor: pointer;
 }
 
+/* ===== Lightfall Background برای Hero ===== */
+.lightfall-canvas {
+    opacity: 0.9;
+}
+
+/* خوانایی بهتر متن روی افکت */
+#home .container {
+    text-shadow: 0 2px 12px rgba(7, 11, 20, 0.6);
+}
+
+/* حالت موبایل - کاهش شدت برای عملکرد بهتر */
+@media (max-width: 768px) {
+    .lightfall-canvas {
+        opacity: 0.6 !important;
+    }
+}
+
+/* غیرفعال کردن برای کاربرانی که reduced motion ترجیح می‌دهند */
+@media (prefers-reduced-motion: reduce) {
+    .lightfall-canvas {
+        display: none !important;
+    }
+}
