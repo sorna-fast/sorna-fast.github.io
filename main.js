@@ -1120,7 +1120,203 @@ function populateContent() {
     });
 })();
 
+// ===== Pixel Card Effect for Education Item =====
+(function initEducationPixelCard() {
+    const educationItem = document.querySelector('.education-item');
+    if (!educationItem) return;
 
+    // تنظیمات - مچ با رنگ‌های سایت
+    const CONFIG = {
+        gap: 6,
+        speed: 25,
+        colors: [
+            '#e6f1ff', '#e6f1ff', '#e6f1ff', '#e6f1ff', '#e6f1ff', '#e6f1ff',  // ۶۰٪ - رنگ اصلی
+            '#94a3b8', '#94a3b8',  // ۲۰٪ - خاکستری متوسط
+            '#64748b', '#64748b'   // ۲۰٪ - خاکستری تیره
+        ],
+        reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    };
+
+    class Pixel {
+        constructor(canvas, ctx, x, y, color, speed, delay) {
+            this.width = canvas.width;
+            this.height = canvas.height;
+            this.ctx = ctx;
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.speed = this.getRandomValue(0.1, 0.9) * speed;
+            this.size = 0;
+            this.sizeStep = Math.random() * 0.4;
+            this.minSize = 0.5;
+            this.maxSizeInteger = 2;
+            this.maxSize = this.getRandomValue(this.minSize, this.maxSizeInteger);
+            this.delay = delay;
+            this.counter = 0;
+            this.counterStep = Math.random() * 4 + (this.width + this.height) * 0.01;
+            this.isIdle = false;
+            this.isReverse = false;
+            this.isShimmer = false;
+        }
+
+        getRandomValue(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        draw() {
+            const centerOffset = this.maxSizeInteger * 0.5 - this.size * 0.5;
+            this.ctx.fillStyle = this.color;
+            this.ctx.fillRect(this.x + centerOffset, this.y + centerOffset, this.size, this.size);
+        }
+
+        appear() {
+            this.isIdle = false;
+            if (this.counter <= this.delay) {
+                this.counter += this.counterStep;
+                return;
+            }
+            if (this.size >= this.maxSize) {
+                this.isShimmer = true;
+            }
+            if (this.isShimmer) {
+                this.shimmer();
+            } else {
+                this.size += this.sizeStep;
+            }
+            this.draw();
+        }
+
+        disappear() {
+            this.isShimmer = false;
+            this.counter = 0;
+            if (this.size <= 0) {
+                this.isIdle = true;
+                return;
+            } else {
+                this.size -= 0.1;
+            }
+            this.draw();
+        }
+
+        shimmer() {
+            if (this.size >= this.maxSize) {
+                this.isReverse = true;
+            } else if (this.size <= this.minSize) {
+                this.isReverse = false;
+            }
+            if (this.isReverse) {
+                this.size -= this.speed;
+            } else {
+                this.size += this.speed;
+            }
+        }
+    }
+
+    // ایجاد canvas
+    const canvas = document.createElement('canvas');
+    canvas.className = 'pixel-canvas';
+    canvas.style.cssText = `
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+        display: block;
+    `;
+
+    // آماده‌سازی container
+    educationItem.style.position = 'relative';
+    educationItem.style.overflow = 'hidden';
+    educationItem.insertBefore(canvas, educationItem.firstChild);
+
+    // اطمینان از اینکه محتوا بالای canvas قرار بگیرد
+    Array.from(educationItem.children).forEach(child => {
+        if (child !== canvas) {
+            child.style.position = 'relative';
+            child.style.zIndex = '1';
+        }
+    });
+
+    const ctx = canvas.getContext('2d');
+    let pixels = [];
+    let animationId = null;
+    let timePrevious = performance.now();
+
+    const initPixels = () => {
+        const rect = educationItem.getBoundingClientRect();
+        const width = Math.floor(rect.width);
+        const height = Math.floor(rect.height);
+
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
+        const pxs = [];
+        for (let x = 0; x < width; x += CONFIG.gap) {
+            for (let y = 0; y < height; y += CONFIG.gap) {
+                const color = CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
+                const dx = x - width / 2;
+                const dy = y - height / 2;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const delay = CONFIG.reducedMotion ? 0 : distance;
+                const speed = CONFIG.reducedMotion ? 0 : CONFIG.speed * 0.001;
+
+                pxs.push(new Pixel(canvas, ctx, x, y, color, speed, delay));
+            }
+        }
+        pixels = pxs;
+    };
+
+    const doAnimate = (fnName) => {
+        animationId = requestAnimationFrame(() => doAnimate(fnName));
+        const timeNow = performance.now();
+        const timePassed = timeNow - timePrevious;
+        const timeInterval = 1000 / 60;
+
+        if (timePassed < timeInterval) return;
+        timePrevious = timeNow - (timePassed % timeInterval);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let allIdle = true;
+        for (let i = 0; i < pixels.length; i++) {
+            pixels[i][fnName]();
+            if (!pixels[i].isIdle) allIdle = false;
+        }
+        if (allIdle) cancelAnimationFrame(animationId);
+    };
+
+    const handleAnimation = (name) => {
+        if (CONFIG.reducedMotion) return;
+        cancelAnimationFrame(animationId);
+        animationId = requestAnimationFrame(() => doAnimate(name));
+    };
+
+    // Event listeners
+    educationItem.addEventListener('mouseenter', () => handleAnimation('appear'));
+    educationItem.addEventListener('mouseleave', () => handleAnimation('disappear'));
+    educationItem.addEventListener('focusin', () => handleAnimation('appear'));
+    educationItem.addEventListener('focusout', (e) => {
+        if (!educationItem.contains(e.relatedTarget)) handleAnimation('disappear');
+    });
+
+    // Init با تاخیر کوتاه برای اطمینان از بارگذاری کامل DOM
+    setTimeout(initPixels, 100);
+
+    // Resize handler
+    const observer = new ResizeObserver(() => {
+        initPixels();
+    });
+    observer.observe(educationItem);
+
+    // Cleanup
+    window.addEventListener('unload', () => {
+        observer.disconnect();
+        cancelAnimationFrame(animationId);
+    });
+})();
 
 
 
@@ -1142,7 +1338,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // تنظیمات - هماهنگ با رنگ‌های سایت
     const CONFIG = {
-        colors: ['#64ffda', '#48c9b0', '#38b2a0'],
+        colors: ['#64ffda', '#48c9b0', '#38b2a0', '#64ffda', '#48c9b0', '#38b2a0', '#64ffda', '#e6f1ff'],
         backgroundColor: '#0a192f',
         speed: 0.5,
         streakCount: 3,
