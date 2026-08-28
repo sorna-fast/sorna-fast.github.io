@@ -1824,3 +1824,21 @@ html[dir="rtl"] .education-item:hover {
         display: none !important;
     }
 }
+
+/* ===== موبایل: حالت فعال هنگام لمس ===== */
+@media (hover: none) and (pointer: coarse) {
+    .education-item {
+        -webkit-tap-highlight-color: rgba(100, 255, 218, 0.2);
+        touch-action: manipulation;
+    }
+
+    /* افکت همیشه فعال در موبایل (چون hover نداریم) */
+    .education-item::before {
+        opacity: 0.5;
+    }
+}
+
+/* جلوگیری از highlight آبی در موبایل */
+.education-item {
+    -webkit-tap-highlight-color: transparent;
+}

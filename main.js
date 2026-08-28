@@ -1294,7 +1294,7 @@ function populateContent() {
         animationId = requestAnimationFrame(() => doAnimate(name));
     };
 
-    // Event listeners
+    // Event listeners - پشتیبانی از موس و تاچ
     educationItem.addEventListener('mouseenter', () => handleAnimation('appear'));
     educationItem.addEventListener('mouseleave', () => handleAnimation('disappear'));
     educationItem.addEventListener('focusin', () => handleAnimation('appear'));
@@ -1302,6 +1302,27 @@ function populateContent() {
         if (!educationItem.contains(e.relatedTarget)) handleAnimation('disappear');
     });
 
+    // 🔧 پشتیبانی از لمس در موبایل
+    educationItem.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // جلوگیری از اسکرول ناخواسته
+        handleAnimation('appear');
+    }, { passive: false });
+
+    educationItem.addEventListener('touchend', () => {
+        // کمی تاخیر تا کاربر افکت رو ببینه
+        setTimeout(() => handleAnimation('disappear'), 800);
+    }, { passive: true });
+
+    // پشتیبانی از Pointer Events (ترکیبی از موس و تاچ)
+    educationItem.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'touch') return; // قبلاً با touchstart هندل شده
+        handleAnimation('appear');
+    });
+
+    educationItem.addEventListener('pointerleave', (e) => {
+        if (e.pointerType === 'touch') return;
+        handleAnimation('disappear');
+    });
     // Init با تاخیر کوتاه برای اطمینان از بارگذاری کامل DOM
     setTimeout(initPixels, 100);
 
