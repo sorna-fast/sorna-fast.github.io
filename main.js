@@ -1340,7 +1340,424 @@ function populateContent() {
 })();
 
 
+// ===== Ghost Fibers Background for Certificates Section =====
+function initGhostFibers() {
+    const certSection = document.getElementById('certificates');
+    if (!certSection) return;
 
+    // بهینه‌سازی برای موبایل
+    const mobile = window.innerWidth <= 768;
+
+    const CONFIG = {
+        // رنگ‌ها مچ با سایت (سبز-آبی)
+        lineColor: '#0d2b26',       // سبز تیره
+        glowColor: '#1a6b5f',       // سبز آبی درخشان
+        backgroundColor: '#0c1222', // پس‌زمینه تیره سایت
+        speed: mobile ? 0.15 : 0.2,
+        scale: mobile ? 2.5 : 2,
+        rotation: 0,
+        rotationSpeed: mobile ? 0.15 : 0.25,
+        layers: mobile ? 3 : 4,
+        waveAmplitude: mobile ? 0.01 : 0.015,
+        waveFrequency: mobile ? 2.5 : 3,
+        waveSpeed: mobile ? 0.1 : 0.15,
+        layerSpeed: mobile ? 0.06 : 0.08,
+        twist: mobile ? 0.08 : 0.1,
+        twistFrequency: mobile ? 4 : 5,
+        twistSpeed: mobile ? 1 : 1.2,
+        lineFrequency: mobile ? 4 : 5,
+        lineSpacing: mobile ? 1.5 : 2,
+        lineSharpness: mobile ? 12 : 16,
+        glowFalloff: mobile ? 8 : 10,
+        glowIntensity: mobile ? 1.2 : 1.6,
+        brightness: mobile ? 1.5 : 2,
+        blueBoost: 1.1,
+        vignette: mobile ? 0.9 : 0.8,
+        grain: mobile ? 0.02 : 0.04,
+        fps: mobile ? 30 : 60
+    };
+
+    const hexToRgb = hex => {
+        const value = hex.trim().replace(/^#/, '');
+        const normalized = value.length === 3 ? value.replace(/./g, ch => ch + ch) : value;
+        const match = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalized);
+        if (!match) return [1, 1, 1];
+        return [parseInt(match[1], 16) / 255, parseInt(match[2], 16) / 255, parseInt(match[3], 16) / 255];
+    };
+
+    const vertexShaderSource = `#version 300 es
+        in vec2 position;
+        void main() {
+            gl_Position = vec4(position, 0.0, 1.0);
+        }
+    `;
+
+    const fragmentShaderSource = `#version 300 es
+        precision highp float;
+
+        uniform vec2 uResolution;
+        uniform float uTime;
+        uniform float uSpeed;
+        uniform float uScale;
+        uniform float uRotation;
+        uniform float uLayers;
+        uniform float uWaveAmplitude;
+        uniform float uWaveFrequency;
+        uniform float uWaveSpeed;
+        uniform float uLayerSpeed;
+        uniform float uTwist;
+        uniform float uTwistFrequency;
+        uniform float uTwistSpeed;
+        uniform float uLineFrequency;
+        uniform float uLineSpacing;
+        uniform float uLineSharpness;
+        uniform float uGlowFalloff;
+        uniform float uGlowIntensity;
+        uniform float uBrightness;
+        uniform float uBlueBoost;
+        uniform float uVignette;
+        uniform float uGrain;
+        uniform float uRotationSpeed;
+        uniform vec3 uLineColor;
+        uniform vec3 uGlowColor;
+        uniform vec3 uBgColor;
+
+        out vec4 fragColor;
+
+        #define MAX_LAYERS 10
+
+        mat2 rotate2d(float angle) {
+            float sine = sin(angle);
+            float cosine = cos(angle);
+            return mat2(cosine, -sine, sine, cosine);
+        }
+
+        float grainHash(vec2 point) {
+            point = floor(point);
+            float hash = 52.9829189 * fract(dot(point, vec2(0.065, 0.005)));
+            return fract(hash);
+        }
+
+        float layeredGrain(vec2 fragmentPixel) {
+            vec2 point = mod(fragmentPixel + vec2(uTime * 30.0, -uTime * 21.0), 1024.0);
+            vec2 rotated = mat2(0.8, -0.5, 0.5, 0.8) * point;
+            float grain = 0.0;
+            grain += 0.40 * grainHash(rotated);
+            grain += 0.25 * grainHash(rotated * 2.0 + 17.0);
+            grain += 0.20 * grainHash(rotated * 4.0 + 47.0);
+            grain += 0.10 * grainHash(rotated * 8.0 + 113.0);
+            grain += 0.05 * grainHash(rotated * 16.0 + 191.0);
+            return grain;
+        }
+
+        void main() {
+            vec2 resolution = max(uResolution, vec2(1.0));
+            vec2 uv = (2.0 * gl_FragCoord.xy - resolution) / resolution.y;
+            float time = uTime * uSpeed;
+
+            vec3 backdrop = uBgColor;
+            vec3 centerTone = max(uLineColor * 0.85567 - uGlowColor * 0.06186, vec3(0.0));
+            vec3 cloudTone = uLineColor * 0.19588 + uGlowColor * 0.2268;
+
+            vec2 p = uv;
+            p /= max(uScale, 0.05);
+            p = rotate2d(radians(uRotation) + time * uRotationSpeed) * p;
+
+            vec3 color = vec3(0.0);
+            float fiberField = 0.0;
+
+            for (int index = 0; index < MAX_LAYERS; index++) {
+                float fi = float(index) + 1.0;
+                if (fi > uLayers) break;
+
+                p += uWaveAmplitude * sin(p.yx * fi * uWaveFrequency + time * (uWaveSpeed + fi * uLayerSpeed));
+
+                float radius = length(p);
+                float polarAngle = atan(p.y, p.x);
+                polarAngle += sin(radius * uTwistFrequency - time * uTwistSpeed + fi) * uTwist;
+                p = vec2(cos(polarAngle), sin(polarAngle)) * radius;
+
+                float lines = abs(sin(p.x * (uLineFrequency + fi * uLineSpacing) + sin(p.y * 3.0 + time)));
+                lines = pow(max(0.0, 1.0 - lines), uLineSharpness);
+                fiberField += lines / fi;
+                color += uLineColor * lines / fi;
+
+                float glow = exp(-uGlowFalloff * abs(sin(p.x * 3.0 + time + fi)));
+                color += uGlowColor * glow * uGlowIntensity / (fi * 2.0);
+            }
+
+            float center = exp(-2.2 * dot(uv, uv));
+            color += centerTone * center;
+
+            float cloud = exp(-1.5 * length(uv + vec2(sin(time * 0.3) * 0.25, cos(time * 0.25) * 0.18)));
+            color += cloudTone * cloud;
+
+            float vignette = 1.0 - smoothstep(0.35, 1.45, length(uv));
+            color *= mix(1.0 - uVignette, 1.0, vignette);
+            color = 1.0 - exp(-color * uBrightness);
+            color.b *= uBlueBoost;
+
+            vec3 outputColor = backdrop + color;
+
+            float noise = (layeredGrain(gl_FragCoord.xy) - 0.5) * uGrain;
+            outputColor = clamp(outputColor + noise, 0.0, 1.0);
+            fragColor = vec4(outputColor, 1.0);
+        }
+    `;
+
+    // Create canvas
+    const canvas = document.createElement('canvas');
+    canvas.className = 'ghost-fibers-canvas';
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+        display: block;
+        opacity: ${mobile ? 0.4 : 0.6};
+    `;
+
+    // Prepare section
+    certSection.style.position = 'relative';
+    certSection.style.overflow = 'hidden';
+
+    // Insert canvas as FIRST child
+    certSection.insertBefore(canvas, certSection.firstChild);
+
+    // Ensure ALL direct children except canvas are above it
+    Array.from(certSection.children).forEach(child => {
+        if (child !== canvas) {
+            child.style.position = 'relative';
+            child.style.zIndex = '1';
+        }
+    });
+
+    // WebGL2 Context
+    const gl = canvas.getContext('webgl2', { antialias: false });
+
+    if (!gl) {
+        console.warn('WebGL2 not supported, skipping GhostFibers');
+        canvas.remove();
+        return;
+    }
+
+    const compileShader = (type, source) => {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            console.error('Shader error:', gl.getShaderInfoLog(shader));
+            gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
+    };
+
+    const vs = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
+    const fs = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+    if (!vs || !fs) {
+        canvas.remove();
+        return;
+    }
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error('Program link error:', gl.getProgramInfoLog(program));
+        canvas.remove();
+        return;
+    }
+
+    gl.useProgram(program);
+
+    // Fullscreen triangle
+    const positions = new Float32Array([-1, -1, 3, -1, -1, 3]);
+    const posBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+    const posLoc = gl.getAttribLocation(program, 'position');
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+    // Uniform locations
+    const u = {
+        uResolution: gl.getUniformLocation(program, 'uResolution'),
+        uTime: gl.getUniformLocation(program, 'uTime'),
+        uSpeed: gl.getUniformLocation(program, 'uSpeed'),
+        uScale: gl.getUniformLocation(program, 'uScale'),
+        uRotation: gl.getUniformLocation(program, 'uRotation'),
+        uRotationSpeed: gl.getUniformLocation(program, 'uRotationSpeed'),
+        uLayers: gl.getUniformLocation(program, 'uLayers'),
+        uWaveAmplitude: gl.getUniformLocation(program, 'uWaveAmplitude'),
+        uWaveFrequency: gl.getUniformLocation(program, 'uWaveFrequency'),
+        uWaveSpeed: gl.getUniformLocation(program, 'uWaveSpeed'),
+        uLayerSpeed: gl.getUniformLocation(program, 'uLayerSpeed'),
+        uTwist: gl.getUniformLocation(program, 'uTwist'),
+        uTwistFrequency: gl.getUniformLocation(program, 'uTwistFrequency'),
+        uTwistSpeed: gl.getUniformLocation(program, 'uTwistSpeed'),
+        uLineFrequency: gl.getUniformLocation(program, 'uLineFrequency'),
+        uLineSpacing: gl.getUniformLocation(program, 'uLineSpacing'),
+        uLineSharpness: gl.getUniformLocation(program, 'uLineSharpness'),
+        uGlowFalloff: gl.getUniformLocation(program, 'uGlowFalloff'),
+        uGlowIntensity: gl.getUniformLocation(program, 'uGlowIntensity'),
+        uBrightness: gl.getUniformLocation(program, 'uBrightness'),
+        uBlueBoost: gl.getUniformLocation(program, 'uBlueBoost'),
+        uVignette: gl.getUniformLocation(program, 'uVignette'),
+        uGrain: gl.getUniformLocation(program, 'uGrain'),
+        uLineColor: gl.getUniformLocation(program, 'uLineColor'),
+        uGlowColor: gl.getUniformLocation(program, 'uGlowColor'),
+        uBgColor: gl.getUniformLocation(program, 'uBgColor')
+    };
+
+    const lineRgb = hexToRgb(CONFIG.lineColor);
+    const glowRgb = hexToRgb(CONFIG.glowColor);
+    const bgRgb = hexToRgb(CONFIG.backgroundColor);
+
+    // Set static uniforms
+    const setStaticUniforms = () => {
+        gl.uniform1f(u.uSpeed, CONFIG.speed);
+        gl.uniform1f(u.uScale, CONFIG.scale);
+        gl.uniform1f(u.uRotation, CONFIG.rotation);
+        gl.uniform1f(u.uRotationSpeed, CONFIG.rotationSpeed);
+        gl.uniform1f(u.uLayers, Math.min(Math.max(Math.round(CONFIG.layers), 1), 10));
+        gl.uniform1f(u.uWaveAmplitude, CONFIG.waveAmplitude);
+        gl.uniform1f(u.uWaveFrequency, CONFIG.waveFrequency);
+        gl.uniform1f(u.uWaveSpeed, CONFIG.waveSpeed);
+        gl.uniform1f(u.uLayerSpeed, CONFIG.layerSpeed);
+        gl.uniform1f(u.uTwist, CONFIG.twist);
+        gl.uniform1f(u.uTwistFrequency, CONFIG.twistFrequency);
+        gl.uniform1f(u.uTwistSpeed, CONFIG.twistSpeed);
+        gl.uniform1f(u.uLineFrequency, CONFIG.lineFrequency);
+        gl.uniform1f(u.uLineSpacing, CONFIG.lineSpacing);
+        gl.uniform1f(u.uLineSharpness, CONFIG.lineSharpness);
+        gl.uniform1f(u.uGlowFalloff, CONFIG.glowFalloff);
+        gl.uniform1f(u.uGlowIntensity, CONFIG.glowIntensity);
+        gl.uniform1f(u.uBrightness, CONFIG.brightness);
+        gl.uniform1f(u.uBlueBoost, CONFIG.blueBoost);
+        gl.uniform1f(u.uVignette, CONFIG.vignette);
+        gl.uniform1f(u.uGrain, CONFIG.grain);
+        gl.uniform3fv(u.uLineColor, lineRgb);
+        gl.uniform3fv(u.uGlowColor, glowRgb);
+        gl.uniform3fv(u.uBgColor, bgRgb);
+    };
+
+    const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 0.5), 2);
+
+    // Resize function that renders immediately
+    const resize = () => {
+        const rect = certSection.getBoundingClientRect();
+        const w = Math.max(1, Math.floor(rect.width));
+        const h = Math.max(1, Math.floor(rect.height));
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        setStaticUniforms();
+        gl.uniform2fv(u.uResolution, [canvas.width, canvas.height]);
+        // Render one frame immediately after resize
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+
+    resize();
+
+    // ResizeObserver to keep canvas covering the full section
+    const resizeObserver = new ResizeObserver(() => {
+        resize();
+    });
+    resizeObserver.observe(certSection);
+
+    // Render loop
+    let frameId = null;
+    let elapsed = 0;
+    let previousTime = performance.now();
+    let lastRenderTime = 0;
+    let running = false;
+    let isVisible = false;
+    let isPageVisible = !document.hidden;
+    const frameRate = CONFIG.fps;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const canAnimate = () => isVisible && isPageVisible && !reducedMotion.matches;
+
+    const stop = () => {
+        if (frameId !== null) {
+            cancelAnimationFrame(frameId);
+            frameId = null;
+        }
+        running = false;
+    };
+
+    const loop = (now) => {
+        if (!running || !canAnimate()) {
+            stop();
+            return;
+        }
+
+        frameId = requestAnimationFrame(loop);
+
+        const delta = Math.min((now - previousTime) / 1000, 0.1);
+        previousTime = now;
+        elapsed += delta;
+
+        if (now - lastRenderTime >= 1000 / frameRate - 0.5) {
+            gl.uniform1f(u.uTime, elapsed);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+            lastRenderTime = now;
+        }
+    };
+
+    const start = () => {
+        if (running || !canAnimate()) return;
+        running = true;
+        previousTime = performance.now();
+        frameId = requestAnimationFrame(loop);
+    };
+
+    // IntersectionObserver to only run when section is in viewport
+    const intersectionObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            isVisible = entry.isIntersecting;
+            if (canAnimate()) start();
+            else stop();
+        });
+    }, { threshold: 0 });
+
+    intersectionObserver.observe(certSection);
+
+    // Pause when tab is hidden
+    const handleVisibility = () => {
+        isPageVisible = !document.hidden;
+        if (canAnimate()) start();
+        else stop();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    // Handle reduced motion changes
+    const handleReducedMotion = () => {
+        if (canAnimate()) start();
+        else {
+            stop();
+            resize(); // Render one static frame
+        }
+    };
+    reducedMotion.addEventListener('change', handleReducedMotion);
+
+    // Cleanup
+    window.addEventListener('unload', () => {
+        stop();
+        resizeObserver.disconnect();
+        intersectionObserver.disconnect();
+        document.removeEventListener('visibilitychange', handleVisibility);
+        reducedMotion.removeEventListener('change', handleReducedMotion);
+    });
+}
 // ===== Init =====
 document.addEventListener('DOMContentLoaded', () => {
     populateContent();
@@ -1349,6 +1766,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initLanguageSwitcher();
     new CertificateSlider();
     new ScrollReveal();
+    initGhostFibers();
 });
 
 

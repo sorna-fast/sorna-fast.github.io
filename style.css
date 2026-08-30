@@ -400,7 +400,38 @@ section {
     margin: 0 auto;
     padding: 20px 0;
 }
+/* ===== WebThreads برای Certificates ===== */
+#certificates {
+    position: relative;
+    overflow: hidden;
+    background: #0c1222 !important;
+    /* مچ با backgroundColor در CONFIG */
+}
 
+.web-threads-canvas {
+    mix-blend-mode: screen;
+    /* ترکیب زیبا با پس‌زمینه */
+}
+
+/* تضمین z-index برای محتوای اصلی */
+#certificates>.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== Accessibility ===== */
+@media (prefers-reduced-motion: reduce) {
+    .web-threads-canvas {
+        display: none !important;
+    }
+}
+
+/* ===== موبایل: شدت کمتر برای عملکرد بهتر ===== */
+@media (max-width: 768px) {
+    .web-threads-canvas {
+        opacity: 0.8;
+    }
+}
 .timeline::before {
     content: '';
     position: absolute;
@@ -1843,3 +1874,45 @@ html[dir="rtl"] .education-item:hover {
     -webkit-tap-highlight-color: transparent;
 }
 
+/* ===== Ghost Fibers برای گواهینامه‌ها ===== */
+#certificates {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: #0c1222 !important;
+}
+
+.ghost-fibers-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
+    opacity: 0.6;
+}
+
+#certificates>.container {
+    position: relative;
+    z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ghost-fibers-canvas {
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .ghost-fibers-canvas {
+        opacity: 0.4 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .ghost-fibers-canvas {
+        opacity: 0.3 !important;
+    }
+}
