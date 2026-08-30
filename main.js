@@ -429,7 +429,7 @@ const translations = {
                 { name: 'food-store-database-mongodb', desc: 'Food store database with all orders and database records', tags: ['MongoDB', 'NoSQL Database', 'NoSQL Queries', 'Nosql store'], url: 'https://github.com/sorna-fast/food-store-database-mongodb' }
             ]
         },
-        certificates: { title: 'Certificates', pause: '⏸ Pause', play: '▶ Play', speed: '⚡ Speed Up', slow: '🐢 Slow Down', viewAll: 'View All Certificates on GitHub →', allBtn: 'All Certificates', error: '⚠️ Certificate Loading Error', notFound: 'No certificates found', tryAll: 'Try selecting "All Certificates"' },
+        certificates: { title: 'Certificates', pause: '⏸ Pause', play: '▶ Play', speed: 'Speed Up', slow: 'Slow Down', viewAll: 'View All Certificates on GitHub →', allBtn: 'All Certificates', error: '⚠️ Certificate Loading Error', notFound: 'No certificates found', tryAll: 'Try selecting "All Certificates"' },
         about: {
             title: 'About Me', role: 'Backend & AI Developer',
             bio: 'Implementing scalable APIs, database management, and developing robust architectures using Python.<br>Proven track record in building machine learning models with over 98% accuracy in image processing and medical diagnostics, utilizing TensorFlow, Keras, and Scikit-learn.<br>Eager to collaborate in innovative teams to develop intelligent and scalable systems in the fields of data analytics and backend services.',
