@@ -1,3 +1,7 @@
+
+const IS_MOBILE = window.matchMedia('(max-width: 768px)').matches;
+const HAS_HOVER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
 // ===== Loading Screen =====
 (function injectLoadingCSS() {
     if (document.getElementById('loading-styles')) return;
@@ -723,7 +727,7 @@ class CertificateSlider {
         }
         this.speed = Math.max(35, this.filteredCertificates.length * 4);
         const html = this.filteredCertificates.map(c => {
-            const preview = c.downloadUrl ? `<img src="${c.downloadUrl}" alt="${c.name}" loading="lazy">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;"><span style="font-size:1.5rem;color:var(--accent);">📄</span><span style="font-size:0.75rem;color:var(--text-muted);">PDF</span></div>`;
+            const preview = c.downloadUrl ? `<img src="${c.downloadUrl}" alt="${c.name}" loading="lazy" decoding="async">` : `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;"><span style="font-size:1.5rem;color:var(--accent);">📄</span><span style="font-size:0.75rem;color:var(--text-muted);">PDF</span></div>`;
             return `<div class="certificate-card" onclick="window.open('${c.url}','_blank')"><div class="cert-preview">${preview}</div><span class="org-tag">${c.org.toUpperCase()}</span><h4>${c.name}</h4><span class="cert-type">${c.type.toUpperCase()}</span></div>`;
         }).join('');
         this.slider.innerHTML = html + html;
@@ -826,10 +830,10 @@ function populateContent() {
     experienceSection.insertBefore(canvas, experienceSection.firstChild);
 
     const ctx = canvas.getContext('2d');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, IS_MOBILE ? 1.25 : 2);
 
     const CONFIG = {
-        cellSize: 70, color: '#64ffda',
+        cellSize: IS_MOBILE ? 100 : 70, color: '#64ffda',
         radius: 180, falloff: 'smooth',
         holdTime: 400, fadeDuration: 800,
         lineWidth: 1.2, maxOpacity: 0.5,
@@ -1047,7 +1051,7 @@ function populateContent() {
     document.body.appendChild(canvas);
 
     const ctx = canvas.getContext('2d');
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, IS_MOBILE ? 1.25 : 2);
     const sparks = [];
     let animationId = null;
     let isAnimating = false;
@@ -1127,7 +1131,7 @@ function populateContent() {
 
     // تنظیمات - مچ با رنگ‌های سایت
     const CONFIG = {
-        gap: 6,
+        gap: IS_MOBILE ? 10 : 6,
         speed: 25,
         colors: [
             '#e6f1ff', '#e6f1ff', '#e6f1ff', '#e6f1ff', '#e6f1ff', '#e6f1ff',  // ۶۰٪ - رنگ اصلی
@@ -1649,7 +1653,7 @@ function initGhostFibers() {
         gl.uniform3fv(u.uBgColor, bgRgb);
     };
 
-    const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 0.5), 2);
+    const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 0.5), IS_MOBILE ? 1 : 2);
 
     // Resize function that renders immediately
     const resize = () => {
@@ -2070,7 +2074,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gl.uniform1f(uniforms.uOpacity, CONFIG.opacity);
     };
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, IS_MOBILE ? 1.25 : 2);
 
     const resize = () => {
         const rect = heroSection.getBoundingClientRect();

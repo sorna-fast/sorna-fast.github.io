@@ -1916,3 +1916,49 @@ html[dir="rtl"] .education-item:hover {
         opacity: 0.3 !important;
     }
 }
+
+
+/* ===== GPU Layer Promotion (بدون تغییر ظاهر) ===== */
+.lightfall-canvas,
+.ghost-fibers-canvas,
+.cursor-grid-canvas,
+#click-spark-canvas,
+.pixel-canvas,
+.certificates-track {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* will-change فقط موقع نیاز فعال بشه (کاهش مصرف VRAM) */
+.project-card,
+.timeline-content,
+.contact-item,
+.certificate-card {
+    will-change: auto;
+}
+
+.project-card:hover,
+.timeline-content:hover,
+.contact-item:hover,
+.certificate-card:hover {
+    will-change: transform, box-shadow;
+}
+
+/* موبایل: حذف will-change اضافی برای کاهش فشار روی GPU موبایل */
+@media (max-width: 768px) {
+
+    .project-card,
+    .timeline-content,
+    .contact-item,
+    .certificate-card,
+    .magnetic {
+        will-change: auto !important;
+    }
+
+    /* انیمیشن‌های سنگین‌تر با کامپوزیت سبک‌تر */
+    .hero h1 .actual-text,
+    .skill-item {
+        backface-visibility: hidden;
+    }
+}

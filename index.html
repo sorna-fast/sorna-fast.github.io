@@ -10,6 +10,12 @@
     <link id="persian-font" rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap"
         media="print" onload="this.media='all'">
+    <link rel="preload" as="image" href="./icon.png">
+    <link rel="preload" as="image" href="./profile.png">
+    
+    <!-- اتصال زودهنگام به گیت‌هاب برای اسلایدر گواهینامه‌ها -->
+    <link rel="preconnect" href="https://api.github.com">
+    <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
 </head>
 
 <body>
@@ -225,7 +231,7 @@
         </div>
     </footer>
 
-    <script src="main.js"></script>
+    <script src="main.js" defer></script>
 </body>
 
 </html>
